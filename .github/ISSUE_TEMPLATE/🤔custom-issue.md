@@ -1,8 +1,8 @@
 ---
-name: "\U0001F41E Bug"
-about: 버그 제보
-title: "[BUG] "
-labels: bug
+name: "\U0001F914Custom issue"
+about: 그 외 이슈
+title: "[]"
+labels: ''
 assignees: ''
 
 ---

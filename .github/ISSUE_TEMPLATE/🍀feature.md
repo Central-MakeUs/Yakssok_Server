@@ -1,5 +1,5 @@
 ---
-name: "\U0001F340 Feature"
+name: "\U0001F340Feature"
 about: 새로운 기능 추가
 title: "[FEATURE] "
 labels: feature
