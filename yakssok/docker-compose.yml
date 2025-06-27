@@ -2,7 +2,7 @@ services:
   app:
     container_name: yakssok-app
     build:
-      context: ./app
+      context: .
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
