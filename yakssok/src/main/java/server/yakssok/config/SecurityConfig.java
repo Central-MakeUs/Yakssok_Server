@@ -1,4 +1,4 @@
-package server.yakssok;
+package server.yakssok.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
