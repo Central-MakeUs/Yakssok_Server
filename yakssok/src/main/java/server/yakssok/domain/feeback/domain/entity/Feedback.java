@@ -1,7 +1,6 @@
-package server.yakssok.domain.medication.domain.entity;
+package server.yakssok.domain.feeback.domain.entity;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -14,20 +13,25 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import server.yakssok.domain.user.domain.entity.User;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class MedicationRecord {
+public class Feedback {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private LocalDate date;
-	private LocalTime time;
-	private boolean isTaken;
-
-	@JoinColumn(name = "medication_id")
+	@JoinColumn(name = "sender_id")
 	@ManyToOne(fetch = FetchType.LAZY)
-	private Medication medication;
+	private User sender;
+
+	@JoinColumn(name = "receiver_id")
+	@ManyToOne(fetch = FetchType.LAZY)
+	private User receiver;
+
+	private String message;
+	private FetchType fetchType;
+	private LocalDateTime createdAt;
 }
