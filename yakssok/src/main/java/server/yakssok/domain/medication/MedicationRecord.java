@@ -8,11 +8,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 public class MedicationRecord {
-	//날짜
 	private LocalDate date;
-	//시간
 	private LocalTime time;
-	//복용 여부
 	private boolean isTaken;
 
 	@JoinColumn(name = "medication_id")

@@ -13,21 +13,15 @@ import server.yakssok.domain.user.User;
 
 @Entity
 public class Medication {
-	//약 이름
 	private String medicineName;
-	//알람 주기
 	private Cycle cycle;
-	//알람 시간
 	private LocalTime alarmTime;
 
-	//시작일 종료일
 	private LocalDate startDate;
 	private LocalDate endDate;
 
-	//알람음
 	@Enumerated(EnumType.STRING)
 	private AlarmSound alarmSound;
-	//약 종류
 	@Enumerated(EnumType.STRING)
 	private MedicationType medicationType;
 
