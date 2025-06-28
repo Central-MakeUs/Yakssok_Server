@@ -1,4 +1,4 @@
-package server.yakssok.domain.medication;
+package server.yakssok.domain.medication.domain.entity;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -9,7 +9,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import server.yakssok.domain.user.User;
+import server.yakssok.domain.user.domain.entity.User;
 
 @Entity
 public class Medication {

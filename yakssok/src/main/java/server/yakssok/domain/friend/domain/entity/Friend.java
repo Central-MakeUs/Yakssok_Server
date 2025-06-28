@@ -1,4 +1,4 @@
-package server.yakssok.domain.friend;
+package server.yakssok.domain.friend.domain.entity;
 
 import jakarta.persistence.Entity;
 

@@ -1,10 +1,10 @@
-package server.yakssok.domain.feeback;
+package server.yakssok.domain.feeback.domain.entity;
 
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import server.yakssok.domain.user.User;
+import server.yakssok.domain.user.domain.entity.User;
 
 @Entity
 public class FeedBack {

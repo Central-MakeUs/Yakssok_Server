@@ -1,4 +1,4 @@
-package server.yakssok.domain.auth;
+package server.yakssok.domain.auth.domain.entity;
 
 import jakarta.persistence.Entity;
 

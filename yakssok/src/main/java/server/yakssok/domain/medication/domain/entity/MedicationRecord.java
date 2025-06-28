@@ -1,4 +1,4 @@
-package server.yakssok.domain.medication;
+package server.yakssok.domain.medication.domain.entity;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

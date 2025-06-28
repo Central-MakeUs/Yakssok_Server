@@ -1,4 +1,4 @@
-package server.yakssok.domain.user;
+package server.yakssok.domain.user.domain.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

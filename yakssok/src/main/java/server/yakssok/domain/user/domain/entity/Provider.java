@@ -1,4 +1,4 @@
-package server.yakssok.domain.user;
+package server.yakssok.domain.user.domain.entity;
 
 import lombok.Getter;
 
