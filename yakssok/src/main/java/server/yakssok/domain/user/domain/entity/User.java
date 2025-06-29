@@ -16,7 +16,6 @@ import server.yakssok.domain.BaseEntity;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class User extends BaseEntity {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,14 +23,43 @@ public class User extends BaseEntity {
 
 	private String nickName;
 	private String profileImageUrl;
-	@Column(length = 500, unique = true)
-	private String providerId;
 
 	@Enumerated(EnumType.STRING)
 	private Provider provider;
+	@Column(length = 500, unique = true)
+	private String providerId;
+
 
 	private boolean pushAgreement;
 
 	@Column(length = 500)
 	private String fcmToken;
+
+	private User(String nickName, String profileImageUrl, Provider provider, String providerId, boolean pushAgreement, String fcmToken) {
+		this.nickName = nickName;
+		this.profileImageUrl = profileImageUrl;
+		this.provider = provider;
+		this.providerId = providerId;
+		this.pushAgreement = pushAgreement;
+		this.fcmToken = fcmToken;
+	}
+
+	public static User create(String nickName, String profileImageUrl, String providerName, String providerId, boolean pushAgreement, String fcmToken) {
+		return new User(
+			nickName,
+			profileImageUrl,
+			Provider.from(providerName),
+			providerId,
+			pushAgreement,
+			fcmToken
+		);
+	}
+
+	public void updatePushAgreement(boolean pushAgreement) {
+		this.pushAgreement = pushAgreement;
+	}
+
+	public void updateFcmToken(String fcmToken) {
+		this.fcmToken = fcmToken;
+	}
 }
