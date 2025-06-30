@@ -6,9 +6,10 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
-import com.fasterxml.jackson.databind.JsonNode;
 
 import server.yakssok.domain.auth.application.client.SocialLoginStrategy;
+import server.yakssok.domain.auth.application.exception.AuthErrorCode;
+import server.yakssok.domain.auth.application.exception.AuthException;
 
 @Component
 public class KakaoLoginStrategy implements SocialLoginStrategy {
@@ -24,11 +25,16 @@ public class KakaoLoginStrategy implements SocialLoginStrategy {
 
 	@Override
 	public KakaoUserResponse fetchUserInfo(String accessToken) {
-		return restClient.get()
-			.uri("/v2/user/me")
-			.header(HttpHeaders.AUTHORIZATION, authHeaderValue(accessToken))
-			.retrieve()
-			.body(KakaoUserResponse.class);
+		try {
+			return restClient.get()
+				.uri("/v2/user/me")
+				.header(HttpHeaders.AUTHORIZATION, authHeaderValue(accessToken))
+				.retrieve()
+				.body(KakaoUserResponse.class);
+		} catch (Exception e) {
+			throw new AuthException(AuthErrorCode.INVALID_KAKAO_TOKEN);
+		}
+
 	}
 
 	private String authHeaderValue(String accessToken) {
