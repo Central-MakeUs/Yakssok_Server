@@ -6,6 +6,6 @@ public record KakaoUserResponse(
 	String id,
 
 	@JsonProperty("kakao_account")
-	KakaoUserResponse kakaoAccount
+	KakaoUserAccount kakaoAccount
 ) {
 }

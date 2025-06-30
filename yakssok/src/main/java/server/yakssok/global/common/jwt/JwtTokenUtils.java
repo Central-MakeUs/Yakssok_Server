@@ -5,6 +5,7 @@ import java.security.Key;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
@@ -18,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 public class JwtTokenUtils {
 	private final JwtProperties properties;
 
-	//TODO : 토큰 항상 다르게 생성되게 하기
 	public String generateAccessToken(Long userId) {
 		return generateToken(userId, properties.accessTokenValidityMs());
 	}
@@ -36,6 +36,7 @@ public class JwtTokenUtils {
 
 		return Jwts.builder()
 			.setSubject(userId.toString())
+			.setId(UUID.randomUUID().toString())
 			.setIssuedAt(issuedAt)
 			.setExpiration(expiresAt)
 			.signWith(getSigningKey(), SignatureAlgorithm.HS256)

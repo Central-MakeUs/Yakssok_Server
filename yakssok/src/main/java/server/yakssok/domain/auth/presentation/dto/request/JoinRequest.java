@@ -6,11 +6,10 @@ public record JoinRequest(
 	String socialAccessToken,
 	String socialType,
 	String nickName,
-	String profileImageUrl,
 	boolean pushAgreement,
 	String fcmToken
 ) {
-	public User toUser(String providerId) {
+	public User toUser(String providerId, String profileImageUrl) {
 		return User.create(nickName, profileImageUrl, socialType, providerId, pushAgreement, fcmToken);
 	}
 }
