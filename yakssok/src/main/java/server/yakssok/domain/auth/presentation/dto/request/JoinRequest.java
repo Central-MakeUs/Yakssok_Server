@@ -3,7 +3,7 @@ package server.yakssok.domain.auth.presentation.dto.request;
 import server.yakssok.domain.user.domain.entity.User;
 
 public record JoinRequest(
-	String socialAccessToken,
+	String socialAuthorizationCode,
 	String socialType,
 	String nickName,
 	boolean pushAgreement,

@@ -29,7 +29,7 @@ public class AuthService {
 
 	@Transactional
 	public void join(JoinRequest joinRequest) {
-		KakaoUserResponse kakaoUserResponse = strategy.fetchUserInfo(joinRequest.socialAccessToken());
+		KakaoUserResponse kakaoUserResponse = strategy.fetchUserInfo(joinRequest.socialAuthorizationCode());
 		boolean isExist = userRepository.existsUserByProviderId(Provider.KAKAO, kakaoUserResponse.id());
 		if(isExist) {
 			throw new AuthException(AuthErrorCode.DUPLICATE_USER);
@@ -40,7 +40,7 @@ public class AuthService {
 
 	@Transactional
 	public LoginResponse login(SocialLoginRequest socialLoginRequest) {
-		KakaoUserResponse kakaoUserResponse = strategy.fetchUserInfo(socialLoginRequest.socialAccessToken());
+		KakaoUserResponse kakaoUserResponse = strategy.fetchUserInfo(socialLoginRequest.socialAuthorizationCode());
 		User user = userRepository.findUserByProviderId(Provider.KAKAO, kakaoUserResponse.id())
 			.orElseThrow(() -> new AuthException(UserErrorCode.NOT_FOUND_USER));
 
@@ -59,5 +59,11 @@ public class AuthService {
 		return new ReissueResponse(accessToken);
 	}
 
-
+	@Transactional
+	public void logOut(Long userId) {
+		refreshTokenService.findRefreshToken(userId)
+			.orElseThrow(() -> {throw new AuthException(AuthErrorCode.INVALID_JWT);
+		});
+		refreshTokenService.deleteRefreshToken(userId);
+	}
 }

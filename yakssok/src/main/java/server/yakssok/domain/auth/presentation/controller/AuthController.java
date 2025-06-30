@@ -1,6 +1,9 @@
 package server.yakssok.domain.auth.presentation.controller;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,5 +39,11 @@ public class AuthController {
 	@PostMapping("/reissue")
 	public ApiResponse<ReissueResponse> reissueToken(@RequestBody ReissueRequest reissueRequest) {
 		return ApiResponse.success(authService.reissue(reissueRequest.refreshToken()));
+	}
+
+	@PutMapping("/logout")
+	public ApiResponse logout(@AuthenticationPrincipal UserDetails userDetails) {
+		authService.logOut(Long.valueOf(userDetails.getUsername()));
+		return ApiResponse.success();
 	}
 }

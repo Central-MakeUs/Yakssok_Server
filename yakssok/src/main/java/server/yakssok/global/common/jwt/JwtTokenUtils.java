@@ -13,9 +13,11 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtTokenUtils {
 	private final JwtProperties properties;
 
@@ -61,5 +63,24 @@ public class JwtTokenUtils {
 				.parseClaimsJws(token)
 				.getBody()
 				.getSubject());
+	}
+
+	public boolean isValidateToken(String token) {
+		try {
+			Jwts.parserBuilder()
+				.setSigningKey(getSigningKey())
+				.build()
+				.parseClaimsJws(token);
+			return true;
+		} catch (io.jsonwebtoken.ExpiredJwtException e) {
+			log.warn("JWT expired at: {}", e.getClaims().getExpiration());
+		} catch (io.jsonwebtoken.SignatureException e) {
+			log.warn("Invalid JWT signature.");
+		} catch (io.jsonwebtoken.MalformedJwtException e) {
+			log.warn("Invalid JWT token format.");
+		} catch (Exception e) {
+			log.warn("JWT validation failed: {}", e.getMessage());
+		}
+		return false;
 	}
 }

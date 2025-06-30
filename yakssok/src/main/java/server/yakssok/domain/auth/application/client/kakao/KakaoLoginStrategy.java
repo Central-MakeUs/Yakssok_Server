@@ -16,6 +16,7 @@ public class KakaoLoginStrategy implements SocialLoginStrategy {
 
 	private final RestClient restClient;
 
+	//TODO 링크 빼내기
 	public KakaoLoginStrategy() {
 		this.restClient = RestClient.builder()
 			.baseUrl("https://kapi.kakao.com")
@@ -24,11 +25,11 @@ public class KakaoLoginStrategy implements SocialLoginStrategy {
 	}
 
 	@Override
-	public KakaoUserResponse fetchUserInfo(String accessToken) {
+	public KakaoUserResponse fetchUserInfo(String socialAuthorizationCode) {
 		try {
 			return restClient.get()
 				.uri("/v2/user/me")
-				.header(HttpHeaders.AUTHORIZATION, authHeaderValue(accessToken))
+				.header(HttpHeaders.AUTHORIZATION, authHeaderValue(socialAuthorizationCode))
 				.retrieve()
 				.body(KakaoUserResponse.class);
 		} catch (Exception e) {

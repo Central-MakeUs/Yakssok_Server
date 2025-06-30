@@ -24,4 +24,8 @@ public class RefreshTokenService {
 	public Optional<RefreshToken> findRefreshToken(Long userId) {
 		return refreshTokenRepository.findById(userId);
 	}
+
+	public void deleteRefreshToken(Long userId) {
+		refreshTokenRepository.deleteByUserId(userId);
+	}
 }
