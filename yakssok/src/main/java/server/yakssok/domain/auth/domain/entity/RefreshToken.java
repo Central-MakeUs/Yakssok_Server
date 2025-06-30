@@ -12,9 +12,18 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class RefreshToken {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	private Long userId;
 	private String refreshToken;
+
+	public RefreshToken(Long userId, String refreshToken) {
+		this.userId = userId;
+		this.refreshToken = refreshToken;
+	}
+
+	public void updateToken(String refreshToken) {
+		this.refreshToken = refreshToken;
+	}
 }
