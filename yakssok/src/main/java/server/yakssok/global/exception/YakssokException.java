@@ -4,10 +4,10 @@ import lombok.Getter;
 
 @Getter
 public class YakssokException extends RuntimeException {
-	protected ExceptionStatus exceptionStatus;
+	protected ErrorCode errorCode;
 
-	public YakssokException(ExceptionStatus exceptionStatus) {
-		super(exceptionStatus.getMessage());
-		this.exceptionStatus = exceptionStatus;
+	public YakssokException(ErrorCode errorCode) {
+		super(errorCode.getMessage());
+		this.errorCode = errorCode;
 	}
 }

@@ -11,7 +11,10 @@ public class SecurityConfig {
 	private static final String[] PERMIT_URLS = {
 			"/v3/api-docs/**",
 			"/swagger-ui/**",
-			"/swagger-ui.html"
+			"/swagger-ui.html",
+			"/api/auth/join/**",
+			"/api/auth/login/**",
+			"/api/auth/kakao/callback"
 	};
 
 	@Bean
@@ -22,9 +25,7 @@ public class SecurityConfig {
 				.requestMatchers(PERMIT_URLS)
 				.permitAll()
 				.anyRequest().authenticated()
-			)
-			.formLogin(Customizer.withDefaults())
-			.httpBasic(Customizer.withDefaults());
+			);
 
 		return http.build();
 	}

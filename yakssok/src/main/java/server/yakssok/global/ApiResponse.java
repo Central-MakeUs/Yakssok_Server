@@ -2,12 +2,13 @@ package server.yakssok.global;
 
 import java.util.HashMap;
 
-import server.yakssok.global.exception.ExceptionStatus;
 
 public class ApiResponse<T> {
 	private Integer code;
 	private String message;
 	private T body;
+	private static final String SUCCESS_MESSAGE = "성공적으로 처리되었습니다.";
+	private static final int SUCCESS_CODE = 0;
 
 	private ApiResponse(int code, String message, T body) {
 		this.code = code;
@@ -16,12 +17,12 @@ public class ApiResponse<T> {
 	}
 
 	public static <T> ApiResponse<T> success(T body) {
-		return new ApiResponse<>(ExceptionStatus.SUCCESS.getCode(), ExceptionStatus.SUCCESS.getMessage(), body);
+		return new ApiResponse<>(SUCCESS_CODE, SUCCESS_MESSAGE, body);
 	}
 
 	public static ApiResponse success() {
 		HashMap<String, String> empty = new HashMap<>();
-		return new ApiResponse<>(ExceptionStatus.SUCCESS.getCode(), ExceptionStatus.SUCCESS.getMessage(), empty);
+		return new ApiResponse<>(SUCCESS_CODE, SUCCESS_MESSAGE, empty);
 	}
 
 	public static ApiResponse error(int code, String message) {
