@@ -14,6 +14,7 @@ public class SecurityConfig {
 			"/swagger-ui.html",
 			"/api/auth/join/**",
 			"/api/auth/login/**",
+			"/api/auth/reissue/**",
 			"/api/auth/kakao/callback"
 	};
 

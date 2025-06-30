@@ -30,6 +30,8 @@ public class JwtTokenUtils {
 	private String generateToken(Long userId, long validityMs) {
 		LocalDateTime now = LocalDateTime.now();
 		LocalDateTime expiry = now.plusSeconds(convertMillisToSeconds(validityMs));
+		System.out.println("now = " + now);
+		System.out.println("expiry = " + expiry);
 
 		Date issuedAt = toDate(now);
 		Date expiresAt = toDate(expiry);
@@ -54,9 +56,13 @@ public class JwtTokenUtils {
 		return Keys.hmacShaKeyFor(properties.secret().getBytes(StandardCharsets.UTF_8));
 	}
 
-	public String getIdFromJwt(String token) {
-		return Jwts.parser()
-			.setSigningKey(properties.secret()).parseClaimsJws(token)
-			.getBody().getSubject();
+	public Long getIdFromJwt(String token) {
+		return Long.valueOf(
+			Jwts.parserBuilder()
+				.setSigningKey(Keys.hmacShaKeyFor(properties.secret().getBytes(StandardCharsets.UTF_8)))
+				.build()
+				.parseClaimsJws(token)
+				.getBody()
+				.getSubject());
 	}
 }
