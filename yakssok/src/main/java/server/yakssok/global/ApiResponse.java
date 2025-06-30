@@ -2,7 +2,9 @@ package server.yakssok.global;
 
 import java.util.HashMap;
 
+import lombok.Getter;
 
+@Getter
 public class ApiResponse<T> {
 	private Integer code;
 	private String message;
