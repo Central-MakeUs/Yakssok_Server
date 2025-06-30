@@ -1,4 +1,4 @@
-package server.yakssok.domain.medication;
+package server.yakssok.domain.medication.domain.entity;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -7,14 +7,30 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import server.yakssok.domain.user.User;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import server.yakssok.domain.user.domain.entity.User;
 
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Medication {
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
 	private String medicineName;
+
+	@Enumerated(EnumType.STRING)
 	private Cycle cycle;
+
 	private LocalTime alarmTime;
 
 	private LocalDate startDate;
