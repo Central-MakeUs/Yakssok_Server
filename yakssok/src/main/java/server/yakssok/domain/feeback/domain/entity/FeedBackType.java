@@ -1,6 +1,4 @@
-package server.yakssok.domain.feeback;
-
-import jakarta.persistence.Entity;
+package server.yakssok.domain.feeback.domain.entity;
 
 public enum FeedBackType {
 	PRAISE("칭찬"),

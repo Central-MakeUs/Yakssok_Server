@@ -1,4 +1,4 @@
-package server.yakssok.domain.medication;
+package server.yakssok.domain.medication.domain.entity;
 
 public enum MedicationType {
 	CHRONIC("만성 질환 관리"),
