@@ -23,20 +23,33 @@ repositories {
 	mavenCentral()
 }
 
+def querydslDir = "src/main/generated"
+
+sourceSets {
+	main.java.srcDirs += querydslDir
+}
+
+tasks.named("compileJava") {
+	options.generatedSourceOutputDirectory.set(file(querydslDir))
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+	implementation 'mysql:mysql-connector-java:8.0.33'
+
 	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.h2database:h2'
 	annotationProcessor 'org.projectlombok:lombok'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
-	implementation 'mysql:mysql-connector-java:8.0.33'
-}
 
-tasks.named('test') {
-	useJUnitPlatform()
+	// ✅ QueryDSL
+	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+	annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'
+	annotationProcessor 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+	annotationProcessor 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 }
