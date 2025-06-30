@@ -7,7 +7,9 @@ import server.yakssok.global.exception.ErrorCode;
 
 @Getter
 public enum AuthErrorCode implements ErrorCode {
+
 	INVALID_KAKAO_TOKEN(HttpStatus.UNAUTHORIZED, 1000, "유효하지 않은 카카오 토큰입니다.");
+
 	private final HttpStatus httpStatus;
 	private final int code;
 	private final String message;

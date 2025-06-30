@@ -29,7 +29,7 @@ public class JwtTokenUtils {
 
 	private String generateToken(Long userId, long validityMs) {
 		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime expiry = now.plusSeconds(validityMs / 1000);
+		LocalDateTime expiry = now.plusSeconds(convertMillisToSeconds(validityMs));
 
 		Date issuedAt = toDate(now);
 		Date expiresAt = toDate(expiry);
@@ -40,6 +40,10 @@ public class JwtTokenUtils {
 			.setExpiration(expiresAt)
 			.signWith(getSigningKey(), SignatureAlgorithm.HS256)
 			.compact();
+	}
+
+	private static long convertMillisToSeconds(long validityMs) {
+		return validityMs / 1000;
 	}
 
 	private Date toDate(LocalDateTime localDateTime) {
