@@ -30,9 +30,6 @@ public class JwtTokenUtils {
 	private String generateToken(Long userId, long validityMs) {
 		LocalDateTime now = LocalDateTime.now();
 		LocalDateTime expiry = now.plusSeconds(convertMillisToSeconds(validityMs));
-		System.out.println("now = " + now);
-		System.out.println("expiry = " + expiry);
-
 		Date issuedAt = toDate(now);
 		Date expiresAt = toDate(expiry);
 

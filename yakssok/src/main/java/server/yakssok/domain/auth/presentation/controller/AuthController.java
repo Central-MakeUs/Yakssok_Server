@@ -35,7 +35,6 @@ public class AuthController {
 
 	@PostMapping("/reissue")
 	public ApiResponse<ReissueResponse> reissueToken(@RequestBody ReissueRequest reissueRequest) {
-		System.out.println("---------- Reissue Request: " + reissueRequest.refreshToken());
 		return ApiResponse.success(authService.reissue(reissueRequest.refreshToken()));
 	}
 }
