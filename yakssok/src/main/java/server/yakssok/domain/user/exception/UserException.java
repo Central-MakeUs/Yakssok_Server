@@ -1,10 +1,10 @@
 package server.yakssok.domain.user.exception;
 
-import server.yakssok.global.exception.ErrorCode;
-import server.yakssok.global.exception.YakssokException;
+import server.yakssok.global.exception.GlobalException;
+import server.yakssok.global.exception.ResponseCode;
 
-public class UserException extends YakssokException {
-	public UserException(ErrorCode errorCode) {
-		super(errorCode);
+public class UserException extends GlobalException {
+	public UserException(ResponseCode responseCode) {
+		super(responseCode);
 	}
 }

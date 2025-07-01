@@ -11,16 +11,31 @@ import server.yakssok.global.ApiResponse;
 @Slf4j
 public class GlobalExceptionHandler {
 
-	@ExceptionHandler(YakssokException.class)
-	protected ResponseEntity<ApiResponse> yakssokExceptionHandler(YakssokException e) {
-		ErrorCode errorCode = e.getErrorCode();
-		log.error("[{}] {} ({})", e.getClass().getSimpleName(), errorCode.getMessage(), e.getStackTrace()[0]);
+	@ExceptionHandler(GlobalException.class)
+	protected ResponseEntity<ApiResponse> yakssokExceptionHandler(GlobalException e) {
+		ResponseCode responseCode = e.getResponseCode();
+		log.error("[{}] {} ({})", e.getClass().getSimpleName(), responseCode.getMessage(), e.getStackTrace()[0]);
 		ApiResponse apiResponse = ApiResponse.error(
-			errorCode.getCode(),
-			errorCode.getMessage()
+			responseCode.getCode(),
+			responseCode.getMessage()
 		);
 		return ResponseEntity
-			.status(errorCode.getHttpStatus())
+			.status(responseCode.getHttpStatus())
+			.body(apiResponse);
+	}
+
+	@ExceptionHandler(RuntimeException.class)
+	protected ResponseEntity<ApiResponse> runtimeExceptionHandler(RuntimeException e) {
+		log.error("[{}] {} ({})", e.getClass().getSimpleName(), e.getMessage(), e.getStackTrace()[0]);
+
+		ResponseCode responseCode = GlobalErrorCode.INTERNAL_SERVER_ERROR;
+		ApiResponse apiResponse = ApiResponse.error(
+			responseCode.getCode(),
+			responseCode.getMessage()
+		);
+
+		return ResponseEntity
+			.status(responseCode.getHttpStatus())
 			.body(apiResponse);
 	}
 }

@@ -3,10 +3,10 @@ package server.yakssok.domain.auth.application.exception;
 import org.springframework.http.HttpStatus;
 
 import lombok.Getter;
-import server.yakssok.global.exception.ErrorCode;
+import server.yakssok.global.exception.ResponseCode;
 
 @Getter
-public enum AuthErrorCode implements ErrorCode {
+public enum AuthErrorCode implements ResponseCode {
 
 	INVALID_KAKAO_TOKEN(HttpStatus.UNAUTHORIZED, 1000, "유효하지 않은 카카오 토큰입니다."),
 	DUPLICATE_USER(HttpStatus.BAD_REQUEST, 1001, "이미 가입된 회원입니다."),

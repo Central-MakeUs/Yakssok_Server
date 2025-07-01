@@ -1,11 +1,11 @@
 package server.yakssok.domain.auth.application.exception;
 
-import server.yakssok.global.exception.ErrorCode;
-import server.yakssok.global.exception.YakssokException;
+import server.yakssok.global.exception.GlobalException;
+import server.yakssok.global.exception.ResponseCode;
 
-public class AuthException extends YakssokException {
+public class AuthException extends GlobalException {
 
-	public AuthException(ErrorCode errorCode) {
-		super(errorCode);
+	public AuthException(ResponseCode responseCode) {
+		super(responseCode);
 	}
 }
