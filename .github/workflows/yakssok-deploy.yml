@@ -29,6 +29,9 @@ jobs:
             git checkout ${{ github.ref_name }}
             git reset --hard origin/${{ github.ref_name }}
 
+            # 🔐 application-dev.yml 복원
+            echo "${{ secrets.DEV_YML }}" > ./src/main/resources/application.yml
+
             chmod +x ./gradlew
             ./gradlew build -x test
 
