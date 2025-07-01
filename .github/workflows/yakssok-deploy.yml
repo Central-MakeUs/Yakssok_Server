@@ -16,17 +16,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🚀 Deploy on EC2 via Git Pull & Docker Compose
+      - name: 🚀 Deploy on EC2 (Git Pull → Build → Docker Compose)
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_KEY }}
           script: |
-            cd ~/yakssok
-            git reset --hard
-            git clean -fd
-            git pull origin ${{ github.ref_name }}
+            cd ~/Yakssok_Server/yakssok
 
-            docker compose -f yakssok/docker-compose.yml down
-            docker compose -f yakssok/docker-compose.yml up -d --build
+            git fetch origin
+            git checkout ${{ github.ref_name }}
+            git reset --hard origin/${{ github.ref_name }}
+
+            chmod +x ./gradlew
+            ./gradlew build -x test
+
+            docker compose -f docker-compose.yml down
+            docker compose -f docker-compose.yml up -d --build
