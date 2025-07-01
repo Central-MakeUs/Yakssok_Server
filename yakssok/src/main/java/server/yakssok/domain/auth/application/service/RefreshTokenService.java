@@ -14,7 +14,7 @@ public class RefreshTokenService {
 	private final RefreshTokenRepository refreshTokenRepository;
 
 	public void registerRefreshToken(Long userId, String refreshToken) {
-		refreshTokenRepository.findById(userId)
+		refreshTokenRepository.findByUserId(userId)
 			.ifPresentOrElse(
 				existing -> existing.updateToken(refreshToken),
 				() -> refreshTokenRepository.save(new RefreshToken(userId, refreshToken))
@@ -22,7 +22,7 @@ public class RefreshTokenService {
 	}
 
 	public Optional<RefreshToken> findRefreshToken(Long userId) {
-		return refreshTokenRepository.findById(userId);
+		return refreshTokenRepository.findByUserId(userId);
 	}
 
 	public void deleteRefreshToken(Long userId) {

@@ -26,4 +26,8 @@ public class RefreshToken {
 	public void updateToken(String refreshToken) {
 		this.refreshToken = refreshToken;
 	}
+
+	public boolean isSame(String refreshToken) {
+		return this.refreshToken.equals(refreshToken);
+	}
 }

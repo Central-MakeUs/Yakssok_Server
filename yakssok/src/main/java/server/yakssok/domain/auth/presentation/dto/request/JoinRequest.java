@@ -1,12 +1,28 @@
 package server.yakssok.domain.auth.presentation.dto.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import server.yakssok.domain.user.domain.entity.User;
 
 public record JoinRequest(
+	@Schema(description = "카카오 Access Token/ 애플 authorization code", example = "1234567890abcdef")
+	@NotNull
 	String socialAuthorizationCode,
+
+	@Schema(description = "소셜 타입(apple/kakao)", example = "apple")
+	@NotNull
 	String socialType,
+
+	@Schema(description = "닉네임", example = "노을")
+	@NotNull
 	String nickName,
-	boolean pushAgreement,
+
+	@Schema(description = "푸시 알림 동의 여부", example = "true")
+	@NotNull
+	Boolean pushAgreement,
+
+	@Schema(description = "FCM 토큰", example = "1234567890abcdef")
+	@NotNull
 	String fcmToken
 ) {
 	public User toUser(String providerId, String profileImageUrl) {

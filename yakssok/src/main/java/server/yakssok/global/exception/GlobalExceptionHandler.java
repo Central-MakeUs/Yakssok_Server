@@ -12,14 +12,13 @@ import server.yakssok.global.ApiResponse;
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(YakssokException.class)
-	protected ResponseEntity<ApiResponse> YakssokExceptionHandler(YakssokException e) {
+	protected ResponseEntity<ApiResponse> yakssokExceptionHandler(YakssokException e) {
 		ErrorCode errorCode = e.getErrorCode();
 		log.error("[{}] {} ({})", e.getClass().getSimpleName(), errorCode.getMessage(), e.getStackTrace()[0]);
 		ApiResponse apiResponse = ApiResponse.error(
 			errorCode.getCode(),
 			errorCode.getMessage()
 		);
-		ApiResponse.error(errorCode.getCode(), errorCode.getMessage());
 		return ResponseEntity
 			.status(errorCode.getHttpStatus())
 			.body(apiResponse);

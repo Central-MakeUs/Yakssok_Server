@@ -9,6 +9,7 @@ import server.yakssok.domain.auth.application.client.SocialLoginStrategy;
 import server.yakssok.domain.auth.application.client.kakao.KakaoUserResponse;
 import server.yakssok.domain.auth.application.exception.AuthErrorCode;
 import server.yakssok.domain.auth.application.exception.AuthException;
+import server.yakssok.domain.auth.domain.entity.RefreshToken;
 import server.yakssok.domain.auth.presentation.dto.request.JoinRequest;
 import server.yakssok.domain.auth.presentation.dto.response.LoginResponse;
 import server.yakssok.domain.auth.presentation.dto.request.SocialLoginRequest;
@@ -53,8 +54,12 @@ public class AuthService {
 	@Transactional
 	public ReissueResponse reissue(String refreshToken) {
 		Long userId = jwtTokenUtils.getIdFromJwt(refreshToken);
-		refreshTokenService.findRefreshToken(userId)
+		RefreshToken savedRefreshToken = refreshTokenService.findRefreshToken(userId)
 			.orElseThrow(() -> new AuthException(AuthErrorCode.INVALID_JWT));
+		if (!savedRefreshToken.isSame(refreshToken)) {
+			throw new AuthException(AuthErrorCode.INVALID_JWT);
+		}
+
 		String accessToken = jwtTokenUtils.generateAccessToken(userId);
 		return new ReissueResponse(accessToken);
 	}
