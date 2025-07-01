@@ -2,12 +2,16 @@ package server.yakssok.global;
 
 import java.util.HashMap;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 @Getter
 public class ApiResponse<T> {
+	@Schema(description = "응답 코드", example = "0")
 	private Integer code;
+	@Schema(description = "응답 메시지", example = "성공적으로 처리되었습니다.")
 	private String message;
+	@Schema(description = "실제 응답 데이터")
 	private T body;
 	private static final String SUCCESS_MESSAGE = "성공적으로 처리되었습니다.";
 	private static final int SUCCESS_CODE = 0;

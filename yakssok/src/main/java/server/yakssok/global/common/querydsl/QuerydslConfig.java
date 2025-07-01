@@ -1,4 +1,4 @@
-package server.yakssok.global.querydsl;
+package server.yakssok.global.common.querydsl;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

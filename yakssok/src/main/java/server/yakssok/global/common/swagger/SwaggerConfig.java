@@ -1,4 +1,4 @@
-package server.yakssok.global.config;
+package server.yakssok.global.common.swagger;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

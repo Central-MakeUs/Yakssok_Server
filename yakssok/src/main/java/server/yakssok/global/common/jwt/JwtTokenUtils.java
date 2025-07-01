@@ -5,6 +5,7 @@ import java.security.Key;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
@@ -12,13 +13,14 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtTokenUtils {
 	private final JwtProperties properties;
 
-	//TODO : 토큰 항상 다르게 생성되게 하기
 	public String generateAccessToken(Long userId) {
 		return generateToken(userId, properties.accessTokenValidityMs());
 	}
@@ -30,12 +32,12 @@ public class JwtTokenUtils {
 	private String generateToken(Long userId, long validityMs) {
 		LocalDateTime now = LocalDateTime.now();
 		LocalDateTime expiry = now.plusSeconds(convertMillisToSeconds(validityMs));
-
 		Date issuedAt = toDate(now);
 		Date expiresAt = toDate(expiry);
 
 		return Jwts.builder()
 			.setSubject(userId.toString())
+			.setId(UUID.randomUUID().toString())
 			.setIssuedAt(issuedAt)
 			.setExpiration(expiresAt)
 			.signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -53,9 +55,32 @@ public class JwtTokenUtils {
 		return Keys.hmacShaKeyFor(properties.secret().getBytes(StandardCharsets.UTF_8));
 	}
 
-	public String getIdFromJwt(String token) {
-		return Jwts.parser()
-			.setSigningKey(properties.secret()).parseClaimsJws(token)
-			.getBody().getSubject();
+	public Long getIdFromJwt(String token) {
+		return Long.valueOf(
+			Jwts.parserBuilder()
+				.setSigningKey(Keys.hmacShaKeyFor(properties.secret().getBytes(StandardCharsets.UTF_8)))
+				.build()
+				.parseClaimsJws(token)
+				.getBody()
+				.getSubject());
+	}
+
+	public boolean isValidateToken(String token) {
+		try {
+			Jwts.parserBuilder()
+				.setSigningKey(getSigningKey())
+				.build()
+				.parseClaimsJws(token);
+			return true;
+		} catch (io.jsonwebtoken.ExpiredJwtException e) {
+			log.warn("JWT expired at: {}", e.getClaims().getExpiration());
+		} catch (io.jsonwebtoken.SignatureException e) {
+			log.warn("Invalid JWT signature.");
+		} catch (io.jsonwebtoken.MalformedJwtException e) {
+			log.warn("Invalid JWT token format.");
+		} catch (Exception e) {
+			log.warn("JWT validation failed: {}", e.getMessage());
+		}
+		return false;
 	}
 }
