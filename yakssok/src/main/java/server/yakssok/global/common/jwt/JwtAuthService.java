@@ -1,4 +1,4 @@
-package server.yakssok.global.common.security;
+package server.yakssok.global.common.jwt;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,7 +12,7 @@ import server.yakssok.domain.user.domain.entity.User;
 import server.yakssok.domain.user.exception.UserErrorCode;
 import server.yakssok.domain.user.exception.UserException;
 import server.yakssok.domain.user.repository.UserRepository;
-import server.yakssok.global.common.jwt.JwtTokenUtils;
+import server.yakssok.global.common.security.YakssokUserDetails;
 
 @Service
 @RequiredArgsConstructor

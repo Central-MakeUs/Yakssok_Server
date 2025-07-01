@@ -1,4 +1,4 @@
-package server.yakssok.global.common.security;
+package server.yakssok.global.common.jwt;
 
 
 import java.io.IOException;
@@ -39,7 +39,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			return;
 		}
 		filterChain.doFilter(request, response);
-
 	}
 
 	private String resolveToken(String bearerToken) {

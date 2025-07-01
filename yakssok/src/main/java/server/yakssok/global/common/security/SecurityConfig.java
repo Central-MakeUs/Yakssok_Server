@@ -9,12 +9,16 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
+import server.yakssok.global.common.jwt.JwtAuthService;
+import server.yakssok.global.common.jwt.JwtAuthenticationEntryPoint;
+import server.yakssok.global.common.jwt.JwtAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 	private final JwtAuthService jwtAuthService;
+	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
 	static final String[] PERMIT_URLS = {
 			"/v3/api-docs/**",
@@ -31,15 +35,21 @@ public class SecurityConfig {
 		http
 			.csrf(csrf -> csrf.disable())
 			.sessionManagement(session -> session
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //세션 사용 X
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용 X
+
+			.exceptionHandling(exception -> exception
+				.authenticationEntryPoint(jwtAuthenticationEntryPoint) // 여기 추가
+			)
+
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers(PERMIT_URLS)
-				.permitAll()
+				.requestMatchers(PERMIT_URLS).permitAll()
 				.anyRequest().authenticated()
 			)
+
 			.addFilterBefore(new JwtAuthenticationFilter(jwtAuthService),
 				UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}
+
 }
