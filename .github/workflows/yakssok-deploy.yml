@@ -1,0 +1,64 @@
+name: yakssok-deploy
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+    paths:
+      - "yakssok/**"
+      - "docker-compose.yml"
+      - ".github/workflows/yakssok-deploy.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Make gradlew executable
+        working-directory: ./yakssok
+        run: chmod +x gradlew
+
+      - name: Build Spring Boot JAR
+        working-directory: ./yakssok
+        run: ./gradlew build -x test
+
+      - name: 🐳 Build Docker image
+        working-directory: ./yakssok
+        run: docker build -t yakssok-app .
+
+      - name: Save image to tar
+        run: docker save yakssok-app > yakssok-app.tar
+
+      - name: Upload app image & compose to EC2
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
+          source: |
+            yakssok-app.tar
+            yakssok/docker-compose.yml
+          target: /home/${{ secrets.EC2_USERNAME }}/yakssok/
+
+      - name: Run docker-compose on EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            cd ~/yakssok
+            docker load < yakssok-app.tar
+            docker-compose -f yakssok/docker-compose.yml down
+            docker-compose -f yakssok/docker-compose.yml up -d
