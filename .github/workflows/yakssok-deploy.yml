@@ -25,15 +25,22 @@ jobs:
           script: |
             cd ~/Yakssok_Server/yakssok
 
+            echo "📥 Pull latest code"
             git fetch origin
             git checkout ${{ github.ref_name }}
             git reset --hard origin/${{ github.ref_name }}
 
-            # 🔐 application-dev.yml 복원
-            echo "${{ secrets.DEV_YML }}" > ./src/main/resources/application.yml
+            echo "🔐 Restore application.yml"
+            cat <<EOF > ./src/main/resources/application.yml
+${{ secrets.DEV_YML }}
+EOF
 
+            echo "⚙️ Make gradlew executable"
             chmod +x ./gradlew
+
+            echo "🛠️ Build project"
             ./gradlew build -x test
 
+            echo "🐳 Run Docker Compose"
             docker compose -f docker-compose.yml down
             docker compose -f docker-compose.yml up -d --build
