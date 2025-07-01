@@ -16,46 +16,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🔽 Checkout code
-        uses: actions/checkout@v4
-
-      - name: ☕ Set up Java 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: 🔧 Make gradlew executable
-        working-directory: ./yakssok
-        run: chmod +x gradlew
-
-      - name: 🛠️ Build Spring Boot JAR
-        working-directory: ./yakssok
-        run: ./gradlew build -x test
-
-      - name: 🐳 Build Docker image (safe path)
-        run: docker build -t yakssok-app -f yakssok/Dockerfile yakssok/
-
-      - name: 📦 Save Docker image to tar
-        run: docker save yakssok-app > yakssok-app.tar
-
-      - name: 🧪 List files before upload (debug)
-        run: |
-          ls -al
-          ls -al yakssok/
-
-      - name: 📡 Upload Docker image & Compose file to EC2
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_KEY }}
-          source: |
-            yakssok-app.tar
-            yakssok/docker-compose.yml
-          target: /home/${{ secrets.EC2_USERNAME }}/yakssok/
-
-      - name: 🚀 Deploy on EC2 with Docker Compose
+      - name: 🚀 Deploy on EC2 via Git Pull & Docker Compose
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -63,6 +24,9 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           script: |
             cd ~/yakssok
-            docker load < yakssok-app.tar
-            docker-compose -f yakssok/docker-compose.yml down
-            docker-compose -f yakssok/docker-compose.yml up -d
+            git reset --hard
+            git clean -fd
+            git pull origin ${{ github.ref_name }}
+
+            docker compose -f yakssok/docker-compose.yml down
+            docker compose -f yakssok/docker-compose.yml up -d --build
