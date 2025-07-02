@@ -34,7 +34,7 @@ jobs:
 
           echo "🏗️ Build Spring Boot"
           chmod +x ./gradlew
-          ./gradlew build -x test
+          ./gradlew clean build -x test
 
           echo "🐳 Docker Build & Push :latest"
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
