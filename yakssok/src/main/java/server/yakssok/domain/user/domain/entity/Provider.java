@@ -1,25 +1,22 @@
 package server.yakssok.domain.user.domain.entity;
 
 import lombok.Getter;
+import server.yakssok.domain.auth.application.exception.AuthErrorCode;
+import server.yakssok.domain.auth.application.exception.AuthException;
 
 @Getter
 public enum Provider {
 	//카카오, 애플
-	KAKAO("kakao"),
-	APPLE("apple");
+	KAKAO,
+	APPLE;
 
-	private String providerName;
-
-	Provider(String providerName) {
-		this.providerName = providerName;
-	}
 
 	public static Provider from(String providerName) {
 		for (Provider provider : values()) {
-			if (provider.providerName.equalsIgnoreCase(providerName)) {
+			if (provider.toString().equalsIgnoreCase(providerName)) {
 				return provider;
 			}
 		}
-		throw new IllegalArgumentException("Unknown provider: " + providerName);
+		throw new AuthException(AuthErrorCode.UNSUPPORTED_SOCIAL_PROVIDER);
 	}
 }

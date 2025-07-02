@@ -1,7 +1,8 @@
 package server.yakssok.domain.auth.application.client;
 
-import server.yakssok.domain.auth.application.client.kakao.KakaoUserResponse;
+import server.yakssok.domain.user.domain.entity.Provider;
 
 public interface SocialLoginStrategy {
-	KakaoUserResponse fetchUserInfo(String socialAuthorizationCode);
+	SocialUserResponse fetchUserInfo(String socialAuthorizationCode);
+	Provider getSocialType();
 }

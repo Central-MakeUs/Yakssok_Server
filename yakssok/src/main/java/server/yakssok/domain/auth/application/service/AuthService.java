@@ -4,9 +4,9 @@ import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import server.yakssok.domain.auth.application.client.kakao.KakaoLoginStrategy;
+import server.yakssok.domain.auth.application.client.SocialLoginStrategyFactory;
+import server.yakssok.domain.auth.application.client.SocialUserResponse;
 import server.yakssok.domain.auth.application.client.SocialLoginStrategy;
-import server.yakssok.domain.auth.application.client.kakao.KakaoUserResponse;
 import server.yakssok.domain.auth.application.exception.AuthErrorCode;
 import server.yakssok.domain.auth.application.exception.AuthException;
 import server.yakssok.domain.auth.domain.entity.RefreshToken;
@@ -23,32 +23,58 @@ import server.yakssok.global.common.jwt.JwtTokenUtils;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-	private SocialLoginStrategy strategy = new KakaoLoginStrategy();
 	private final UserRepository userRepository;
 	private final JwtTokenUtils jwtTokenUtils;
 	private final RefreshTokenService refreshTokenService;
+	private final SocialLoginStrategyFactory strategyFactory;
 
 	@Transactional
 	public void join(JoinRequest joinRequest) {
-		KakaoUserResponse kakaoUserResponse = strategy.fetchUserInfo(joinRequest.socialAuthorizationCode());
-		boolean isExist = userRepository.existsUserByProviderId(Provider.KAKAO, kakaoUserResponse.id());
-		if(isExist) {
-			throw new AuthException(AuthErrorCode.DUPLICATE_USER);
-		}
-		User user = joinRequest.toUser(kakaoUserResponse.id(), kakaoUserResponse.kakaoAccount().profileImageUrl());
+		String socialType = joinRequest.socialType();
+		String socialAuthorizationCode = joinRequest.socialAuthorizationCode();
+		SocialUserResponse socialUserResponse = getSocialUserResponse(socialType,
+			socialAuthorizationCode);
+
+		String providerId = socialUserResponse.getId();
+		String profileImageUrl = socialUserResponse.getProfileImageUrl();
+		checkDuplicateUser(socialType, providerId);
+		User user = joinRequest.toUser(providerId, profileImageUrl);
 		userRepository.save(user);
 	}
 
+	private void checkDuplicateUser(String socialType, String providerId) {
+		boolean isExist = userRepository.existsUserByProviderId(Provider.from(socialType), providerId);
+		if(isExist) {
+			throw new AuthException(AuthErrorCode.DUPLICATE_USER);
+		}
+	}
+
+
 	@Transactional
 	public LoginResponse login(SocialLoginRequest socialLoginRequest) {
-		KakaoUserResponse kakaoUserResponse = strategy.fetchUserInfo(socialLoginRequest.socialAuthorizationCode());
-		User user = userRepository.findUserByProviderId(Provider.KAKAO, kakaoUserResponse.id())
-			.orElseThrow(() -> new AuthException(UserErrorCode.NOT_FOUND_USER));
+		String socialType = socialLoginRequest.socialType();
+		String socialAuthorizationCode = socialLoginRequest.socialAuthorizationCode();
+		SocialUserResponse socialUserResponse = getSocialUserResponse(socialType,
+			socialAuthorizationCode);
+		String providerId = socialUserResponse.getId();
+		User user = findUser(socialType, providerId);
 
 		String accessToken = jwtTokenUtils.generateAccessToken(user.getId());
 		String refreshToken = jwtTokenUtils.generateRefreshToken(user.getId());
 		refreshTokenService.registerRefreshToken(user.getId(), refreshToken);
 		return new LoginResponse(accessToken, refreshToken);
+	}
+
+	private SocialUserResponse getSocialUserResponse(String socialType, String socialAuthorizationCode) {
+		SocialLoginStrategy strategy = strategyFactory.getStrategy(socialType);
+		return strategy.fetchUserInfo(socialAuthorizationCode);
+	}
+
+
+	private User findUser(String socialType, String providerId) {
+		User user = userRepository.findUserByProviderId(Provider.from(socialType), providerId)
+			.orElseThrow(() -> new AuthException(UserErrorCode.NOT_FOUND_USER));
+		return user;
 	}
 
 	@Transactional

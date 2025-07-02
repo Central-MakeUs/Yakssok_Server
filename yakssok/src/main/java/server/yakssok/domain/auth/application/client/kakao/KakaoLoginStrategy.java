@@ -10,6 +10,7 @@ import org.springframework.web.client.RestClient;
 import server.yakssok.domain.auth.application.client.SocialLoginStrategy;
 import server.yakssok.domain.auth.application.exception.AuthErrorCode;
 import server.yakssok.domain.auth.application.exception.AuthException;
+import server.yakssok.domain.user.domain.entity.Provider;
 
 @Component
 public class KakaoLoginStrategy implements SocialLoginStrategy {
@@ -36,6 +37,11 @@ public class KakaoLoginStrategy implements SocialLoginStrategy {
 			throw new AuthException(AuthErrorCode.INVALID_KAKAO_TOKEN);
 		}
 
+	}
+
+	@Override
+	public Provider getSocialType() {
+		return Provider.KAKAO;
 	}
 
 	private String authHeaderValue(String accessToken) {
