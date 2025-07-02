@@ -31,6 +31,7 @@ jobs:
       - name: 📦 Build and Push Docker Image
         run: |
           cd yakssok
+
           echo "🔐 Create application.yml"
           mkdir -p src/main/resources
           echo "${{ secrets.DEV_YML }}" > src/main/resources/application.yml
@@ -55,7 +56,7 @@ jobs:
             cd ~/Yakssok_Server/yakssok
 
             echo "🛠️ docker-compose.yml에 SHA 태그 반영"
-            sed -i 's|image: .*/yakssok:.*|image: '"${{ secrets.DOCKER_USERNAME }}"'/yakssok:${{ github.sha }}|' docker-compose.yml
+            sed -i 's|image: .*/yakssok:.*|image: '"${{ secrets.DOCKER_USERNAME }}"'/yakssok:${IMAGE_TAG}|' docker-compose.yml
 
             echo "🐳 Docker 로그인 & Pull"
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
