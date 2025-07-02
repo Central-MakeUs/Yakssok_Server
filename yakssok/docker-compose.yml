@@ -1,7 +1,7 @@
 services:
   app:
     container_name: yakssok-app
-    image: yakssok/yakssok:latest
+    image: yakssok/yakssok:${TAG}
     ports:
       - "8080:8080"
     networks:
