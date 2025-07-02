@@ -15,9 +15,6 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
-    env:
-      IMAGE_TAG: ${{ github.sha }}
-
     steps:
       - name: 🧾 Checkout
         uses: actions/checkout@v3
@@ -31,7 +28,6 @@ jobs:
       - name: 📦 Build and Push Docker Image
         run: |
           cd yakssok
-
           echo "🔐 Create application.yml"
           mkdir -p src/main/resources
           echo "${{ secrets.DEV_YML }}" > src/main/resources/application.yml
@@ -40,10 +36,10 @@ jobs:
           chmod +x ./gradlew
           ./gradlew build -x test
 
-          echo "🐳 Docker Build & Push"
+          echo "🐳 Docker Build & Push :latest"
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/yakssok:${IMAGE_TAG} .
-          docker push ${{ secrets.DOCKER_USERNAME }}/yakssok:${IMAGE_TAG}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/yakssok:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/yakssok:latest
 
       - name: 🚀 Deploy to EC2 with Docker Compose
         uses: appleboy/ssh-action@v1.0.3
@@ -54,9 +50,6 @@ jobs:
           script: |
             echo "📁 이동: docker-compose.yml이 있는 디렉토리로"
             cd ~/Yakssok_Server/yakssok
-
-            echo "🛠️ docker-compose.yml에 SHA 태그 반영"
-            sed -i 's|image: .*/yakssok:.*|image: '"${{ secrets.DOCKER_USERNAME }}"'/yakssok:${IMAGE_TAG}|' docker-compose.yml
 
             echo "🐳 Docker 로그인 & Pull"
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
