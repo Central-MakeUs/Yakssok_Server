@@ -15,6 +15,9 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
+    env:
+      IMAGE_TAG: ${{ github.sha }}
+
     steps:
       - name: 🧾 Checkout
         uses: actions/checkout@v3
@@ -34,14 +37,14 @@ jobs:
 
           echo "🏗️ Build Spring Boot"
           chmod +x ./gradlew
-          ./gradlew clean build -x test
+          ./gradlew build -x test
 
-          echo "🐳 Docker Build & Push :latest"
+          echo "🐳 Docker Build & Push"
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/yakssok:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/yakssok:latest
+          docker build -t yakssok/yakssok:${IMAGE_TAG} .
+          docker push yakssok/yakssok:${IMAGE_TAG}
 
-      - name: 🚀 Deploy to EC2 with Docker Compose
+      - name: 🚀 Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -51,13 +54,13 @@ jobs:
             echo "📁 이동: docker-compose.yml이 있는 디렉토리로"
             cd ~/Yakssok_Server/yakssok
 
+            echo "🛠️ docker-compose.yml에 태그 반영"
+            sed -i 's|image: yakssok/yakssok:.*|image: yakssok/yakssok:'"${{ github.sha }}"'|' docker-compose.yml
+
             echo "🐳 Docker 로그인"
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
-            echo "🧹 기존 이미지 삭제"
-            docker image rm -f ${{ secrets.DOCKER_USERNAME }}/yakssok:latest || true
-
-            echo "📦 최신 이미지 Pull"
+            echo "📦 이미지 최신 Pull"
             docker compose pull app
 
             echo "🔄 컨테이너 재시작"
