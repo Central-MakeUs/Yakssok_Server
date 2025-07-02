@@ -15,6 +15,9 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
+    env:
+      IMAGE_TAG: ${{ github.sha }}
+
     steps:
       - name: 🧾 Checkout
         uses: actions/checkout@v3
@@ -31,15 +34,15 @@ jobs:
           echo "🔐 Create application.yml"
           mkdir -p src/main/resources
           echo "${{ secrets.DEV_YML }}" > src/main/resources/application.yml
-          
+
           echo "🏗️ Build Spring Boot"
           chmod +x ./gradlew
           ./gradlew build -x test
-          
+
           echo "🐳 Docker Build & Push"
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/yakssok:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/yakssok:latest
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/yakssok:${IMAGE_TAG} .
+          docker push ${{ secrets.DOCKER_USERNAME }}/yakssok:${IMAGE_TAG}
 
       - name: 🚀 Deploy to EC2 with Docker Compose
         uses: appleboy/ssh-action@v1.0.3
@@ -51,15 +54,18 @@ jobs:
             echo "📁 이동: docker-compose.yml이 있는 디렉토리로"
             cd ~/Yakssok_Server/yakssok
 
-            echo "🐳 Docker 로그인"
+            echo "🛠️ docker-compose.yml에 SHA 태그 반영"
+            sed -i 's|image: .*/yakssok:.*|image: '"${{ secrets.DOCKER_USERNAME }}"'/yakssok:${{ github.sha }}|' docker-compose.yml
+
+            echo "🐳 Docker 로그인 & Pull"
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
-            echo "🧹 기존 컨테이너 종료 및 이미지 정리"
-            docker-compose down --remove-orphans
-            docker image prune -a -f
-
             echo "📦 이미지 최신 Pull"
-            docker-compose pull --ignore-pull-failures
+            docker-compose pull app
 
-            echo "🚀 컨테이너 재생성 및 실행"
+            echo "🔄 Docker Compose 재시작"
+            docker-compose down --remove-orphans
             docker-compose up -d --force-recreate
+
+            echo "🧹 Docker 정리"
+            docker image prune -a -f
