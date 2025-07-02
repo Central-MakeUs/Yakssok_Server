@@ -1,8 +1,8 @@
-package server.yakssok.domain.auth.application.client.kakao;
+package server.yakssok.global.infra.oauth.kakao;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import server.yakssok.domain.auth.application.client.SocialUserResponse;
+import server.yakssok.global.infra.oauth.SocialUserResponse;
 public record KakaoUserResponse(
 	String id,
 

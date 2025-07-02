@@ -1,6 +1,6 @@
-package server.yakssok.domain.auth.application.client.apple;
+package server.yakssok.global.infra.oauth.apple;
 
-import server.yakssok.domain.auth.application.client.SocialUserResponse;
+import server.yakssok.global.infra.oauth.SocialUserResponse;
 
 public record AppleUserResponse(
 	String sub

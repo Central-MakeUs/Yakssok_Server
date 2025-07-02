@@ -1,11 +1,11 @@
-package server.yakssok.domain.auth.application.client.apple;
+package server.yakssok.global.infra.oauth.apple;
 
 import org.springframework.stereotype.Component;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
-import server.yakssok.domain.auth.application.client.SocialLoginStrategy;
+import server.yakssok.global.infra.oauth.SocialLoginStrategy;
 import server.yakssok.domain.user.domain.entity.Provider;
 @Component
 public class AppleLoginStrategy implements SocialLoginStrategy {

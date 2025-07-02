@@ -4,9 +4,9 @@ import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import server.yakssok.domain.auth.application.client.SocialLoginStrategyFactory;
-import server.yakssok.domain.auth.application.client.SocialUserResponse;
-import server.yakssok.domain.auth.application.client.SocialLoginStrategy;
+import server.yakssok.global.infra.oauth.SocialLoginStrategyFactory;
+import server.yakssok.global.infra.oauth.SocialUserResponse;
+import server.yakssok.global.infra.oauth.SocialLoginStrategy;
 import server.yakssok.domain.auth.application.exception.AuthErrorCode;
 import server.yakssok.domain.auth.application.exception.AuthException;
 import server.yakssok.domain.auth.domain.entity.RefreshToken;

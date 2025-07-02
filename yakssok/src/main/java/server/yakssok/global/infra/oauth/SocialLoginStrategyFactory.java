@@ -1,4 +1,4 @@
-package server.yakssok.domain.auth.application.client;
+package server.yakssok.global.infra.oauth;
 
 import java.util.List;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package server.yakssok.domain.auth.application.client.kakao;
+package server.yakssok.global.infra.oauth.kakao;
 
 
 import org.springframework.http.HttpHeaders;
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 
-import server.yakssok.domain.auth.application.client.SocialLoginStrategy;
+import server.yakssok.global.infra.oauth.SocialLoginStrategy;
 import server.yakssok.domain.auth.application.exception.AuthErrorCode;
 import server.yakssok.domain.auth.application.exception.AuthException;
 import server.yakssok.domain.user.domain.entity.Provider;
