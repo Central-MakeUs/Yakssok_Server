@@ -1,9 +1,7 @@
 services:
   app:
     container_name: yakssok-app
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: your-docker-username/yakssok:${TAG}
     ports:
       - "8080:8080"
     networks:
