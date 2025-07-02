@@ -10,7 +10,7 @@
         <appender-ref ref="Console"/>
     </root>
 
-    <springProfile name="dev">
+    <springProfile name="!local">
 
         <springProperty name="SLACK_WEBHOOK_URI" source="logging.slack.webhook-uri"/>
 
