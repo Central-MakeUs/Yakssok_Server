@@ -51,15 +51,18 @@ jobs:
             echo "📁 이동: docker-compose.yml이 있는 디렉토리로"
             cd ~/Yakssok_Server/yakssok
 
-            echo "🐳 Docker 로그인 & Pull"
+            echo "🐳 Docker 로그인"
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
-            echo "📦 이미지 최신 Pull"
-            docker-compose pull app
+            echo "🧹 기존 이미지 삭제"
+            docker image rm -f ${{ secrets.DOCKER_USERNAME }}/yakssok:latest || true
 
-            echo "🔄 Docker Compose 재시작"
-            docker-compose down --remove-orphans
-            docker-compose up -d --force-recreate
+            echo "📦 최신 이미지 Pull"
+            docker compose pull app
 
-            echo "🧹 Docker 정리"
+            echo "🔄 컨테이너 재시작"
+            docker compose down --remove-orphans
+            docker compose up -d --force-recreate
+
+            echo "🧹 이미지 정리"
             docker image prune -a -f
