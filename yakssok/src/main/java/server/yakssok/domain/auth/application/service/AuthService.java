@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.user.domain.entity.OAuthType;
+import server.yakssok.domain.user.exception.UserException;
 import server.yakssok.global.infra.oauth.OAuthStrategy;
 import server.yakssok.global.infra.oauth.OAuthStrategyFactory;
 import server.yakssok.global.infra.oauth.OAuthUserResponse;
@@ -71,7 +72,7 @@ public class AuthService {
 
 	private User findUser(String oauthType, String providerId) {
 		User user = userRepository.findUserByProviderId(OAuthType.from(oauthType), providerId)
-			.orElseThrow(() -> new AuthException(UserErrorCode.NOT_FOUND_USER));
+			.orElseThrow(() -> new UserException(UserErrorCode.NOT_FOUND_USER));
 		return user;
 	}
 

@@ -9,7 +9,7 @@ import org.springframework.web.client.RestClient;
 import server.yakssok.domain.user.domain.entity.OAuthType;
 import server.yakssok.global.infra.oauth.exception.OAuthErrorCode;
 import server.yakssok.global.infra.oauth.OAuthStrategy;
-import server.yakssok.domain.auth.application.exception.AuthException;
+import server.yakssok.global.infra.oauth.exception.OAuthException;
 
 @Component
 public class KakaoLoginStrategy implements OAuthStrategy {
@@ -33,7 +33,7 @@ public class KakaoLoginStrategy implements OAuthStrategy {
 				.retrieve()
 				.body(KakaoUserResponse.class);
 		} catch (Exception e) {
-			throw new AuthException(OAuthErrorCode.INVALID_OAUTH_TOKEN);
+			throw new OAuthException(OAuthErrorCode.INVALID_OAUTH_TOKEN);
 		}
 
 	}
