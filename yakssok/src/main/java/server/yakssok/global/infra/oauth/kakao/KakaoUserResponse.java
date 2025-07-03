@@ -2,13 +2,13 @@ package server.yakssok.global.infra.oauth.kakao;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import server.yakssok.global.infra.oauth.SocialUserResponse;
+import server.yakssok.global.infra.oauth.OAuthUserResponse;
 public record KakaoUserResponse(
 	String id,
 
 	@JsonProperty("kakao_account")
 	KakaoUserAccount kakaoAccount
-)implements SocialUserResponse {
+)implements OAuthUserResponse {
 	@Override
 	public String getId() {
 		return id;

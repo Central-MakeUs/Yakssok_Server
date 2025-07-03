@@ -25,7 +25,7 @@ public class User extends BaseEntity {
 	private String profileImageUrl;
 
 	@Enumerated(EnumType.STRING)
-	private Provider provider;
+	private OAuthType oAuthType;
 	@Column(length = 500, unique = true)
 	private String providerId;
 
@@ -35,20 +35,20 @@ public class User extends BaseEntity {
 	@Column(length = 500)
 	private String fcmToken;
 
-	private User(String nickName, String profileImageUrl, Provider provider, String providerId, boolean pushAgreement, String fcmToken) {
+	private User(String nickName, String profileImageUrl, OAuthType oAuthType, String providerId, boolean pushAgreement, String fcmToken) {
 		this.nickName = nickName;
 		this.profileImageUrl = profileImageUrl;
-		this.provider = provider;
+		this.oAuthType = oAuthType;
 		this.providerId = providerId;
 		this.pushAgreement = pushAgreement;
 		this.fcmToken = fcmToken;
 	}
 
-	public static User create(String nickName, String profileImageUrl, String providerName, String providerId, boolean pushAgreement, String fcmToken) {
+	public static User create(String nickName, String profileImageUrl, String oauthType, String providerId, boolean pushAgreement, String fcmToken) {
 		return new User(
 			nickName,
 			profileImageUrl,
-			Provider.from(providerName),
+			OAuthType.from(oauthType),
 			providerId,
 			pushAgreement,
 			fcmToken

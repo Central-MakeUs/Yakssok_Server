@@ -1,6 +1,6 @@
 package server.yakssok.global.infra.oauth;
 
-public interface SocialUserResponse {
+public interface OAuthUserResponse {
 	String getId();
 	String getProfileImageUrl();
 }

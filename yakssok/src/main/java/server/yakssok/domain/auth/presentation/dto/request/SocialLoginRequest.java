@@ -6,10 +6,10 @@ import jakarta.validation.constraints.NotNull;
 public record SocialLoginRequest(
 	@Schema(description = "카카오 Access Token/ 애플 authorization code", example = "1234567890abcdef")
 	@NotNull
-	String socialAuthorizationCode,
+	String oauthAuthorizationCode,
 
-	@Schema(description = "소셜 타입(apple/kakao)", example = "apple")
+	@Schema(description = "oauth 타입(apple/kakao)", example = "apple")
 	@NotNull
-	String socialType
+	String oauthType
 ) {
 }

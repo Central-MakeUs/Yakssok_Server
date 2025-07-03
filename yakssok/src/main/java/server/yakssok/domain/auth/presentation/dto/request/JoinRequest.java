@@ -7,11 +7,11 @@ import server.yakssok.domain.user.domain.entity.User;
 public record JoinRequest(
 	@Schema(description = "카카오 Access Token/ 애플 idToken", example = "1234567890abcdef")
 	@NotNull
-	String socialAuthorizationCode,
+	String oauthAuthorizationCode,
 
-	@Schema(description = "소셜 타입(apple/kakao)", example = "kakao")
+	@Schema(description = "oauth 타입(apple/kakao)", example = "kakao")
 	@NotNull
-	String socialType,
+	String oauthType,
 
 	@Schema(description = "닉네임", example = "노을")
 	@NotNull
@@ -26,6 +26,6 @@ public record JoinRequest(
 	String fcmToken
 ) {
 	public User toUser(String providerId, String profileImageUrl) {
-		return User.create(nickName, profileImageUrl, socialType, providerId, pushAgreement, fcmToken);
+		return User.create(nickName, profileImageUrl, oauthType, providerId, pushAgreement, fcmToken);
 	}
 }

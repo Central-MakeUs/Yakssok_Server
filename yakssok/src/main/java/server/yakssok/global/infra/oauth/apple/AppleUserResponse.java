@@ -1,10 +1,10 @@
 package server.yakssok.global.infra.oauth.apple;
 
-import server.yakssok.global.infra.oauth.SocialUserResponse;
+import server.yakssok.global.infra.oauth.OAuthUserResponse;
 
 public record AppleUserResponse(
 	String sub
-) implements SocialUserResponse {
+) implements OAuthUserResponse {
 	@Override
 	public String getId() {
 		return sub;

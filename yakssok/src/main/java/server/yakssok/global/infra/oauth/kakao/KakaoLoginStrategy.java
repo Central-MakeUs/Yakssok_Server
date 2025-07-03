@@ -6,14 +6,13 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
-
-import server.yakssok.global.infra.oauth.SocialLoginStrategy;
-import server.yakssok.domain.auth.application.exception.AuthErrorCode;
+import server.yakssok.domain.user.domain.entity.OAuthType;
+import server.yakssok.global.infra.oauth.exception.OAuthErrorCode;
+import server.yakssok.global.infra.oauth.OAuthStrategy;
 import server.yakssok.domain.auth.application.exception.AuthException;
-import server.yakssok.domain.user.domain.entity.Provider;
 
 @Component
-public class KakaoLoginStrategy implements SocialLoginStrategy {
+public class KakaoLoginStrategy implements OAuthStrategy {
 
 	private final RestClient restClient;
 
@@ -34,14 +33,14 @@ public class KakaoLoginStrategy implements SocialLoginStrategy {
 				.retrieve()
 				.body(KakaoUserResponse.class);
 		} catch (Exception e) {
-			throw new AuthException(AuthErrorCode.INVALID_KAKAO_TOKEN);
+			throw new AuthException(OAuthErrorCode.INVALID_OAUTH_TOKEN);
 		}
 
 	}
 
 	@Override
-	public Provider getSocialType() {
-		return Provider.KAKAO;
+	public OAuthType getOAuthType() {
+		return OAuthType.KAKAO;
 	}
 
 	private String authHeaderValue(String accessToken) {

@@ -7,7 +7,7 @@ import server.yakssok.global.exception.ResponseCode;
 
 @Getter
 public enum UserErrorCode implements ResponseCode {
-	NOT_FOUND_USER(HttpStatus.NOT_FOUND, 2000, "존재하지 않는 회원입니다."),
+	NOT_FOUND_USER(HttpStatus.NOT_FOUND, 3000, "존재하지 않는 회원입니다."),
 	;
 
 	private final HttpStatus httpStatus;
