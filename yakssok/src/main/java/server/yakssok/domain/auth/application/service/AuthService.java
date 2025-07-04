@@ -4,18 +4,19 @@ import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import server.yakssok.domain.auth.application.client.kakao.KakaoLoginStrategy;
-import server.yakssok.domain.auth.application.client.SocialLoginStrategy;
-import server.yakssok.domain.auth.application.client.kakao.KakaoUserResponse;
+import server.yakssok.domain.auth.presentation.dto.request.OAuthLoginRequest;
+import server.yakssok.domain.user.domain.entity.OAuthType;
+import server.yakssok.domain.user.exception.UserException;
+import server.yakssok.global.infra.oauth.OAuthStrategy;
+import server.yakssok.global.infra.oauth.OAuthStrategyFactory;
+import server.yakssok.global.infra.oauth.OAuthUserResponse;
 import server.yakssok.domain.auth.application.exception.AuthErrorCode;
 import server.yakssok.domain.auth.application.exception.AuthException;
 import server.yakssok.domain.auth.domain.entity.RefreshToken;
 import server.yakssok.domain.auth.presentation.dto.request.JoinRequest;
 import server.yakssok.domain.auth.presentation.dto.response.LoginResponse;
-import server.yakssok.domain.auth.presentation.dto.request.SocialLoginRequest;
 import server.yakssok.domain.auth.presentation.dto.response.ReissueResponse;
 import server.yakssok.domain.user.repository.UserRepository;
-import server.yakssok.domain.user.domain.entity.Provider;
 import server.yakssok.domain.user.domain.entity.User;
 import server.yakssok.domain.user.exception.UserErrorCode;
 import server.yakssok.global.common.jwt.JwtTokenUtils;
@@ -23,32 +24,55 @@ import server.yakssok.global.common.jwt.JwtTokenUtils;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-	private SocialLoginStrategy strategy = new KakaoLoginStrategy();
 	private final UserRepository userRepository;
 	private final JwtTokenUtils jwtTokenUtils;
 	private final RefreshTokenService refreshTokenService;
+	private final OAuthStrategyFactory strategyFactory;
 
 	@Transactional
 	public void join(JoinRequest joinRequest) {
-		KakaoUserResponse kakaoUserResponse = strategy.fetchUserInfo(joinRequest.socialAuthorizationCode());
-		boolean isExist = userRepository.existsUserByProviderId(Provider.KAKAO, kakaoUserResponse.id());
-		if(isExist) {
-			throw new AuthException(AuthErrorCode.DUPLICATE_USER);
-		}
-		User user = joinRequest.toUser(kakaoUserResponse.id(), kakaoUserResponse.kakaoAccount().profileImageUrl());
+		String oauthType = joinRequest.oauthType();
+		String oauthAuthorizationCode = joinRequest.oauthAuthorizationCode();
+		OAuthUserResponse oAuthUserResponse = getOAuthUserResponse(oauthType, oauthAuthorizationCode, joinRequest.nonce());
+
+		String providerId = oAuthUserResponse.getId();
+		String profileImageUrl = oAuthUserResponse.getProfileImageUrl();
+		checkDuplicateUser(oauthType, providerId);
+		User user = joinRequest.toUser(providerId, profileImageUrl);
 		userRepository.save(user);
 	}
 
+	private void checkDuplicateUser(String oauthType, String providerId) {
+		boolean isExist = userRepository.existsUserByProviderId(OAuthType.from(oauthType), providerId);
+		if(isExist) {
+			throw new AuthException(AuthErrorCode.DUPLICATE_USER);
+		}
+	}
+
+
 	@Transactional
-	public LoginResponse login(SocialLoginRequest socialLoginRequest) {
-		KakaoUserResponse kakaoUserResponse = strategy.fetchUserInfo(socialLoginRequest.socialAuthorizationCode());
-		User user = userRepository.findUserByProviderId(Provider.KAKAO, kakaoUserResponse.id())
-			.orElseThrow(() -> new AuthException(UserErrorCode.NOT_FOUND_USER));
+	public LoginResponse login(OAuthLoginRequest oAuthLoginRequest) {
+		String oauthType = oAuthLoginRequest.oauthType();
+		String oauthAuthorizationCode = oAuthLoginRequest.oauthAuthorizationCode();
+		OAuthUserResponse oAuthUserResponse = getOAuthUserResponse(oauthType, oauthAuthorizationCode, oAuthLoginRequest.nonce());
+		String providerId = oAuthUserResponse.getId();
+		User user = findUser(oauthType, providerId);
 
 		String accessToken = jwtTokenUtils.generateAccessToken(user.getId());
 		String refreshToken = jwtTokenUtils.generateRefreshToken(user.getId());
 		refreshTokenService.registerRefreshToken(user.getId(), refreshToken);
 		return new LoginResponse(accessToken, refreshToken);
+	}
+
+	private OAuthUserResponse getOAuthUserResponse(String oauthType, String oauthAuthorizationCode, String nonce) {
+		OAuthStrategy strategy = strategyFactory.getStrategy(oauthType);
+		return strategy.fetchUserInfo(oauthAuthorizationCode, nonce);
+	}
+
+	private User findUser(String oauthType, String providerId) {
+		User user = userRepository.findUserByProviderId(oauthType, providerId)
+			.orElseThrow(() -> new UserException(UserErrorCode.NOT_FOUND_USER));
+		return user;
 	}
 
 	@Transactional

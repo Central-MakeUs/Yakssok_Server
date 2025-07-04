@@ -6,7 +6,7 @@ import lombok.Getter;
 import server.yakssok.global.exception.ResponseCode;
 @Getter
 public enum SuccessCode implements ResponseCode {
-	SECCESS(HttpStatus.OK, 0, "성공적으로 처리되었습니다.");
+	SUCCESS(HttpStatus.OK, 0, "성공적으로 처리되었습니다.");
 
 	private final HttpStatus httpStatus;
 	private final int code;

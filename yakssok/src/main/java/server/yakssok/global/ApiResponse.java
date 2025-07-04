@@ -23,12 +23,12 @@ public class ApiResponse<T> {
 	}
 
 	public static <T> ApiResponse<T> success(T body) {
-		return new ApiResponse<>(SECCESS.getCode(), SECCESS.getMessage(), body);
+		return new ApiResponse<>(SUCCESS.getCode(), SUCCESS.getMessage(), body);
 	}
 
 	public static ApiResponse success() {
 		HashMap<String, String> empty = new HashMap<>();
-		return new ApiResponse<>(SECCESS.getCode(), SECCESS.getMessage(), empty);
+		return new ApiResponse<>(SUCCESS.getCode(), SUCCESS.getMessage(), empty);
 	}
 
 	public static ApiResponse error(int code, String message) {

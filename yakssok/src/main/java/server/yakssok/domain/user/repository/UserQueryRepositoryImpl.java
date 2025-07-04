@@ -8,7 +8,7 @@ import java.util.Optional;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
-import server.yakssok.domain.user.domain.entity.Provider;
+import server.yakssok.domain.user.domain.entity.OAuthType;
 import server.yakssok.domain.user.domain.entity.User;
 
 @RequiredArgsConstructor
@@ -16,11 +16,11 @@ public class UserQueryRepositoryImpl implements UserQueryRepository{
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public Optional<User> findUserByProviderId(Provider provider, String providerId) {
+	public Optional<User> findUserByProviderId(String oAuthType, String providerId) {
 		User result = queryFactory
 			.selectFrom(user)
 			.where(
-				user.provider.eq(provider),
+				user.oAuthType.eq(OAuthType.from(oAuthType)),
 				user.providerId.eq(providerId)
 			)
 			.fetchOne();
@@ -29,12 +29,12 @@ public class UserQueryRepositoryImpl implements UserQueryRepository{
 	}
 
 	@Override
-	public boolean existsUserByProviderId(Provider provider, String providerId) {
+	public boolean existsUserByProviderId(OAuthType oAuthType, String providerId) {
 		return Optional.ofNullable(queryFactory
 			.selectOne()
 			.from(user)
 			.where(
-				user.provider.eq(provider),
+				user.oAuthType.eq(oAuthType),
 				user.providerId.eq(providerId)
 			)
 			.fetchFirst()).isPresent();
