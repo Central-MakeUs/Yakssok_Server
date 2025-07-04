@@ -21,10 +21,9 @@ import com.auth0.jwt.interfaces.JWTVerifier;
 
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.user.domain.entity.OAuthType;
-import server.yakssok.global.exception.GlobalErrorCode;
+import server.yakssok.global.exception.ErrorCode;
 import server.yakssok.global.exception.GlobalException;
 import server.yakssok.global.infra.oauth.OAuthStrategy;
-import server.yakssok.global.infra.oauth.exception.OAuthErrorCode;
 import server.yakssok.global.infra.oauth.exception.OAuthException;
 
 @Component
@@ -39,9 +38,9 @@ public class AppleLoginStrategy implements OAuthStrategy {
 			String sub = decodedJWT.getSubject();
 			return new AppleUserResponse(sub);
 		} catch (JWTVerificationException e) {
-			throw new OAuthException(OAuthErrorCode.INVALID_OAUTH_TOKEN);
+			throw new OAuthException(ErrorCode.INVALID_OAUTH_TOKEN);
 		} catch (JwkException | MalformedURLException e) {
-			throw new GlobalException(GlobalErrorCode.INTERNAL_SERVER_ERROR);
+			throw new GlobalException(ErrorCode.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -71,7 +70,7 @@ public class AppleLoginStrategy implements OAuthStrategy {
 	private void validateNonce(DecodedJWT jwt, String expectedNonce) {
 		String actualNonce = jwt.getClaim(properties.nonceClaimKey()).asString();
 		if (expectedNonce != null && !expectedNonce.equals(actualNonce)) {
-			throw new OAuthException(OAuthErrorCode.INVALID_OAUTH_TOKEN);
+			throw new OAuthException(ErrorCode.INVALID_OAUTH_TOKEN);
 		}
 	}
 

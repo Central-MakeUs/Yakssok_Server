@@ -6,13 +6,12 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.security.core.Authentication;
 import lombok.RequiredArgsConstructor;
-import server.yakssok.domain.auth.application.exception.AuthErrorCode;
 import server.yakssok.domain.auth.application.exception.AuthException;
 import server.yakssok.domain.user.domain.entity.User;
-import server.yakssok.domain.user.exception.UserErrorCode;
 import server.yakssok.domain.user.exception.UserException;
 import server.yakssok.domain.user.repository.UserRepository;
 import server.yakssok.global.common.security.YakssokUserDetails;
+import server.yakssok.global.exception.ErrorCode;
 
 @Service
 @RequiredArgsConstructor
@@ -22,12 +21,12 @@ public class JwtAuthService {
 
 	public Authentication getAuthentication(String token) {
 		if (!jwtTokenUtils.isValidateToken(token)) {
-			throw new AuthException(AuthErrorCode.INVALID_JWT);
+			throw new AuthException(ErrorCode.INVALID_JWT);
 		}
 
 		Long userId = jwtTokenUtils.getIdFromJwt(token);
 		User user = userRepository.findById(userId)
-			.orElseThrow(() -> new UserException(UserErrorCode.NOT_FOUND_USER));
+			.orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 
 		UserDetails principal = new YakssokUserDetails(user.getId());
 		return new UsernamePasswordAuthenticationToken(

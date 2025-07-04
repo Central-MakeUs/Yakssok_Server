@@ -1,7 +1,7 @@
 package server.yakssok.domain.user.domain.entity;
 
 import lombok.Getter;
-import server.yakssok.global.infra.oauth.exception.OAuthErrorCode;
+import server.yakssok.global.exception.ErrorCode;
 import server.yakssok.global.infra.oauth.exception.OAuthException;
 
 @Getter
@@ -15,6 +15,6 @@ public enum OAuthType {
 				return provider;
 			}
 		}
-		throw new OAuthException(OAuthErrorCode.UNSUPPORTED_SOCIAL_PROVIDER);
+		throw new OAuthException(ErrorCode.UNSUPPORTED_OAUTH_PROVIDER);
 	}
 }

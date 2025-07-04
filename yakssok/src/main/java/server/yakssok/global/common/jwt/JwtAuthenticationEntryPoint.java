@@ -12,8 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import server.yakssok.domain.auth.application.exception.AuthErrorCode;
 import server.yakssok.global.ApiResponse;
+import server.yakssok.global.exception.ErrorCode;
 
 @Component
 @RequiredArgsConstructor
@@ -26,9 +26,9 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 		IOException {
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setCharacterEncoding("utf-8");
-		response.setStatus(AuthErrorCode.INVALID_JWT.getHttpStatus().value());
+		response.setStatus(ErrorCode.INVALID_JWT.getHttpStatus().value());
 		String body = objectMapper.writeValueAsString(
-			ApiResponse.error(AuthErrorCode.INVALID_JWT.getCode(), AuthErrorCode.INVALID_JWT.getMessage())
+			ApiResponse.error(ErrorCode.INVALID_JWT.getCode(), ErrorCode.INVALID_JWT.getMessage())
 		);
 		response.getWriter().write(body);
 	}

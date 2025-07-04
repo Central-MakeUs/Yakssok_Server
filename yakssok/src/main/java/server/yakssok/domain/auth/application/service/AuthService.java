@@ -7,10 +7,10 @@ import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.auth.presentation.dto.request.OAuthLoginRequest;
 import server.yakssok.domain.user.domain.entity.OAuthType;
 import server.yakssok.domain.user.exception.UserException;
+import server.yakssok.global.exception.ErrorCode;
 import server.yakssok.global.infra.oauth.OAuthStrategy;
 import server.yakssok.global.infra.oauth.OAuthStrategyFactory;
 import server.yakssok.global.infra.oauth.OAuthUserResponse;
-import server.yakssok.domain.auth.application.exception.AuthErrorCode;
 import server.yakssok.domain.auth.application.exception.AuthException;
 import server.yakssok.domain.auth.domain.entity.RefreshToken;
 import server.yakssok.domain.auth.presentation.dto.request.JoinRequest;
@@ -18,7 +18,6 @@ import server.yakssok.domain.auth.presentation.dto.response.LoginResponse;
 import server.yakssok.domain.auth.presentation.dto.response.ReissueResponse;
 import server.yakssok.domain.user.repository.UserRepository;
 import server.yakssok.domain.user.domain.entity.User;
-import server.yakssok.domain.user.exception.UserErrorCode;
 import server.yakssok.global.common.jwt.JwtTokenUtils;
 
 @Service
@@ -45,7 +44,7 @@ public class AuthService {
 	private void checkDuplicateUser(String oauthType, String providerId) {
 		boolean isExist = userRepository.existsUserByProviderId(OAuthType.from(oauthType), providerId);
 		if(isExist) {
-			throw new AuthException(AuthErrorCode.DUPLICATE_USER);
+			throw new AuthException(ErrorCode.DUPLICATE_USER);
 		}
 	}
 
@@ -71,7 +70,7 @@ public class AuthService {
 
 	private User findUser(String oauthType, String providerId) {
 		User user = userRepository.findUserByProviderId(oauthType, providerId)
-			.orElseThrow(() -> new UserException(UserErrorCode.NOT_FOUND_USER));
+			.orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 		return user;
 	}
 
@@ -79,9 +78,9 @@ public class AuthService {
 	public ReissueResponse reissue(String refreshToken) {
 		Long userId = jwtTokenUtils.getIdFromJwt(refreshToken);
 		RefreshToken savedRefreshToken = refreshTokenService.findRefreshToken(userId)
-			.orElseThrow(() -> new AuthException(AuthErrorCode.INVALID_JWT));
+			.orElseThrow(() -> new AuthException(ErrorCode.INVALID_JWT));
 		if (!savedRefreshToken.isSame(refreshToken)) {
-			throw new AuthException(AuthErrorCode.INVALID_JWT);
+			throw new AuthException(ErrorCode.INVALID_JWT);
 		}
 
 		String accessToken = jwtTokenUtils.generateAccessToken(userId);
@@ -91,7 +90,7 @@ public class AuthService {
 	@Transactional
 	public void logOut(Long userId) {
 		refreshTokenService.findRefreshToken(userId)
-			.orElseThrow(() -> {throw new AuthException(AuthErrorCode.INVALID_JWT);
+			.orElseThrow(() -> {throw new AuthException(ErrorCode.INVALID_JWT);
 		});
 		refreshTokenService.deleteRefreshToken(userId);
 	}

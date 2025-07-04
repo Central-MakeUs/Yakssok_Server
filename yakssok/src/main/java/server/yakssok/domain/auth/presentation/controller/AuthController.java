@@ -19,6 +19,9 @@ import server.yakssok.domain.auth.presentation.dto.request.ReissueRequest;
 import server.yakssok.domain.auth.presentation.dto.response.LoginResponse;
 import server.yakssok.domain.auth.presentation.dto.response.ReissueResponse;
 import server.yakssok.global.ApiResponse;
+import server.yakssok.global.common.swagger.ApiErrorResponse;
+import server.yakssok.global.common.swagger.ApiErrorResponses;
+import server.yakssok.global.exception.ErrorCode;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,6 +31,11 @@ public class AuthController {
 	private final AuthService authService;
 
 	@Operation(summary = "회원가입")
+	@ApiErrorResponses(value = {
+		@ApiErrorResponse(ErrorCode.INVALID_OAUTH_TOKEN),
+		@ApiErrorResponse(ErrorCode.UNSUPPORTED_OAUTH_PROVIDER),
+		@ApiErrorResponse(ErrorCode.DUPLICATE_USER)
+	})
 	@PostMapping("/join")
 	public ApiResponse join(@Valid @RequestBody JoinRequest joinRequest) {
 		authService.join(joinRequest);
@@ -35,18 +43,25 @@ public class AuthController {
 	}
 
 	@Operation(summary = "로그인")
+	@ApiErrorResponses(value = {
+		@ApiErrorResponse(ErrorCode.INVALID_OAUTH_TOKEN),
+		@ApiErrorResponse(ErrorCode.UNSUPPORTED_OAUTH_PROVIDER),
+		@ApiErrorResponse(ErrorCode.NOT_FOUND_USER)
+	})
 	@PostMapping("/login")
 	public ApiResponse<LoginResponse> login(@Valid @RequestBody OAuthLoginRequest oAuthLoginRequest) {
 		return ApiResponse.success(authService.login(oAuthLoginRequest));
 	}
 
 	@Operation(summary = "엑세스 토큰 재발급")
+	@ApiErrorResponse(ErrorCode.INVALID_JWT)
 	@PostMapping("/reissue")
 	public ApiResponse<ReissueResponse> reissueToken(@Valid @RequestBody ReissueRequest reissueRequest) {
 		return ApiResponse.success(authService.reissue(reissueRequest.refreshToken()));
 	}
 
 	@Operation(summary = "로그아웃")
+	@ApiErrorResponse(ErrorCode.INVALID_JWT)
 	@PutMapping("/logout")
 	public ApiResponse logout(@AuthenticationPrincipal UserDetails userDetails) {
 		authService.logOut(Long.valueOf(userDetails.getUsername()));
