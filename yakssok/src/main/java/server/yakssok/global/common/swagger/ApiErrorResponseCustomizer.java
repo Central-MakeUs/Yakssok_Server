@@ -11,6 +11,7 @@ import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
+import server.yakssok.global.exception.ErrorCode;
 
 import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.stereotype.Component;
@@ -29,19 +30,20 @@ public class ApiErrorResponseCustomizer implements OperationCustomizer {
 		if (multiple != null) errorAnnotations.addAll(Arrays.asList(multiple.value()));
 
 		for (ApiErrorResponse error : errorAnnotations) {
+			ErrorCode errorCode = error.value();
 			Map<String, Object> example = new HashMap<>();
-			example.put("code", error.code());
-			example.put("message", error.message());
+			example.put("code", errorCode.getCode());
+			example.put("message", errorCode.getMessage());
 			example.put("body", new HashMap<>());
 
 			ApiResponse apiResponse = new ApiResponse()
-				.description(error.message())
+				.description(errorCode.getMessage())
 				.content(new Content().addMediaType("application/json",
 					new MediaType()
 						.schema(new Schema<>().$ref("#/components/schemas/ApiResponse"))
 						.example(example)));
 
-			operation.getResponses().addApiResponse(String.valueOf(error.httpStatus()), apiResponse);
+			operation.getResponses().addApiResponse(String.valueOf(errorCode.getHttpStatus()), apiResponse);
 		}
 		return operation;
 	}
