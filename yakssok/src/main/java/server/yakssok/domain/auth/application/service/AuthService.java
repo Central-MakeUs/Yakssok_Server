@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import server.yakssok.domain.auth.presentation.dto.request.OAuthLoginRequest;
 import server.yakssok.domain.user.domain.entity.OAuthType;
 import server.yakssok.domain.user.exception.UserException;
 import server.yakssok.global.infra.oauth.OAuthStrategy;
@@ -14,7 +15,6 @@ import server.yakssok.domain.auth.application.exception.AuthException;
 import server.yakssok.domain.auth.domain.entity.RefreshToken;
 import server.yakssok.domain.auth.presentation.dto.request.JoinRequest;
 import server.yakssok.domain.auth.presentation.dto.response.LoginResponse;
-import server.yakssok.domain.auth.presentation.dto.request.SocialLoginRequest;
 import server.yakssok.domain.auth.presentation.dto.response.ReissueResponse;
 import server.yakssok.domain.user.repository.UserRepository;
 import server.yakssok.domain.user.domain.entity.User;
@@ -33,17 +33,17 @@ public class AuthService {
 	public void join(JoinRequest joinRequest) {
 		String oauthType = joinRequest.oauthType();
 		String oauthAuthorizationCode = joinRequest.oauthAuthorizationCode();
-		OAuthUserResponse socialUserResponse = getSocialUserResponse(oauthType, oauthAuthorizationCode, joinRequest.nonce());
+		OAuthUserResponse oAuthUserResponse = getOAuthUserResponse(oauthType, oauthAuthorizationCode, joinRequest.nonce());
 
-		String providerId = socialUserResponse.getId();
-		String profileImageUrl = socialUserResponse.getProfileImageUrl();
+		String providerId = oAuthUserResponse.getId();
+		String profileImageUrl = oAuthUserResponse.getProfileImageUrl();
 		checkDuplicateUser(oauthType, providerId);
 		User user = joinRequest.toUser(providerId, profileImageUrl);
 		userRepository.save(user);
 	}
 
-	private void checkDuplicateUser(String socialType, String providerId) {
-		boolean isExist = userRepository.existsUserByProviderId(OAuthType.from(socialType), providerId);
+	private void checkDuplicateUser(String oauthType, String providerId) {
+		boolean isExist = userRepository.existsUserByProviderId(OAuthType.from(oauthType), providerId);
 		if(isExist) {
 			throw new AuthException(AuthErrorCode.DUPLICATE_USER);
 		}
@@ -51,11 +51,11 @@ public class AuthService {
 
 
 	@Transactional
-	public LoginResponse login(SocialLoginRequest socialLoginRequest) {
-		String oauthType = socialLoginRequest.oauthType();
-		String oauthAuthorizationCode = socialLoginRequest.oauthAuthorizationCode();
-		OAuthUserResponse socialUserResponse = getSocialUserResponse(oauthType, oauthAuthorizationCode, socialLoginRequest.nonce());
-		String providerId = socialUserResponse.getId();
+	public LoginResponse login(OAuthLoginRequest oAuthLoginRequest) {
+		String oauthType = oAuthLoginRequest.oauthType();
+		String oauthAuthorizationCode = oAuthLoginRequest.oauthAuthorizationCode();
+		OAuthUserResponse oAuthUserResponse = getOAuthUserResponse(oauthType, oauthAuthorizationCode, oAuthLoginRequest.nonce());
+		String providerId = oAuthUserResponse.getId();
 		User user = findUser(oauthType, providerId);
 
 		String accessToken = jwtTokenUtils.generateAccessToken(user.getId());
@@ -64,14 +64,13 @@ public class AuthService {
 		return new LoginResponse(accessToken, refreshToken);
 	}
 
-	private OAuthUserResponse getSocialUserResponse(String socialType, String socialAuthorizationCode, String nonce) {
-		OAuthStrategy strategy = strategyFactory.getStrategy(socialType);
-		return strategy.fetchUserInfo(socialAuthorizationCode, nonce);
+	private OAuthUserResponse getOAuthUserResponse(String oauthType, String oauthAuthorizationCode, String nonce) {
+		OAuthStrategy strategy = strategyFactory.getStrategy(oauthType);
+		return strategy.fetchUserInfo(oauthAuthorizationCode, nonce);
 	}
 
-
 	private User findUser(String oauthType, String providerId) {
-		User user = userRepository.findUserByProviderId(OAuthType.from(oauthType), providerId)
+		User user = userRepository.findUserByProviderId(oauthType, providerId)
 			.orElseThrow(() -> new UserException(UserErrorCode.NOT_FOUND_USER));
 		return user;
 	}

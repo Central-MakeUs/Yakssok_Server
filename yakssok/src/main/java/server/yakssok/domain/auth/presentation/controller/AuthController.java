@@ -14,9 +14,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.auth.application.service.AuthService;
 import server.yakssok.domain.auth.presentation.dto.request.JoinRequest;
+import server.yakssok.domain.auth.presentation.dto.request.OAuthLoginRequest;
 import server.yakssok.domain.auth.presentation.dto.request.ReissueRequest;
 import server.yakssok.domain.auth.presentation.dto.response.LoginResponse;
-import server.yakssok.domain.auth.presentation.dto.request.SocialLoginRequest;
 import server.yakssok.domain.auth.presentation.dto.response.ReissueResponse;
 import server.yakssok.global.ApiResponse;
 
@@ -36,8 +36,8 @@ public class AuthController {
 
 	@Operation(summary = "로그인")
 	@PostMapping("/login")
-	public ApiResponse<LoginResponse> login(@Valid @RequestBody SocialLoginRequest socialLoginRequest) {
-		return ApiResponse.success(authService.login(socialLoginRequest));
+	public ApiResponse<LoginResponse> login(@Valid @RequestBody OAuthLoginRequest oAuthLoginRequest) {
+		return ApiResponse.success(authService.login(oAuthLoginRequest));
 	}
 
 	@Operation(summary = "엑세스 토큰 재발급")

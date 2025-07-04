@@ -13,13 +13,13 @@ import server.yakssok.global.infra.oauth.exception.OAuthException;
 
 @Component
 public class KakaoLoginStrategy implements OAuthStrategy {
-
 	private final RestClient restClient;
+	private final KakaoOAuthProperties properties;
 
-	//TODO 링크 빼내기
-	public KakaoLoginStrategy() {
-		this.restClient = RestClient.builder()
-			.baseUrl("https://kapi.kakao.com")
+	public KakaoLoginStrategy(KakaoOAuthProperties properties, RestClient.Builder builder) {
+		this.properties = properties;
+		this.restClient = builder
+			.baseUrl(properties.apiBaseUrl())
 			.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
 			.build();
 	}
@@ -28,7 +28,7 @@ public class KakaoLoginStrategy implements OAuthStrategy {
 	public KakaoUserResponse fetchUserInfo(String socialAuthorizationCode, String nonce) {
 		try {
 			return restClient.get()
-				.uri("/v2/user/me")
+				.uri(properties.userInfoPath())
 				.header(HttpHeaders.AUTHORIZATION, authHeaderValue(socialAuthorizationCode))
 				.retrieve()
 				.body(KakaoUserResponse.class);
@@ -44,6 +44,6 @@ public class KakaoLoginStrategy implements OAuthStrategy {
 	}
 
 	private String authHeaderValue(String accessToken) {
-		return "Bearer %s".formatted(accessToken);
+		return properties.tokenTypeFormat().formatted(accessToken);
 	}
 }
