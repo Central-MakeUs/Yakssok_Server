@@ -1,6 +1,4 @@
-package server.yakssok.domain.user.repository;
-
-import java.util.Optional;
+package server.yakssok.domain.user.domain.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
