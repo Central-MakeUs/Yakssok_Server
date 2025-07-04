@@ -17,7 +17,7 @@ public class SwaggerConfig {
 		final String securitySchemeName = "bearerAuth";
 
 		return new OpenAPI()
-			.addServersItem(new Server().url("https://yakssok.site")) // ✅ 서버 URL 명시
+			.addServersItem(new Server().url("https://yakssok.site"))
 			.info(new Info()
 				.title("Yakssok API")
 				.description("약속 API 문서")
@@ -30,5 +30,10 @@ public class SwaggerConfig {
 						.type(SecurityScheme.Type.HTTP)
 						.scheme("bearer")
 						.bearerFormat("JWT")));
+	}
+
+	@Bean
+	public ApiErrorResponseCustomizer apiErrorResponseCustomizer() {
+		return new ApiErrorResponseCustomizer();
 	}
 }

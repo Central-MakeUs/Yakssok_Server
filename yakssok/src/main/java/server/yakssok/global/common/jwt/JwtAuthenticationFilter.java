@@ -16,8 +16,8 @@ import org.springframework.security.core.Authentication;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
-import server.yakssok.domain.auth.application.exception.AuthErrorCode;
 import server.yakssok.global.ApiResponse;
+import server.yakssok.global.exception.ErrorCode;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -35,7 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 			}
 		} catch (Exception e) {
-			setErrorResponse(response, AuthErrorCode.INVALID_JWT);
+			setErrorResponse(response, ErrorCode.INVALID_JWT);
 			return;
 		}
 		filterChain.doFilter(request, response);
@@ -48,7 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		return null;
 	}
 
-	private void setErrorResponse(HttpServletResponse response, AuthErrorCode errorCode) {
+	private void setErrorResponse(HttpServletResponse response, ErrorCode errorCode) {
 		ObjectMapper objectMapper = new ObjectMapper();
 		response.setStatus(errorCode.getHttpStatus().value());
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);

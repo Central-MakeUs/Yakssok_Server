@@ -9,14 +9,14 @@ import lombok.Getter;
 
 @Getter
 public class ApiResponse<T> {
-	@Schema(description = "응답 코드", example = "0")
+	@Schema(description = "응답 코드", example = "SUCCESS")
 	private Integer code;
 	@Schema(description = "응답 메시지", example = "성공적으로 처리되었습니다.")
 	private String message;
 	@Schema(description = "실제 응답 데이터")
 	private T body;
 
-	private ApiResponse(int code, String message, T body) {
+	private ApiResponse(Integer code, String message, T body) {
 		this.code = code;
 		this.message = message;
 		this.body = body;
@@ -31,12 +31,12 @@ public class ApiResponse<T> {
 		return new ApiResponse<>(SUCCESS.getCode(), SUCCESS.getMessage(), empty);
 	}
 
-	public static ApiResponse error(int code, String message) {
+	public static ApiResponse error(Integer code, String message) {
 		HashMap<String, String> empty = new HashMap<>();
 		return new ApiResponse<>(code, message, empty);
 	}
 
-	public static <T> ApiResponse<T> error(int code, T body, String message) {
+	public static <T> ApiResponse<T> error(Integer code, T body, String message) {
 		return new ApiResponse<>(code, message, body);
 	}
 }
