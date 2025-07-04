@@ -10,6 +10,9 @@ public record SocialLoginRequest(
 
 	@Schema(description = "oauth 타입(apple/kakao)", example = "apple")
 	@NotNull
-	String oauthType
+	String oauthType,
+
+	@Schema(description = "apple nonce", example = "1234567890abcdef")
+	String nonce
 ) {
 }

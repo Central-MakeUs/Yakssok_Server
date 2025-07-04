@@ -33,7 +33,7 @@ public class AuthService {
 	public void join(JoinRequest joinRequest) {
 		String oauthType = joinRequest.oauthType();
 		String oauthAuthorizationCode = joinRequest.oauthAuthorizationCode();
-		OAuthUserResponse socialUserResponse = getSocialUserResponse(oauthType, oauthAuthorizationCode);
+		OAuthUserResponse socialUserResponse = getSocialUserResponse(oauthType, oauthAuthorizationCode, joinRequest.nonce());
 
 		String providerId = socialUserResponse.getId();
 		String profileImageUrl = socialUserResponse.getProfileImageUrl();
@@ -54,7 +54,7 @@ public class AuthService {
 	public LoginResponse login(SocialLoginRequest socialLoginRequest) {
 		String oauthType = socialLoginRequest.oauthType();
 		String oauthAuthorizationCode = socialLoginRequest.oauthAuthorizationCode();
-		OAuthUserResponse socialUserResponse = getSocialUserResponse(oauthType, oauthAuthorizationCode);
+		OAuthUserResponse socialUserResponse = getSocialUserResponse(oauthType, oauthAuthorizationCode, socialLoginRequest.nonce());
 		String providerId = socialUserResponse.getId();
 		User user = findUser(oauthType, providerId);
 
@@ -64,9 +64,9 @@ public class AuthService {
 		return new LoginResponse(accessToken, refreshToken);
 	}
 
-	private OAuthUserResponse getSocialUserResponse(String socialType, String socialAuthorizationCode) {
+	private OAuthUserResponse getSocialUserResponse(String socialType, String socialAuthorizationCode, String nonce) {
 		OAuthStrategy strategy = strategyFactory.getStrategy(socialType);
-		return strategy.fetchUserInfo(socialAuthorizationCode);
+		return strategy.fetchUserInfo(socialAuthorizationCode, nonce);
 	}
 
 

@@ -13,6 +13,9 @@ public record JoinRequest(
 	@NotNull
 	String oauthType,
 
+	@Schema(description = "apple nonce", example = "1234567890abcdef")
+	String nonce,
+
 	@Schema(description = "닉네임", example = "노을")
 	@NotNull
 	String nickName,

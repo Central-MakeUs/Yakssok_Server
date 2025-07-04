@@ -25,7 +25,7 @@ public class KakaoLoginStrategy implements OAuthStrategy {
 	}
 
 	@Override
-	public KakaoUserResponse fetchUserInfo(String socialAuthorizationCode) {
+	public KakaoUserResponse fetchUserInfo(String socialAuthorizationCode, String nonce) {
 		try {
 			return restClient.get()
 				.uri("/v2/user/me")
