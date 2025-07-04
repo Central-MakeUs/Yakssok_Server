@@ -8,16 +8,19 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
-
+import lombok.RequiredArgsConstructor;
 
 @Configuration
+@RequiredArgsConstructor
 public class SwaggerConfig {
+	private final SwaggerProperties swaggerProperties;
+
 	@Bean
 	public OpenAPI openAPI() {
 		final String securitySchemeName = "bearerAuth";
 
 		return new OpenAPI()
-			.addServersItem(new Server().url("https://yakssok.site"))
+			.addServersItem(new Server().url(swaggerProperties.serverUrl()))
 			.info(new Info()
 				.title("Yakssok API")
 				.description("약속 API 문서")
