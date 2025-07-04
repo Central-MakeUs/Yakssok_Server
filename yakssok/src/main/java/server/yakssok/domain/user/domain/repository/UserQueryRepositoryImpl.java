@@ -1,4 +1,4 @@
-package server.yakssok.domain.user.repository;
+package server.yakssok.domain.user.domain.repository;
 
 
 import static server.yakssok.domain.user.domain.entity.QUser.*;

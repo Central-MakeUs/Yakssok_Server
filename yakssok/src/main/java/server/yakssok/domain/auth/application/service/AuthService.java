@@ -6,7 +6,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.auth.presentation.dto.request.OAuthLoginRequest;
 import server.yakssok.domain.user.domain.entity.OAuthType;
-import server.yakssok.domain.user.exception.UserException;
+import server.yakssok.domain.user.application.exception.UserException;
 import server.yakssok.global.exception.ErrorCode;
 import server.yakssok.global.infra.oauth.OAuthStrategy;
 import server.yakssok.global.infra.oauth.OAuthStrategyFactory;
@@ -16,7 +16,7 @@ import server.yakssok.domain.auth.domain.entity.RefreshToken;
 import server.yakssok.domain.auth.presentation.dto.request.JoinRequest;
 import server.yakssok.domain.auth.presentation.dto.response.LoginResponse;
 import server.yakssok.domain.auth.presentation.dto.response.ReissueResponse;
-import server.yakssok.domain.user.repository.UserRepository;
+import server.yakssok.domain.user.domain.repository.UserRepository;
 import server.yakssok.domain.user.domain.entity.User;
 import server.yakssok.global.common.jwt.JwtTokenUtils;
 

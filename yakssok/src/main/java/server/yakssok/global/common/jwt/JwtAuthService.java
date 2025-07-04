@@ -8,8 +8,8 @@ import org.springframework.security.core.Authentication;
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.auth.application.exception.AuthException;
 import server.yakssok.domain.user.domain.entity.User;
-import server.yakssok.domain.user.exception.UserException;
-import server.yakssok.domain.user.repository.UserRepository;
+import server.yakssok.domain.user.application.exception.UserException;
+import server.yakssok.domain.user.domain.repository.UserRepository;
 import server.yakssok.global.common.security.YakssokUserDetails;
 import server.yakssok.global.exception.ErrorCode;
 
