@@ -14,7 +14,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(GlobalException.class)
 	protected ResponseEntity<ApiResponse> yakssokExceptionHandler(GlobalException e) {
 		ResponseCode responseCode = e.getResponseCode();
-		log.error("[{}] {} ({})", e.getClass().getSimpleName(), responseCode.getMessage(), e.getStackTrace()[0]);
+		log.warn("[{}] {} ({})", e.getClass().getSimpleName(), responseCode.getMessage(), e.getStackTrace()[0]);
 		ApiResponse apiResponse = ApiResponse.error(
 			responseCode.getCode(),
 			responseCode.getMessage()

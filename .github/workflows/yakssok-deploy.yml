@@ -12,30 +12,60 @@ permissions:
   contents: read
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
+    env:
+      IMAGE_TAG: ${{ github.sha }}
+
     steps:
-      - name: 🚀 Deploy on EC2 (Git Pull → Build → Docker Compose)
+      - name: 🧾 Checkout
+        uses: actions/checkout@v3
+
+      - name: 🔧 Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: 📦 Build and Push Docker Image
+        run: |
+          cd yakssok
+          echo "🔐 Create application.yml"
+          mkdir -p src/main/resources
+          echo "${{ secrets.DEV_YML }}" > src/main/resources/application.yml
+
+          echo "🏗️ Build Spring Boot"
+          chmod +x ./gradlew
+          ./gradlew build -x test
+
+          echo "🐳 Docker Build & Push"
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -t yakssok/yakssok:${IMAGE_TAG} .
+          docker push yakssok/yakssok:${IMAGE_TAG}
+
+      - name: 🚀 Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_KEY }}
           script: |
+            echo "📁 이동: docker-compose.yml이 있는 디렉토리로"
             cd ~/Yakssok_Server/yakssok
 
-            git fetch origin
-            git checkout ${{ github.ref_name }}
-            git reset --hard origin/${{ github.ref_name }}
+            echo "🛠️ docker-compose.yml에 태그 반영"
+            sed -i 's|image: yakssok/yakssok:.*|image: yakssok/yakssok:'"${{ github.sha }}"'|' docker-compose.yml
 
-            # 🔐 application-dev.yml 복원
-            echo "🔐 Restore application.yml"
-            mkdir -p ./src/main/resources
-            echo "${{ secrets.DEV_YML }}" | tee ./src/main/resources/application.yml > /dev/null
+            echo "🐳 Docker 로그인"
+            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
-            chmod +x ./gradlew
-            ./gradlew build -x test
+            echo "📦 이미지 최신 Pull"
+            docker compose pull app
 
-            docker compose -f docker-compose.yml down
-            docker compose -f docker-compose.yml up -d --build
+            echo "🔄 컨테이너 재시작"
+            docker compose down --remove-orphans
+            docker compose up -d --force-recreate
+
+            echo "🧹 이미지 정리"
+            docker image prune -a -f

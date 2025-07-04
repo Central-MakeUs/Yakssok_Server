@@ -65,4 +65,7 @@ dependencies {
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
 	implementation 'com.auth0:jwks-rsa:0.22.1'
 
+	//slack
+	implementation 'com.github.maricn:logback-slack-appender:1.4.0'
+
 }
