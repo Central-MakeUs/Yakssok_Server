@@ -46,16 +46,19 @@ jobs:
 
       - name: 🚀 Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          GITHUB_SHA: ${{ github.sha }}          # ← 실제 변수값 지정
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_KEY }}
+          envs: GITHUB_SHA                       # ← 이름만! (쉼표로 여러 개 가능)
           script: |
             echo "📁 이동: docker-compose.yml이 있는 디렉토리로"
             cd ~/Yakssok_Server/yakssok
 
             echo "🛠️ docker-compose.yml에 태그 반영"
-            sed -i 's|image: yakssok/yakssok:.*|image: yakssok/yakssok:'"${{ github.sha }}"'|' docker-compose.yml
+            sed -i 's|image: yakssok/yakssok:.*|image: yakssok/yakssok:'"$GITHUB_SHA"'|' docker-compose.yml
 
             echo "🐳 Docker 로그인"
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
@@ -64,8 +67,10 @@ jobs:
             docker compose pull app
 
             echo "🔄 컨테이너 재시작"
+            docker rm -f yakssok-app || true
             docker compose down --remove-orphans
             docker compose up -d --force-recreate
 
             echo "🧹 이미지 정리"
             docker image prune -a -f
+
