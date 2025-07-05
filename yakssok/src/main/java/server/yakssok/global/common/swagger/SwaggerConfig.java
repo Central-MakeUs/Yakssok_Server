@@ -3,6 +3,7 @@ package server.yakssok.global.common.swagger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
@@ -17,7 +18,7 @@ public class SwaggerConfig {
 
 	@Bean
 	public OpenAPI openAPI() {
-		final String securitySchemeName = "bearerAuth";
+		final String securitySchemeName = "Authorization";
 
 		return new OpenAPI()
 			.addServersItem(new Server().url(swaggerProperties.serverUrl()))
@@ -26,7 +27,7 @@ public class SwaggerConfig {
 				.description("약속 API 문서")
 				.version("v1"))
 			.addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
-			.components(new io.swagger.v3.oas.models.Components()
+			.components(new Components()
 				.addSecuritySchemes(securitySchemeName,
 					new SecurityScheme()
 						.name(securitySchemeName)
@@ -34,7 +35,6 @@ public class SwaggerConfig {
 						.scheme("bearer")
 						.bearerFormat("JWT")));
 	}
-
 	@Bean
 	public ApiErrorResponseCustomizer apiErrorResponseCustomizer() {
 		return new ApiErrorResponseCustomizer();

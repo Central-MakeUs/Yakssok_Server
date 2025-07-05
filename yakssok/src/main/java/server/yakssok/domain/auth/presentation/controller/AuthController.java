@@ -64,7 +64,8 @@ public class AuthController {
 	@ApiErrorResponse(ErrorCode.INVALID_JWT)
 	@PutMapping("/logout")
 	public ApiResponse logout(@AuthenticationPrincipal UserDetails userDetails) {
-		authService.logOut(Long.valueOf(userDetails.getUsername()));
+		Long userId = Long.valueOf(userDetails.getUsername());
+		authService.logOut(userId);
 		return ApiResponse.success();
 	}
 }

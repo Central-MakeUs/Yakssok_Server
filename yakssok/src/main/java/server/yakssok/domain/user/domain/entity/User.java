@@ -8,7 +8,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import server.yakssok.domain.BaseEntity;
@@ -61,5 +60,10 @@ public class User extends BaseEntity {
 
 	public void updateFcmToken(String fcmToken) {
 		this.fcmToken = fcmToken;
+	}
+
+	public void updateInfo(String nickname, String profileImageUrl) {
+		this.nickName = nickname;
+		this.profileImageUrl = profileImageUrl;
 	}
 }
