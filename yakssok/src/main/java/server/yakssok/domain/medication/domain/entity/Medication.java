@@ -2,6 +2,7 @@ package server.yakssok.domain.medication.domain.entity;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -28,9 +29,6 @@ public class Medication {
 
 	private String medicineName;
 
-	@Enumerated(EnumType.STRING)
-	private Cycle cycle;
-
 	private LocalTime alarmTime;
 
 	private LocalDate startDate;
@@ -44,4 +42,5 @@ public class Medication {
 	@JoinColumn(name = "user_id")
 	@ManyToOne(fetch = FetchType.LAZY)
 	private User user;
+
 }

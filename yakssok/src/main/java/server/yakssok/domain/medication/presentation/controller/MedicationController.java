@@ -1,0 +1,47 @@
+package server.yakssok.domain.medication.presentation.controller;
+
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import server.yakssok.domain.medication.application.service.MedicationService;
+import server.yakssok.domain.medication.presentation.dto.request.CreateMedicationRequest;
+import server.yakssok.domain.medication.presentation.dto.response.FindMedicationResponse;
+import server.yakssok.global.ApiResponse;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/medications")
+@Tag(name = "Medication", description = "복약 API")
+public class MedicationController {
+	private final MedicationService medicationService;
+
+
+	@Operation(summary = "복약 루틴 등록")
+	@PostMapping
+	public ApiResponse createMedication(
+		@Valid @RequestBody CreateMedicationRequest createMedicationRequest,
+		@AuthenticationPrincipal UserDetails userDetails
+	) {
+		Long userId = Long.valueOf(userDetails.getUsername());
+		medicationService.createMedication(userId, createMedicationRequest);
+		return ApiResponse.success();
+	}
+
+	@Operation(summary = "전체 복약 루틴 목록 조회")
+	@GetMapping
+	public ApiResponse<FindMedicationResponse> getMedications(
+		@AuthenticationPrincipal UserDetails userDetails
+	) {
+		Long userId = Long.valueOf(userDetails.getUsername());
+		return ApiResponse.success(medicationService.findMedications(userId));
+	}
+}

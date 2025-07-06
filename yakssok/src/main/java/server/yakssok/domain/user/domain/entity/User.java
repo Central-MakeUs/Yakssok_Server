@@ -28,11 +28,12 @@ public class User extends BaseEntity {
 	@Column(length = 500, unique = true)
 	private String providerId;
 
-
 	private boolean pushAgreement;
 
 	@Column(length = 500)
 	private String fcmToken;
+	@Column(unique = true)
+	private String inviteCode;
 
 	private User(String nickName, String profileImageUrl, OAuthType oAuthType, String providerId, boolean pushAgreement, String fcmToken) {
 		this.nickName = nickName;
