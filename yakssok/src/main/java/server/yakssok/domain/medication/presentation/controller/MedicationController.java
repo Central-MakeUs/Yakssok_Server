@@ -16,6 +16,9 @@ import server.yakssok.domain.medication.application.service.MedicationService;
 import server.yakssok.domain.medication.presentation.dto.request.CreateMedicationRequest;
 import server.yakssok.domain.medication.presentation.dto.response.FindMedicationResponse;
 import server.yakssok.global.ApiResponse;
+import server.yakssok.global.common.security.YakssokUserDetails;
+import server.yakssok.global.common.swagger.ApiErrorResponse;
+import server.yakssok.global.exception.ErrorCode;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,14 +27,14 @@ import server.yakssok.global.ApiResponse;
 public class MedicationController {
 	private final MedicationService medicationService;
 
-
 	@Operation(summary = "복약 루틴 등록")
+	@ApiErrorResponse(value = ErrorCode.INVALID_INPUT_VALUE)
 	@PostMapping
 	public ApiResponse createMedication(
 		@Valid @RequestBody CreateMedicationRequest createMedicationRequest,
-		@AuthenticationPrincipal UserDetails userDetails
+		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
-		Long userId = Long.valueOf(userDetails.getUsername());
+		Long userId = userDetails.getUserId();
 		medicationService.createMedication(userId, createMedicationRequest);
 		return ApiResponse.success();
 	}
@@ -39,9 +42,9 @@ public class MedicationController {
 	@Operation(summary = "전체 복약 루틴 목록 조회")
 	@GetMapping
 	public ApiResponse<FindMedicationResponse> getMedications(
-		@AuthenticationPrincipal UserDetails userDetails
+		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
-		Long userId = Long.valueOf(userDetails.getUsername());
+		Long userId = userDetails.getUserId();
 		return ApiResponse.success(medicationService.findMedications(userId));
 	}
 }

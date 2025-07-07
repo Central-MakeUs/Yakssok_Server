@@ -1,5 +1,9 @@
 package server.yakssok.domain.medication.domain.entity;
 
+import static server.yakssok.global.exception.ErrorCode.*;
+
+import server.yakssok.domain.medication.application.exception.MedicationException;
+
 public enum MedicationType {
 	CHRONIC("만성 질환 관리"),
 	MENTAL("정신 건강 관리"),
@@ -13,5 +17,13 @@ public enum MedicationType {
 
 	MedicationType(String label) {
 		this.label = label;
+	}
+
+	public static MedicationType from(String name) {
+		try {
+			return MedicationType.valueOf(name.toUpperCase());
+		} catch (IllegalArgumentException | NullPointerException e) {
+			throw new MedicationException(INVALID_INPUT_VALUE);
+		}
 	}
 }

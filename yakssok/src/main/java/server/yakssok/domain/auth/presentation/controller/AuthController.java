@@ -19,6 +19,7 @@ import server.yakssok.domain.auth.presentation.dto.request.ReissueRequest;
 import server.yakssok.domain.auth.presentation.dto.response.LoginResponse;
 import server.yakssok.domain.auth.presentation.dto.response.ReissueResponse;
 import server.yakssok.global.ApiResponse;
+import server.yakssok.global.common.security.YakssokUserDetails;
 import server.yakssok.global.common.swagger.ApiErrorResponse;
 import server.yakssok.global.common.swagger.ApiErrorResponses;
 import server.yakssok.global.exception.ErrorCode;
@@ -63,8 +64,8 @@ public class AuthController {
 	@Operation(summary = "로그아웃")
 	@ApiErrorResponse(ErrorCode.INVALID_JWT)
 	@PutMapping("/logout")
-	public ApiResponse logout(@AuthenticationPrincipal UserDetails userDetails) {
-		Long userId = Long.valueOf(userDetails.getUsername());
+	public ApiResponse logout(@AuthenticationPrincipal YakssokUserDetails userDetails) {
+		Long userId = userDetails.getUserId();
 		authService.logOut(userId);
 		return ApiResponse.success();
 	}

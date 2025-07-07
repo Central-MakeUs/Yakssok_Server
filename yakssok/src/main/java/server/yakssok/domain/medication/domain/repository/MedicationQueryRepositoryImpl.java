@@ -1,0 +1,25 @@
+package server.yakssok.domain.medication.domain.repository;
+
+import static server.yakssok.domain.medication.domain.entity.QMedication.*;
+
+import java.util.List;
+
+import com.querydsl.jpa.impl.JPAQueryFactory;
+
+import lombok.RequiredArgsConstructor;
+import server.yakssok.domain.medication.domain.entity.Medication;
+
+@RequiredArgsConstructor
+public class MedicationQueryRepositoryImpl implements MedicationQueryRepository{
+	private final JPAQueryFactory queryFactory;
+
+	@Override
+	public List<Medication> findAllUserMedications(Long userId) {
+		queryFactory
+			.selectFrom(medication)
+			.where(
+				medication.user.id.eq(userId)
+			);
+		return List.of();
+	}
+}
