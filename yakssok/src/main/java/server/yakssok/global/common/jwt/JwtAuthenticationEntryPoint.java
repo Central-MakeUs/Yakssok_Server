@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import server.yakssok.global.ApiResponse;
+import server.yakssok.global.common.reponse.ApiResponse;
 import server.yakssok.global.exception.ErrorCode;
 
 @Component

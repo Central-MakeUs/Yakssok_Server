@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 
 import server.yakssok.domain.medication.domain.entity.Medication;
 @Repository
-public interface MedicationRepository extends JpaRepository<Medication, Long> {
+public interface MedicationRepository extends JpaRepository<Medication, Long>, MedicationQueryRepository{
 }

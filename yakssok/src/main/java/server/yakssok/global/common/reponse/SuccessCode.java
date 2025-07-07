@@ -1,4 +1,4 @@
-package server.yakssok.global;
+package server.yakssok.global.common.reponse;
 
 import org.springframework.http.HttpStatus;
 

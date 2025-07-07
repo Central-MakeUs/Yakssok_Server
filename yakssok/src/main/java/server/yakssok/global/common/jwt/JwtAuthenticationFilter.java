@@ -16,7 +16,7 @@ import org.springframework.security.core.Authentication;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
-import server.yakssok.global.ApiResponse;
+import server.yakssok.global.common.reponse.ApiResponse;
 import server.yakssok.global.exception.ErrorCode;
 
 @RequiredArgsConstructor

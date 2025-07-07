@@ -1,7 +1,6 @@
 package server.yakssok.domain.medication.presentation.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,8 +13,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.medication.application.service.MedicationService;
 import server.yakssok.domain.medication.presentation.dto.request.CreateMedicationRequest;
-import server.yakssok.domain.medication.presentation.dto.response.FindMedicationResponse;
-import server.yakssok.global.ApiResponse;
+import server.yakssok.domain.medication.presentation.dto.response.FindMedicationResponseCard;
+import server.yakssok.global.common.reponse.ApiResponse;
+import server.yakssok.global.common.reponse.PageResponse;
 import server.yakssok.global.common.security.YakssokUserDetails;
 import server.yakssok.global.common.swagger.ApiErrorResponse;
 import server.yakssok.global.exception.ErrorCode;
@@ -41,7 +41,7 @@ public class MedicationController {
 
 	@Operation(summary = "전체 복약 루틴 목록 조회")
 	@GetMapping
-	public ApiResponse<FindMedicationResponse> getMedications(
+	public ApiResponse<PageResponse<FindMedicationResponseCard>> getMedications(
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
 		Long userId = userDetails.getUserId();
