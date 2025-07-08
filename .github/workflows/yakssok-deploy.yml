@@ -47,15 +47,15 @@ jobs:
       - name: 🚀 Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3
         env:
-          GITHUB_SHA: ${{ github.sha }}          # ← 실제 변수값 지정
+          GITHUB_SHA: ${{ github.sha }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_KEY }}
-          envs: GITHUB_SHA                       # ← 이름만! (쉼표로 여러 개 가능)
+          envs: GITHUB_SHA 
           script: |
             echo "📁 이동: docker-compose.yml이 있는 디렉토리로"
-            cd ~/Yakssok_Server/yakssok
+            cd ~/Yakssok_Server
 
             echo "🛠️ docker-compose.yml에 태그 반영"
             sed -i 's|image: yakssok/yakssok:.*|image: yakssok/yakssok:'"$GITHUB_SHA"'|' docker-compose.yml
