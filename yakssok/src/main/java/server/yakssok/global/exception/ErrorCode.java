@@ -20,7 +20,14 @@ public enum ErrorCode implements ResponseCode{
 
     //common
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, 9000, "서버 오류가 발생했습니다."),
-    INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, 9001, "잘못된 입력 값입니다.");
+    INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, 9001, "잘못된 입력 값입니다."),
+
+    // image
+    FAILED_FILE_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, 9100, "이미지 업로드에 실패했습니다."),
+    FAILED_FILE_DELETE(HttpStatus.INTERNAL_SERVER_ERROR, 9101, "이미지 삭제에 실패했습니다."),
+    UNSUPPORTED_FILE_TYPE(HttpStatus.BAD_REQUEST, 9102, "지원하지 않는 파일 타입입니다."),
+    INVALID_FILE_EXTENSION(HttpStatus.BAD_REQUEST, 9103, "지원하지 않는 파일 확장자입니다.");
+
 
     private final HttpStatus httpStatus;
     private final Integer code;
