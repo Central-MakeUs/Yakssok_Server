@@ -40,7 +40,7 @@ public class MedicationService {
 		Comparator<Medication> comparator = getMedicationComparator();
 		medications.sort(comparator);
 
-		Map<String, List<MedicationCardResponse>> group = groupByMedicationType(medications, comparator);
+		Map<String, List<MedicationCardResponse>> group = groupByMedicationType(medications, comparator); //TODO: n+1 문제 해결
 		return MedicationGroupedResponse.of(group);
 	}
 
@@ -82,12 +82,12 @@ public class MedicationService {
 
 	private void saveMedicationTimes(CreateMedicationRequest request, Medication medication) {
 		List<MedicationIntakeTime> medicationsTimes = request.toMedicationsTimes(medication);
-		medicationIntakeTimeRepository.saveAll(medicationsTimes);
+		medicationIntakeTimeRepository.saveAll(medicationsTimes); //TODO: 벌크 insert로 변경
 	}
 
 	private void saveMedicationDays(CreateMedicationRequest request, Medication medication) {
 		List<MedicationIntakeDay> intakeDays = request.toIntakeDays(medication);
-		medicationIntakeDayRepository.saveAll(intakeDays);
+		medicationIntakeDayRepository.saveAll(intakeDays); //TODO: 벌크 insert로 변경
 	}
 
 	private Medication saveMedication(CreateMedicationRequest request, User user) {
