@@ -35,8 +35,4 @@ public class MedicationIntakeTime {
 		this.time = time;
 		this.medication = medication;
 	}
-
-	void assignMedication(Medication medication) {
-		this.medication = medication;
-	}
 }

@@ -54,10 +54,15 @@ public class Medication {
 	private MedicationStatus medicationStatus;
 
 	@OneToMany(mappedBy = "medication", cascade = CascadeType.PERSIST)
-	private List<MedicationIntakeTime> medicationIntakeTimes = new ArrayList<>();
+	private List<MedicationIntakeTime> intakeTimes = new ArrayList<>();
+
+	@OneToMany(mappedBy = "medication", cascade = CascadeType.PERSIST)
+	private List<MedicationIntakeDay> intakeDays = new ArrayList<>();
+
+	private int intakeCount;
 
 	private Medication(String medicineName, LocalDate startDate, LocalDate endDate, AlarmSound alarmSound,
-		MedicationType medicationType, User user) {
+		MedicationType medicationType, User user, int intakeCount) {
 		this.medicineName = medicineName;
 		this.startDate = startDate;
 		this.endDate = endDate;
@@ -65,24 +70,20 @@ public class Medication {
 		this.medicationType = medicationType;
 		this.user = user;
 		this.medicationStatus = calculateStatus(startDate, endDate);
+		this.intakeCount = intakeCount;
 	}
 
 	public static Medication create(String medicineName, LocalDate startDate, LocalDate endDate,
-		AlarmSound alarmSound, MedicationType medicationType, User user) {
+		AlarmSound alarmSound, MedicationType medicationType, User user, int intakeCount) {
 		return new Medication(
 			medicineName,
 			startDate,
 			endDate,
 			alarmSound,
 			medicationType,
-			user
+			user,
+			intakeCount
 		);
-	}
-
-	//연관관계 편의 메서드
-	public void addIntakeTime(MedicationIntakeTime medicationIntakeTime) {
-		this.medicationIntakeTimes.add(medicationIntakeTime);
-		medicationIntakeTime.assignMedication(this); // 양방향 연관관계 설정
 	}
 
 	public void updateStatus() {

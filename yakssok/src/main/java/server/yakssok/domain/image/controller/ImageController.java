@@ -2,10 +2,11 @@ package server.yakssok.domain.image.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.image.service.ImageService;
 import server.yakssok.domain.image.dto.UploadImageResponse;
-import server.yakssok.global.ApiResponse;
+import server.yakssok.global.common.reponse.ApiResponse;
 import server.yakssok.global.common.swagger.ApiErrorResponse;
 import server.yakssok.global.common.swagger.ApiErrorResponses;
 import server.yakssok.global.exception.ErrorCode;
@@ -13,6 +14,7 @@ import server.yakssok.global.exception.ErrorCode;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+@Tag(name = "Image", description = "이미지 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/images")
@@ -33,7 +35,6 @@ public class ImageController {
     ) {
         return ApiResponse.success(imageService.upload(file, type));
     }
-
 
     @Operation(summary = "이미지 수정 (기존 삭제 + 새 업로드)")
     @ApiErrorResponses({

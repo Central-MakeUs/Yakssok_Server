@@ -1,5 +1,6 @@
 package server.yakssok.domain.medication.presentation.dto.request;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.List;
 import io.swagger.v3.oas.annotations.media.Schema;
 import server.yakssok.domain.medication.domain.entity.AlarmSound;
 import server.yakssok.domain.medication.domain.entity.Medication;
+import server.yakssok.domain.medication.domain.entity.MedicationIntakeDay;
 import server.yakssok.domain.medication.domain.entity.MedicationIntakeTime;
 import server.yakssok.domain.medication.domain.entity.MedicationType;
 import server.yakssok.domain.user.domain.entity.User;
@@ -27,13 +29,13 @@ public record CreateMedicationRequest(
 
 	@Schema(
 		description = "복용 요일",
-		example = "[\"MON\", \"WED\", \"FRI\"]",
-		allowableValues = {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"}
+		example = "[\"MONDAY\", \"TUESDAY\", \"WEDNESDAY\"]",
+		allowableValues = {"MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"}
 	)
 	List<String> intakeDays,
 
 	@Schema(description = "하루 복용 횟수", example = "1")
-	Integer repeatCount,
+	Integer intakeCount,
 
 	@Schema(description = "알람 종류", example = "YAKSSUK")
 	String alarmSound,
@@ -56,16 +58,24 @@ public record CreateMedicationRequest(
 			LocalDate.parse(endDate),
 			AlarmSound.from(alarmSound),
 			MedicationType.from(medicineType),
-			user
+			user,
+			intakeCount
 		);
 	}
 
 	public List<MedicationIntakeTime> toMedicationsTimes(Medication medication){
 		return intakeTimes.stream()
 			.map(intakeTimeRequest -> MedicationIntakeTime.create(
-				LocalTime.parse(intakeTimeRequest.time()),
-				medication
+				LocalTime.parse(intakeTimeRequest.time()), medication
 			))
+			.toList();
+	}
+
+	public List<MedicationIntakeDay> toIntakeDays(Medication medication) {
+		return intakeDays.stream()
+			.map(String::toUpperCase)
+			.map(DayOfWeek::valueOf)
+			.map(dayOfWeek -> MedicationIntakeDay.of(dayOfWeek, medication))
 			.toList();
 	}
 }
