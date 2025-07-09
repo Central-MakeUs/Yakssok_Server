@@ -9,6 +9,7 @@ import server.yakssok.domain.user.domain.entity.User;
 import server.yakssok.domain.user.domain.repository.UserRepository;
 import server.yakssok.domain.user.presentation.dto.request.UpdateUserInfoRequest;
 import server.yakssok.domain.user.presentation.dto.response.FindUserInfoResponse;
+import server.yakssok.domain.user.presentation.dto.response.FindUserInviteCodeResponse;
 import server.yakssok.global.exception.ErrorCode;
 
 @Service
@@ -37,5 +38,12 @@ public class UserService {
 	private User getUser(Long userId) {
 		return userRepository.findById(userId)
 			.orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+	}
+
+	public FindUserInviteCodeResponse findUserInviteCode(Long userId) {
+		User user = getUser(userId);
+		return new FindUserInviteCodeResponse(
+			user.getInviteCode().getValue()
+		);
 	}
 }

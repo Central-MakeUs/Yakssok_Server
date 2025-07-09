@@ -1,7 +1,6 @@
 package server.yakssok.domain.user.presentation.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,7 +14,9 @@ import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.user.application.service.UserService;
 import server.yakssok.domain.user.presentation.dto.request.UpdateUserInfoRequest;
 import server.yakssok.domain.user.presentation.dto.response.FindUserInfoResponse;
+import server.yakssok.domain.user.presentation.dto.response.FindUserInviteCodeResponse;
 import server.yakssok.global.ApiResponse;
+import server.yakssok.global.common.security.YakssokUserDetails;
 import server.yakssok.global.common.swagger.ApiErrorResponse;
 import server.yakssok.global.exception.ErrorCode;
 
@@ -30,9 +31,9 @@ public class UserController {
 	@ApiErrorResponse(ErrorCode.NOT_FOUND_USER)
 	@GetMapping("/me")
 	public ApiResponse<FindUserInfoResponse> findUserInfo(
-		@AuthenticationPrincipal UserDetails userDetails
+		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
-		Long userId = Long.valueOf(userDetails.getUsername());
+		Long userId = userDetails.getUserId();
 		return ApiResponse.success(userService.findUserInfo(userId));
 	}
 
@@ -41,10 +42,20 @@ public class UserController {
 	@PutMapping("/me")
 	public ApiResponse updateUserInfo(
 		@Valid @RequestBody UpdateUserInfoRequest userInfoRequest,
-		@AuthenticationPrincipal UserDetails userDetails
+		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
-		Long userId = Long.valueOf(userDetails.getUsername());
+		Long userId = userDetails.getUserId();
 		userService.updateUserInfo(userId, userInfoRequest);
 		return ApiResponse.success();
+	}
+
+	@Operation(summary = "초대 코드 조회")
+	@ApiErrorResponse(ErrorCode.NOT_FOUND_USER)
+	@GetMapping("/invite-code")
+	public ApiResponse<FindUserInviteCodeResponse> findUserInviteCode(
+		@AuthenticationPrincipal YakssokUserDetails userDetails
+	) {
+		Long userId = userDetails.getUserId();
+		return ApiResponse.success(userService.findUserInviteCode(userId));
 	}
 }
