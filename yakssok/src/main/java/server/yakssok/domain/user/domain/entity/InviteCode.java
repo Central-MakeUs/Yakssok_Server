@@ -15,7 +15,7 @@ import server.yakssok.global.exception.ErrorCode;
 public class InviteCode {
 	private String value;
 
-	private static final String FORMAT_REGEX = "^[a-z]{6}\\d{1}[a-z]{2}$";
+	private static final String FORMAT_REGEX = "^[A-Za-z]{6}\\d{1}[A-Za-z]{2}$";
 	private static final int LETTERS1_COUNT = 6;
 	private static final int LETTERS2_COUNT = 2;
 
@@ -41,7 +41,9 @@ public class InviteCode {
 	private static String randomLetters(int count) {
 		StringBuilder sb = new StringBuilder(count);
 		for (int i = 0; i < count; i++) {
-			char c = (char) ('a' + ThreadLocalRandom.current().nextInt(26));
+			boolean upper = ThreadLocalRandom.current().nextBoolean();
+			char base = upper ? 'A' : 'a';
+			char c = (char) (base + ThreadLocalRandom.current().nextInt(26));
 			sb.append(c);
 		}
 		return sb.toString();
