@@ -82,12 +82,12 @@ public class MedicationService {
 
 	private void saveMedicationTimes(CreateMedicationRequest request, Medication medication) {
 		List<MedicationIntakeTime> medicationsTimes = request.toMedicationsTimes(medication);
-		medicationIntakeTimeRepository.saveAll(medicationsTimes); //TODO: 벌크 insert로 변경
+		medicationIntakeTimeRepository.saveAll(medicationsTimes);
 	}
 
 	private void saveMedicationDays(CreateMedicationRequest request, Medication medication) {
 		List<MedicationIntakeDay> intakeDays = request.toIntakeDays(medication);
-		medicationIntakeDayRepository.saveAll(intakeDays); //TODO: 벌크 insert로 변경
+		medicationIntakeDayRepository.saveAll(intakeDays);
 	}
 
 	private Medication saveMedication(CreateMedicationRequest request, User user) {
