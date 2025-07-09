@@ -10,8 +10,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+@Getter
 @Entity
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class MedicationIntakeDay {
@@ -28,6 +29,7 @@ public class MedicationIntakeDay {
 	private MedicationIntakeDay(DayOfWeek dayOfWeek, Medication medication) {
 		this.dayOfWeek = dayOfWeek;
 		this.medication = medication;
+		medication.getIntakeDays().add(this);
 	}
 
 	public static MedicationIntakeDay of(DayOfWeek day, Medication medication) {

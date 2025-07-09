@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.medication.application.service.MedicationService;
 import server.yakssok.domain.medication.presentation.dto.request.CreateMedicationRequest;
 import server.yakssok.domain.medication.presentation.dto.response.MedicationCardResponse;
+import server.yakssok.domain.medication.presentation.dto.response.MedicationGroupedResponse;
 import server.yakssok.global.common.reponse.ApiResponse;
 import server.yakssok.global.common.reponse.PageResponse;
 import server.yakssok.global.common.security.YakssokUserDetails;
@@ -41,7 +42,7 @@ public class MedicationController {
 
 	@Operation(summary = "전체 복약 루틴 목록 조회")
 	@GetMapping
-	public ApiResponse<PageResponse<MedicationCardResponse>> getMedications(
+	public ApiResponse<MedicationGroupedResponse> getMedications(
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
 		Long userId = userDetails.getUserId();

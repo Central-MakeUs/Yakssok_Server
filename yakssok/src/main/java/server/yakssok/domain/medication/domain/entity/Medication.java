@@ -61,8 +61,15 @@ public class Medication {
 
 	private int intakeCount;
 
-	private Medication(String medicineName, LocalDate startDate, LocalDate endDate, AlarmSound alarmSound,
-		MedicationType medicationType, User user, int intakeCount) {
+	private Medication(
+		String medicineName,
+		LocalDate startDate,
+		LocalDate endDate,
+		AlarmSound alarmSound,
+		MedicationType medicationType,
+		User user,
+		int intakeCount
+	) {
 		this.medicineName = medicineName;
 		this.startDate = startDate;
 		this.endDate = endDate;
@@ -73,8 +80,15 @@ public class Medication {
 		this.intakeCount = intakeCount;
 	}
 
-	public static Medication create(String medicineName, LocalDate startDate, LocalDate endDate,
-		AlarmSound alarmSound, MedicationType medicationType, User user, int intakeCount) {
+	public static Medication create(
+		String medicineName,
+		LocalDate startDate,
+		LocalDate endDate,
+		AlarmSound alarmSound,
+		MedicationType medicationType,
+		User user,
+		int intakeCount
+	) {
 		return new Medication(
 			medicineName,
 			startDate,

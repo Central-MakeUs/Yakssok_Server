@@ -34,5 +34,6 @@ public class MedicationIntakeTime {
 	public MedicationIntakeTime(LocalTime time, Medication medication) {
 		this.time = time;
 		this.medication = medication;
+		medication.getIntakeTimes().add(this);
 	}
 }

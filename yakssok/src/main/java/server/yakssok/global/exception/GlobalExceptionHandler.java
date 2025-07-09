@@ -51,7 +51,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(RuntimeException.class)
 	protected ResponseEntity<ApiResponse> runtimeExceptionHandler(RuntimeException e) {
 		log.error("[{}] {} ({})", e.getClass().getSimpleName(), e.getMessage(), e.getStackTrace()[0]);
-
+		e.getStackTrace();
 		ResponseCode responseCode = ErrorCode.INTERNAL_SERVER_ERROR;
 		ApiResponse apiResponse = ApiResponse.error(
 			responseCode.getCode(),

@@ -15,11 +15,10 @@ public class MedicationQueryRepositoryImpl implements MedicationQueryRepository{
 
 	@Override
 	public List<Medication> findAllUserMedications(Long userId) {
-		queryFactory
+		return queryFactory
 			.selectFrom(medication)
 			.where(
 				medication.user.id.eq(userId)
-			);
-		return List.of();
+			).fetch();
 	}
 }

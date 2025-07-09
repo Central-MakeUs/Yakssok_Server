@@ -1,7 +1,12 @@
 package server.yakssok.domain.medication.application.service;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,11 +20,10 @@ import server.yakssok.domain.medication.domain.repository.MedicationIntakeDayRep
 import server.yakssok.domain.medication.domain.repository.MedicationIntakeTimeRepository;
 import server.yakssok.domain.medication.domain.repository.MedicationRepository;
 import server.yakssok.domain.medication.presentation.dto.request.CreateMedicationRequest;
-import server.yakssok.domain.medication.presentation.dto.response.GroupedMedicationResponse;
 import server.yakssok.domain.medication.presentation.dto.response.MedicationCardResponse;
+import server.yakssok.domain.medication.presentation.dto.response.MedicationGroupedResponse;
 import server.yakssok.domain.user.application.service.UserService;
 import server.yakssok.domain.user.domain.entity.User;
-import server.yakssok.global.common.reponse.PageResponse;
 
 
 @Service
@@ -31,19 +35,32 @@ public class MedicationService {
 	private final UserService userService;
 
 	@Transactional(readOnly = true)
-	public PageResponse<MedicationCardResponse> findMedications(Long userId) {
+	public MedicationGroupedResponse findMedications(Long userId) {
 		List<Medication> medications = medicationRepository.findAllUserMedications(userId); //TODO : fetch join
 
+		System.out.println("=========================1===========================");
 		//정렬
 		Comparator<Medication> comparator = Comparator
-			.comparing((Medication m) -> m.getMedicationType().getPriority()) // 1. 타입 순
-			.thenComparing(m -> m.getMedicationStatus().getPriority())     // 2. 상태 우선순위
-			.thenComparing(Medication::getId, Comparator.reverseOrder());  // 3. 최신순
-
+			.comparing((Medication m) -> m.getMedicationType().getPriority())
+			.thenComparing(m -> m.getMedicationStatus().getPriority())
+			.thenComparing(Medication::getId, Comparator.reverseOrder());
 		medications.sort(comparator);
-		//medications을 카테고리, 복약 상태, 최신순으로 정렬
-		return null;
 
+		System.out.println("==========================2==========================");
+		//map으로 반환
+		Map<String, List<MedicationCardResponse>> group = Arrays.stream(MedicationType.values())
+			.map(Enum::name)
+			.collect(Collectors.toMap(
+				typeName -> typeName,
+				typeName -> medications.stream()
+					.filter(med -> med.getMedicationType().name().equals(typeName))
+					.sorted(comparator)
+					.map(MedicationCardResponse::from)
+					.toList(),
+				(a, b) -> a,
+				LinkedHashMap::new
+			));
+		return MedicationGroupedResponse.of(group);
 	}
 
 	@Transactional
