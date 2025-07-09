@@ -1,6 +1,7 @@
 package server.yakssok.domain.medication.domain.repository;
 
 import static server.yakssok.domain.medication.domain.entity.QMedication.*;
+import static server.yakssok.domain.medication.domain.entity.QMedicationIntakeDay.*;
 
 import java.util.List;
 
@@ -17,8 +18,9 @@ public class MedicationQueryRepositoryImpl implements MedicationQueryRepository{
 	public List<Medication> findAllUserMedications(Long userId) {
 		return queryFactory
 			.selectFrom(medication)
-			.where(
-				medication.user.id.eq(userId)
-			).fetch();
+			.leftJoin(medication.intakeDays, medicationIntakeDay).fetchJoin()
+			.where(medication.user.id.eq(userId))
+			.distinct()
+			.fetch();
 	}
 }

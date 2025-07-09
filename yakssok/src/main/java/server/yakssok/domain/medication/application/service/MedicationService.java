@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -36,19 +35,30 @@ public class MedicationService {
 
 	@Transactional(readOnly = true)
 	public MedicationGroupedResponse findMedications(Long userId) {
-		List<Medication> medications = medicationRepository.findAllUserMedications(userId); //TODO : fetch join
+		List<Medication> medications = medicationRepository.findAllUserMedications(userId);
 
-		System.out.println("=========================1===========================");
-		//정렬
-		Comparator<Medication> comparator = Comparator
+		Comparator<Medication> comparator = getMedicationComparator();
+		medications.sort(comparator);
+
+		Map<String, List<MedicationCardResponse>> group = groupByMedicationType(medications, comparator);
+		return MedicationGroupedResponse.of(group);
+	}
+
+	/**
+	 * 복약 타입에 따라 정렬 기준을 설정합니다.
+	 * 1. MedicationType의 우선순위에 따라 정렬
+	 * 2. MedicationStatus의 우선순위에 따라 정렬
+	 * 3. ID를 기준으로 내림차순 정렬
+	 */
+	private Comparator<Medication> getMedicationComparator() {
+		return Comparator
 			.comparing((Medication m) -> m.getMedicationType().getPriority())
 			.thenComparing(m -> m.getMedicationStatus().getPriority())
 			.thenComparing(Medication::getId, Comparator.reverseOrder());
-		medications.sort(comparator);
+	}
 
-		System.out.println("==========================2==========================");
-		//map으로 반환
-		Map<String, List<MedicationCardResponse>> group = Arrays.stream(MedicationType.values())
+	private Map<String, List<MedicationCardResponse>> groupByMedicationType(List<Medication> medications, Comparator<Medication> comparator) {
+		return Arrays.stream(MedicationType.values())
 			.map(Enum::name)
 			.collect(Collectors.toMap(
 				typeName -> typeName,
@@ -60,7 +70,6 @@ public class MedicationService {
 				(a, b) -> a,
 				LinkedHashMap::new
 			));
-		return MedicationGroupedResponse.of(group);
 	}
 
 	@Transactional
