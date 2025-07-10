@@ -39,8 +39,6 @@ public class User extends BaseEntity {
 
 	@Column(length = 500)
 	private String fcmToken;
-	@Column(unique = true)
-	private String inviteCode;
 
 	private User(String nickName, String profileImageUrl, OAuthType oAuthType, String providerId, boolean pushAgreement, String fcmToken, InviteCode inviteCode) {
 		this.nickName = nickName;
