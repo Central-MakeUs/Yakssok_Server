@@ -1,6 +1,8 @@
 package server.yakssok.domain.user.domain.entity;
 
+import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -31,18 +33,23 @@ public class User extends BaseEntity {
 
 	private boolean pushAgreement;
 
+	@Embedded
+	@AttributeOverride(name = "value", column = @Column(name = "invite_code", unique = true, nullable = false, length = 20))
+	private InviteCode inviteCode; //회원가입 시 생성
+
 	@Column(length = 500)
 	private String fcmToken;
 	@Column(unique = true)
 	private String inviteCode;
 
-	private User(String nickName, String profileImageUrl, OAuthType oAuthType, String providerId, boolean pushAgreement, String fcmToken) {
+	private User(String nickName, String profileImageUrl, OAuthType oAuthType, String providerId, boolean pushAgreement, String fcmToken, InviteCode inviteCode) {
 		this.nickName = nickName;
 		this.profileImageUrl = profileImageUrl;
 		this.oAuthType = oAuthType;
 		this.providerId = providerId;
 		this.pushAgreement = pushAgreement;
 		this.fcmToken = fcmToken;
+		this.inviteCode = inviteCode;
 	}
 
 	public static User create(String nickName, String profileImageUrl, String oauthType, String providerId, boolean pushAgreement, String fcmToken) {
@@ -52,7 +59,8 @@ public class User extends BaseEntity {
 			OAuthType.from(oauthType),
 			providerId,
 			pushAgreement,
-			fcmToken
+			fcmToken,
+			InviteCode.generate()
 		);
 	}
 

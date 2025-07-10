@@ -14,7 +14,8 @@ import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.user.application.service.UserService;
 import server.yakssok.domain.user.presentation.dto.request.UpdateUserInfoRequest;
 import server.yakssok.domain.user.presentation.dto.response.FindUserInfoResponse;
-import server.yakssok.global.common.reponse.ApiResponse;
+import server.yakssok.domain.user.presentation.dto.response.FindUserInviteCodeResponse;
+import server.yakssok.global.ApiResponse;
 import server.yakssok.global.common.security.YakssokUserDetails;
 import server.yakssok.global.common.swagger.ApiErrorResponse;
 import server.yakssok.global.exception.ErrorCode;
@@ -46,5 +47,15 @@ public class UserController {
 		Long userId = userDetails.getUserId();
 		userService.updateUserInfo(userId, userInfoRequest);
 		return ApiResponse.success();
+	}
+
+	@Operation(summary = "초대 코드 조회")
+	@ApiErrorResponse(ErrorCode.NOT_FOUND_USER)
+	@GetMapping("/invite-code")
+	public ApiResponse<FindUserInviteCodeResponse> findUserInviteCode(
+		@AuthenticationPrincipal YakssokUserDetails userDetails
+	) {
+		Long userId = userDetails.getUserId();
+		return ApiResponse.success(userService.findUserInviteCode(userId));
 	}
 }
