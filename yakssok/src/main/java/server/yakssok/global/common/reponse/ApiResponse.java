@@ -1,6 +1,6 @@
-package server.yakssok.global;
+package server.yakssok.global.common.reponse;
 
-import static server.yakssok.global.SuccessCode.*;
+import static server.yakssok.global.common.reponse.SuccessCode.*;
 
 import java.util.HashMap;
 

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import lombok.extern.slf4j.Slf4j;
-import server.yakssok.global.ApiResponse;
+import server.yakssok.global.common.reponse.ApiResponse;
 
 @RestControllerAdvice
 @Slf4j
@@ -51,7 +51,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(RuntimeException.class)
 	protected ResponseEntity<ApiResponse> runtimeExceptionHandler(RuntimeException e) {
 		log.error("[{}] {} ({})", e.getClass().getSimpleName(), e.getMessage(), e.getStackTrace()[0]);
-
+		e.getStackTrace();
 		ResponseCode responseCode = ErrorCode.INTERNAL_SERVER_ERROR;
 		ApiResponse apiResponse = ApiResponse.error(
 			responseCode.getCode(),

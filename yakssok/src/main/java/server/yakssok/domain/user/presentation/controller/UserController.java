@@ -15,7 +15,7 @@ import server.yakssok.domain.user.application.service.UserService;
 import server.yakssok.domain.user.presentation.dto.request.UpdateUserInfoRequest;
 import server.yakssok.domain.user.presentation.dto.response.FindUserInfoResponse;
 import server.yakssok.domain.user.presentation.dto.response.FindUserInviteCodeResponse;
-import server.yakssok.global.ApiResponse;
+import server.yakssok.global.common.reponse.ApiResponse;
 import server.yakssok.global.common.security.YakssokUserDetails;
 import server.yakssok.global.common.swagger.ApiErrorResponse;
 import server.yakssok.global.exception.ErrorCode;
