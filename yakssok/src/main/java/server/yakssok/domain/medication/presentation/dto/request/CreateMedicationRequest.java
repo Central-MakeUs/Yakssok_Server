@@ -51,14 +51,14 @@ public record CreateMedicationRequest(
 
 	) {}
 
-	public Medication toMedication(User user) {
+	public Medication toMedication(Long userId) {
 		return Medication.create(
 			name,
 			LocalDate.parse(startDate),
 			LocalDate.parse(endDate),
 			AlarmSound.from(alarmSound),
 			MedicationType.from(medicineType),
-			user,
+			userId,
 			intakeCount
 		);
 	}

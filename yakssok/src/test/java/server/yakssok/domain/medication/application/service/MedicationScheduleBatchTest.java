@@ -75,7 +75,7 @@ public class MedicationScheduleBatchTest {
 					endDate,
 					AlarmSound.YAKSSUK,
 					MedicationType.CHRONIC,
-					user,
+					user.getId(),
 					1
 				);
 				MedicationIntakeDay.of(dayOfWeek, medication);

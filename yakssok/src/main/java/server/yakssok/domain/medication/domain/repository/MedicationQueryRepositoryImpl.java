@@ -24,7 +24,7 @@ public class MedicationQueryRepositoryImpl implements MedicationQueryRepository{
 		return queryFactory
 			.selectFrom(medication)
 			.leftJoin(medication.intakeDays, medicationIntakeDay).fetchJoin()
-			.where(medication.user.id.eq(userId))
+			.where(medication.userId.eq(userId))
 			.distinct()
 			.fetch();
 	}
@@ -36,7 +36,7 @@ public class MedicationQueryRepositoryImpl implements MedicationQueryRepository{
 				medication.id,
 				medication.medicineName,
 				medicationIntakeTime.time,
-				medication.user.id
+				medication.userId
 			))
 			.from(medication)
 			.join(medication.intakeDays, medicationIntakeDay)

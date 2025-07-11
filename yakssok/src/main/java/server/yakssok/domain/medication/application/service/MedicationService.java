@@ -74,8 +74,7 @@ public class MedicationService {
 
 	@Transactional
 	public void createMedication(Long userId, CreateMedicationRequest request) {
-		User user = userService.getUser(userId);
-		Medication medication = saveMedication(request, user);
+		Medication medication = saveMedication(request, userId);
 		saveMedicationTimes(request, medication);
 		saveMedicationDays(request, medication);
 	}
@@ -90,8 +89,8 @@ public class MedicationService {
 		medicationIntakeDayRepository.saveAll(intakeDays);
 	}
 
-	private Medication saveMedication(CreateMedicationRequest request, User user) {
-		Medication medication = request.toMedication(user);
+	private Medication saveMedication(CreateMedicationRequest request, Long userId) {
+		Medication medication = request.toMedication(userId);
 		medicationRepository.save(medication);
 		return medication;
 	}
