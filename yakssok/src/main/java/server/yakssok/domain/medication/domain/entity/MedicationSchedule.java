@@ -4,12 +4,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,15 +16,18 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class MedicationRecord {
+public class MedicationSchedule {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private LocalDate date;
-	private LocalTime time;
-	private boolean isTaken;
+	private String medicineName;
 
-	@JoinColumn(name = "medication_id")
-	@ManyToOne(fetch = FetchType.LAZY)
-	private Medication medication;
+	private LocalDate scheduledDate;
+	private LocalTime scheduledTime;
+	private boolean isTaken;
+	private Long medicationId;
+
+	public static MedicationSchedule create(String medicineName, LocalDate scheduledDate, LocalTime scheduledTime, Long medicationId) {
+		return new MedicationSchedule(null, medicineName, scheduledDate, scheduledTime, false, medicationId);
+	}
 }
