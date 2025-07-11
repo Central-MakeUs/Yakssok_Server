@@ -36,6 +36,6 @@ public class MedicationScheduleService {
 			))
 			.toList();
 
-		medicationScheduleRepository.batchInsert(schedules); //TODO: 배치 인서트
+		medicationScheduleRepository.batchInsert(schedules);
 	}
 }
