@@ -13,6 +13,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.medication.domain.entity.Medication;
+import server.yakssok.domain.medication.domain.repository.dto.MedicationScheduleDto;
 
 @RequiredArgsConstructor
 public class MedicationQueryRepositoryImpl implements MedicationQueryRepository{

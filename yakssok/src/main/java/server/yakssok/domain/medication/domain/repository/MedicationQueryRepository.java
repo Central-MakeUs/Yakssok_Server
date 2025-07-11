@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import server.yakssok.domain.medication.domain.entity.Medication;
+import server.yakssok.domain.medication.domain.repository.dto.MedicationScheduleDto;
 
 public interface MedicationQueryRepository {
 	List<Medication> findAllUserMedications(Long userId);

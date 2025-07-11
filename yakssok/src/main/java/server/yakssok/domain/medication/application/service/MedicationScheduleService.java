@@ -10,14 +10,14 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.medication.domain.entity.MedicationSchedule;
 import server.yakssok.domain.medication.domain.repository.MedicationRepository;
-import server.yakssok.domain.medication.domain.repository.MedicationScheduleDto;
-import server.yakssok.domain.medication.domain.repository.MedicationScheduleRepository;
+import server.yakssok.domain.medication.domain.repository.MedicationScheduleJdbcRepository;
+import server.yakssok.domain.medication.domain.repository.dto.MedicationScheduleDto;
 
 @Service
 @RequiredArgsConstructor
 public class MedicationScheduleService {
 
-	private final MedicationScheduleRepository medicationScheduleRepository;
+	private final MedicationScheduleJdbcRepository medicationScheduleRepository;
 	private final MedicationRepository medicationRepository;
 
 	@Transactional
@@ -27,8 +27,6 @@ public class MedicationScheduleService {
 
 		List<MedicationScheduleDto> medicationScheduleDtos =
 			medicationRepository.findMedicationsByDate(today, todayDayOfWeek);
-
-		System.out.println("medicationScheduleDtos.isEmpty() = " + medicationScheduleDtos.isEmpty());
 		List<MedicationSchedule> schedules = medicationScheduleDtos.stream()
 			.map(dto -> MedicationSchedule.create(
 				dto.medicineName(),
@@ -38,6 +36,6 @@ public class MedicationScheduleService {
 			))
 			.toList();
 
-		medicationScheduleRepository.saveAll(schedules); //TODO: 배치 인서트
+		medicationScheduleRepository.batchInsert(schedules); //TODO: 배치 인서트
 	}
 }
