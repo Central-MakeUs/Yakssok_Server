@@ -8,6 +8,7 @@ import server.yakssok.domain.user.application.exception.UserException;
 import server.yakssok.domain.user.domain.entity.User;
 import server.yakssok.domain.user.domain.repository.UserRepository;
 import server.yakssok.domain.user.presentation.dto.request.UpdateUserInfoRequest;
+import server.yakssok.domain.user.presentation.dto.response.FindMyInfoResponse;
 import server.yakssok.domain.user.presentation.dto.response.FindUserInfoResponse;
 import server.yakssok.domain.user.presentation.dto.response.FindUserInviteCodeResponse;
 import server.yakssok.global.exception.ErrorCode;
@@ -18,9 +19,9 @@ public class UserService {
 	private final UserRepository userRepository;
 
 	@Transactional
-	public FindUserInfoResponse findUserInfo(Long userId) {
+	public FindMyInfoResponse findMyInfo(Long userId) {
 		User user = getUser(userId);
-		return new FindUserInfoResponse(
+		return new FindMyInfoResponse(
 			user.getNickName(),
 			user.getProfileImageUrl()
 		);
@@ -44,6 +45,15 @@ public class UserService {
 		User user = getUser(userId);
 		return new FindUserInviteCodeResponse(
 			user.getInviteCode().getValue()
+		);
+	}
+
+	public FindUserInfoResponse findUserInfoByInviteCode(String inviteCode) {
+		User user = userRepository.findByInviteCodeValue(inviteCode)
+			.orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
+		return new FindUserInfoResponse(
+			user.getNickName(),
+			user.getProfileImageUrl()
 		);
 	}
 }
