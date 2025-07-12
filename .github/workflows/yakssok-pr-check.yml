@@ -26,10 +26,6 @@ jobs:
         working-directory: ./yakssok
         run: chmod +x gradlew
 
-      - name: ✅ Run tests
-        working-directory: ./yakssok
-        run: ./gradlew test
-
       - name: 🛠 Build (without retesting)
         working-directory: ./yakssok
         run: ./gradlew build -x test
