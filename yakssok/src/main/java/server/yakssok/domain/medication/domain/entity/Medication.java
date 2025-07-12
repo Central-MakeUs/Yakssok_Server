@@ -9,18 +9,14 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import server.yakssok.domain.user.domain.entity.User;
 
 @Entity
 @Getter
@@ -45,9 +41,7 @@ public class Medication {
 	@Enumerated(EnumType.STRING)
 	private MedicationType medicationType;
 
-	@JoinColumn(name = "user_id")
-	@ManyToOne(fetch = FetchType.LAZY)
-	private User user;
+	private Long userId;
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -67,7 +61,7 @@ public class Medication {
 		LocalDate endDate,
 		AlarmSound alarmSound,
 		MedicationType medicationType,
-		User user,
+		Long userId,
 		int intakeCount
 	) {
 		this.medicineName = medicineName;
@@ -75,7 +69,7 @@ public class Medication {
 		this.endDate = endDate;
 		this.alarmSound = alarmSound;
 		this.medicationType = medicationType;
-		this.user = user;
+		this.userId = userId;
 		this.medicationStatus = calculateStatus(startDate, endDate);
 		this.intakeCount = intakeCount;
 	}
@@ -86,7 +80,7 @@ public class Medication {
 		LocalDate endDate,
 		AlarmSound alarmSound,
 		MedicationType medicationType,
-		User user,
+		Long userId,
 		int intakeCount
 	) {
 		return new Medication(
@@ -95,7 +89,7 @@ public class Medication {
 			endDate,
 			alarmSound,
 			medicationType,
-			user,
+			userId,
 			intakeCount
 		);
 	}
