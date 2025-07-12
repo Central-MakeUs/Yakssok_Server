@@ -25,12 +25,12 @@ jobs:
       - name: 🔧 Make gradlew executable
         working-directory: ./yakssok
         run: chmod +x gradlew
-
+        
       - name: 📝 Create application-test.yml from secret
+        working-directory: ./yakssok
         run: |
-          mkdir -p ./yakssok/src/test/resources
-          echo "${{ secrets.TEST_YML }}" > ./yakssok/src/test/resources/application-test.yml
-          echo "✅ application-test.yml created"
+          mkdir -p src/test/resources
+          echo "${{ secrets.TEST_YML }}" > src/test/resources/application-test.yml
 
       - name: ✅ Run tests
         working-directory: ./yakssok
