@@ -75,8 +75,9 @@ dependencies {
 	//s3
 	implementation 'software.amazon.awssdk:s3:2.25.3'
 
-	//junit
+	//test
 	testImplementation 'org.junit.jupiter:junit-jupiter'
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'com.h2database:h2:2.2.224'
 }
