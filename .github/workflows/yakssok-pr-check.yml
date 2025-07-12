@@ -30,7 +30,7 @@ jobs:
         working-directory: ./yakssok/src/test/resources
         run: |
           mkdir -p ./yakssok/src/test/resources
-          echo "${{ secrets.TEST_YML }}" > application-test.yml
+          echo "${{ secrets.TEST_YML }}" > ./yakssok/src/test/resources/application-test.yml
 
       - name: ✅ Run tests
         working-directory: ./yakssok
