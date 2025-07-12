@@ -32,12 +32,6 @@ jobs:
           mkdir -p src/test/resources
           echo "${{ secrets.TEST_YML }}" > src/test/resources/application-test.yml
 
-      - name: 📝 Create application-test.yml from secret
-        working-directory: ./yakssok/src/test/resources
-        run: |
-          mkdir -p ./yakssok/src/test/resources
-          echo "${{ secrets.TEST_YML }}" > application-test.yml
-
       - name: ✅ Run tests
         working-directory: ./yakssok
         run: ./gradlew test -Dspring.profiles.active=test
