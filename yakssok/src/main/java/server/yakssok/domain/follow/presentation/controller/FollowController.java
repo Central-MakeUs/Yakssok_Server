@@ -1,6 +1,7 @@
 package server.yakssok.domain.follow.presentation.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import server.yakssok.domain.follow.presentation.dto.response.FollowInfoGroupResponse;
+import server.yakssok.domain.follow.presentation.dto.response.FollowInfoResponse;
 import server.yakssok.domain.follow.applcation.service.FollowService;
 import server.yakssok.domain.follow.presentation.dto.request.FollowRequest;
 import server.yakssok.global.common.reponse.ApiResponse;
@@ -30,5 +33,14 @@ public class FollowController {
 	) {
 		friendService.followByInviteCode(userDetails.getUserId(), followRequest);
 		return ApiResponse.success();
+	}
+
+	@Operation(summary = "내가 팔로우한 지인 목록 조회")
+	@GetMapping
+	public ApiResponse<FollowInfoGroupResponse<FollowInfoResponse>> findMyFollowings(
+		@AuthenticationPrincipal YakssokUserDetails userDetails
+	) {
+		FollowInfoGroupResponse<FollowInfoResponse> followings = friendService.findMyFollowings(userDetails.getUserId());
+		return ApiResponse.success(followings);
 	}
 }

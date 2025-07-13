@@ -64,4 +64,9 @@ public class UserService {
 			.orElseThrow(() -> new UserException(ErrorCode.INVALID_INVITE_CODE));
 		return user.getId();
 	}
+
+	public String findUserProfileByUserId(Long followingId) {
+		User user = getUserByUserId(followingId);
+		return user.getProfileImageUrl();
+	}
 }

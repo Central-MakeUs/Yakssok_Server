@@ -1,5 +1,6 @@
 package server.yakssok.domain.follow.applcation.service;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.springframework.stereotype.Service;
@@ -10,6 +11,8 @@ import server.yakssok.domain.follow.applcation.exception.FollowException;
 import server.yakssok.domain.follow.domain.entity.Follow;
 import server.yakssok.domain.follow.domain.repository.FollowRepository;
 import server.yakssok.domain.follow.presentation.dto.request.FollowRequest;
+import server.yakssok.domain.follow.presentation.dto.response.FollowInfoGroupResponse;
+import server.yakssok.domain.follow.presentation.dto.response.FollowInfoResponse;
 import server.yakssok.domain.user.application.service.UserService;
 import server.yakssok.global.exception.ErrorCode;
 
@@ -51,6 +54,19 @@ public class FollowService {
 		if (isExists) {
 			throw new FollowException(ErrorCode.ALREADY_FRIEND);
 		}
+	}
+
+	@Transactional
+	public FollowInfoGroupResponse<FollowInfoResponse> findMyFollowings(Long userId) {
+		List<Follow> followList = followRepository.findAllByFollowerId(userId);
+		List<FollowInfoResponse> followInfoResponses = followList.stream()
+			.map(follow -> {
+				Long followingId = follow.getFollowingId();
+				String relationName = follow.getRelationName();
+				String profileImageUrl = userService.findUserProfileByUserId(followingId);
+				return new FollowInfoResponse(followingId, relationName, profileImageUrl);
+			}).toList();
+		return FollowInfoGroupResponse.of(followInfoResponses);
 	}
 }
 
