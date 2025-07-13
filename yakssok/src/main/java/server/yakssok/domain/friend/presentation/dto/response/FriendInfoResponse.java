@@ -1,8 +1,8 @@
-package server.yakssok.domain.follow.presentation.dto.response;
+package server.yakssok.domain.friend.presentation.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-public record FollowInfoResponse(
+public record FriendInfoResponse(
 	@Schema(description = "지인 ID", example = "1")
 	Long userId,
 	@Schema(description = "관계명", example = "엄마")

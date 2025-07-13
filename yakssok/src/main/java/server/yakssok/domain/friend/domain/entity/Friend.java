@@ -1,4 +1,4 @@
-package server.yakssok.domain.follow.domain.entity;
+package server.yakssok.domain.friend.domain.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,14 +13,20 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Follow {
+public class Friend {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private Long followerId;
-	private Long followingId;
+	private Long userId;
+	private Long followingFriendId;
 	private String relationName;
 
-	public static Follow create(Long followerId, Long followingId, String relationName) {
-		return new Follow(null, followerId, followingId, relationName);
+	public static Friend create(Long userId, Long followingFriendId, String relationName) {
+		return new Friend(userId, followingFriendId, relationName);
+	}
+
+	private Friend(Long userId, Long followingFriendId, String relationName) {
+		this.userId = userId;
+		this.followingFriendId = followingFriendId;
+		this.relationName = relationName;
 	}
 }
