@@ -21,8 +21,6 @@ import server.yakssok.domain.medication.domain.repository.MedicationRepository;
 import server.yakssok.domain.medication.presentation.dto.request.CreateMedicationRequest;
 import server.yakssok.domain.medication.presentation.dto.response.MedicationCardResponse;
 import server.yakssok.domain.medication.presentation.dto.response.MedicationGroupedResponse;
-import server.yakssok.domain.user.application.service.UserService;
-import server.yakssok.domain.user.domain.entity.User;
 
 
 @Service
@@ -31,7 +29,6 @@ public class MedicationService {
 	private final MedicationRepository medicationRepository;
 	private final MedicationIntakeDayRepository medicationIntakeDayRepository;
 	private final MedicationIntakeTimeRepository medicationIntakeTimeRepository;
-	private final UserService userService;
 
 	@Transactional(readOnly = true)
 	public MedicationGroupedResponse findMedications(Long userId) {

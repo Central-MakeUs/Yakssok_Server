@@ -34,7 +34,8 @@ public class AuthController {
 	@ApiErrorResponses(value = {
 		@ApiErrorResponse(ErrorCode.INVALID_OAUTH_TOKEN),
 		@ApiErrorResponse(ErrorCode.UNSUPPORTED_OAUTH_PROVIDER),
-		@ApiErrorResponse(ErrorCode.DUPLICATE_USER)
+		@ApiErrorResponse(ErrorCode.DUPLICATE_USER),
+		@ApiErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR)
 	})
 	@PostMapping("/join")
 	public ApiResponse join(@Valid @RequestBody JoinRequest joinRequest) {
