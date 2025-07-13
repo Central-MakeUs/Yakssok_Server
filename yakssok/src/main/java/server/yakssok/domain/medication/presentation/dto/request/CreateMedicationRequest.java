@@ -11,7 +11,6 @@ import server.yakssok.domain.medication.domain.entity.Medication;
 import server.yakssok.domain.medication.domain.entity.MedicationIntakeDay;
 import server.yakssok.domain.medication.domain.entity.MedicationIntakeTime;
 import server.yakssok.domain.medication.domain.entity.MedicationType;
-import server.yakssok.domain.user.domain.entity.User;
 
 @Schema(description = "약 복용 등록 요청")
 public record CreateMedicationRequest(
@@ -40,16 +39,12 @@ public record CreateMedicationRequest(
 	@Schema(description = "알람 종류", example = "YAKSSUK")
 	String alarmSound,
 
-	@Schema(description = "복용 시간 목록")
-	List<IntakeTimeRequest> intakeTimes
+	@Schema(
+		description = "복용 시간",
+		example = "[\"8:00\", \"13:00\"]"
+	)
+	List<String> intakeTimes
 ) {
-
-	@Schema(description = "복용 시간 정보")
-	public record IntakeTimeRequest(
-		@Schema(description = "복용 시간 (HH:mm 형식)", example = "08:00")
-		String time
-
-	) {}
 
 	public Medication toMedication(Long userId) {
 		return Medication.create(
@@ -65,8 +60,8 @@ public record CreateMedicationRequest(
 
 	public List<MedicationIntakeTime> toMedicationsTimes(Medication medication){
 		return intakeTimes.stream()
-			.map(intakeTimeRequest -> MedicationIntakeTime.create(
-				LocalTime.parse(intakeTimeRequest.time()), medication
+			.map(intakeTime -> MedicationIntakeTime.create(
+				LocalTime.parse(intakeTime), medication
 			))
 			.toList();
 	}
