@@ -63,8 +63,7 @@ public class UserController {
 	}
 
 	@Operation(summary = "초대 코드로 유저 정보 조회")
-	@ApiErrorResponse(ErrorCode.NOT_FOUND_USER)
-	@ApiErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR)
+	@ApiErrorResponse(ErrorCode.INVALID_INVITE_CODE)
 	@GetMapping
 	public ApiResponse<FindUserInfoResponse> findUserInfoByInviteCode(
 		@Parameter(description = "초대 코드", required = true, example = "JoWRYS3Fz")
