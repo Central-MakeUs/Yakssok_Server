@@ -73,7 +73,7 @@ public class MedicationScheduleBatchTest {
 					"약-" + i,
 					startDate,
 					endDate,
-					AlarmSound.YAKSSUK,
+					AlarmSound.FEEL_GOOD,
 					MedicationType.CHRONIC,
 					user.getId(),
 					1
