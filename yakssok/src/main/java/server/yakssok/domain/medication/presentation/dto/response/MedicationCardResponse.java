@@ -7,7 +7,7 @@ import server.yakssok.domain.medication.domain.entity.Medication;
 
 @Schema(description = "복약 정보")
 public record MedicationCardResponse(
-	@Schema(description = "약 종류", example = "만성 질환 관리")
+	@Schema(description = "약 종류", example = "CHRONIC")
 	String medicationType,
 
 	@Schema(description = "약 이름", example = "타이레놀")
@@ -28,7 +28,7 @@ public record MedicationCardResponse(
 ) {
 	public static MedicationCardResponse from(Medication medication) {
 		return new MedicationCardResponse(
-			medication.getMedicationType().getLabel(),
+			medication.getMedicationType().name(),
 			medication.getMedicineName(),
 			medication.getMedicationStatus().name(),
 			medication.getIntakeDays().stream()
