@@ -14,14 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import lombok.extern.slf4j.Slf4j;
-import server.yakssok.domain.medication.batch.MedicationScheduleJob;
+import server.yakssok.domain.medication_schedule.application.batch.MedicationScheduleJob;
 import server.yakssok.domain.medication.domain.entity.AlarmSound;
 import server.yakssok.domain.medication.domain.entity.Medication;
 import server.yakssok.domain.medication.domain.entity.MedicationIntakeDay;
 import server.yakssok.domain.medication.domain.entity.MedicationIntakeTime;
 import server.yakssok.domain.medication.domain.entity.MedicationType;
 import server.yakssok.domain.medication.domain.repository.MedicationRepository;
-import server.yakssok.domain.medication.domain.repository.MedicationScheduleRepository;
+import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleRepository;
 import server.yakssok.domain.user.domain.entity.User;
 import server.yakssok.domain.user.domain.repository.UserRepository;
 

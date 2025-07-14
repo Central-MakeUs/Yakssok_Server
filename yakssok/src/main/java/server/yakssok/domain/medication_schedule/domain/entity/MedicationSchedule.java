@@ -1,4 +1,4 @@
-package server.yakssok.domain.medication.domain.entity;
+package server.yakssok.domain.medication_schedule.domain.entity;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -20,14 +20,19 @@ public class MedicationSchedule {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private String medicineName;
-
 	private LocalDate scheduledDate;
 	private LocalTime scheduledTime;
 	private boolean isTaken;
 	private Long medicationId;
 
-	public static MedicationSchedule create(String medicineName, LocalDate scheduledDate, LocalTime scheduledTime, Long medicationId) {
-		return new MedicationSchedule(null, medicineName, scheduledDate, scheduledTime, false, medicationId);
+	public static MedicationSchedule create(LocalDate scheduledDate, LocalTime scheduledTime, Long medicationId) {
+		return new MedicationSchedule(scheduledDate, scheduledTime, false, medicationId);
+	}
+
+	private MedicationSchedule(LocalDate scheduledDate, LocalTime scheduledTime, boolean isTaken, Long medicationId) {
+		this.scheduledDate = scheduledDate;
+		this.scheduledTime = scheduledTime;
+		this.isTaken = isTaken;
+		this.medicationId = medicationId;
 	}
 }

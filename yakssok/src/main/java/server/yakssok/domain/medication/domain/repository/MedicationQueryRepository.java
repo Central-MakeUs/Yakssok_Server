@@ -5,9 +5,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 import server.yakssok.domain.medication.domain.entity.Medication;
-import server.yakssok.domain.medication.domain.repository.dto.MedicationScheduleDto;
+import server.yakssok.domain.medication.domain.repository.dto.MedicationDto;
 
 public interface MedicationQueryRepository {
 	List<Medication> findAllUserMedications(Long userId);
-	List<MedicationScheduleDto> findMedicationsByDate(LocalDate date, DayOfWeek dayOfWeek);
+	List<MedicationDto> findMedicationsByDate(LocalDate date, DayOfWeek dayOfWeek);
 }

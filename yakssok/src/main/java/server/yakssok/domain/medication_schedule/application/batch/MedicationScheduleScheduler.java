@@ -1,4 +1,4 @@
-package server.yakssok.domain.medication.batch;
+package server.yakssok.domain.medication_schedule.application.batch;
 
 
 import org.springframework.scheduling.annotation.Scheduled;

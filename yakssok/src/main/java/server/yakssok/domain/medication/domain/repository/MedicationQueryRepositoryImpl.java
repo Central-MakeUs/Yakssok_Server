@@ -13,7 +13,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.medication.domain.entity.Medication;
-import server.yakssok.domain.medication.domain.repository.dto.MedicationScheduleDto;
+import server.yakssok.domain.medication.domain.repository.dto.MedicationDto;
 
 @RequiredArgsConstructor
 public class MedicationQueryRepositoryImpl implements MedicationQueryRepository{
@@ -29,10 +29,10 @@ public class MedicationQueryRepositoryImpl implements MedicationQueryRepository{
 			.fetch();
 	}
 	@Override
-	public List<MedicationScheduleDto> findMedicationsByDate(LocalDate date, DayOfWeek dayOfWeek) {
+	public List<MedicationDto> findMedicationsByDate(LocalDate date, DayOfWeek dayOfWeek) {
 		return queryFactory
 			.select(Projections.constructor(
-				MedicationScheduleDto.class,
+				MedicationDto.class,
 				medication.id,
 				medication.medicineName,
 				medicationIntakeTime.time,

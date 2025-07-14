@@ -1,16 +1,15 @@
-package server.yakssok.domain.medication.batch;
+package server.yakssok.domain.medication_schedule.application.batch;
 
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
-import server.yakssok.domain.medication.application.service.MedicationScheduleService;
+import server.yakssok.domain.medication_schedule.application.service.MedicationScheduleService;
 
 @Component
 @RequiredArgsConstructor
 public class MedicationScheduleJob {
 
 	private final MedicationScheduleService medicationScheduleService;
-
 	public void runToday() {
 		medicationScheduleService.generateTodaySchedules();
 	}
