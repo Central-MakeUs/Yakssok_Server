@@ -26,8 +26,10 @@ public class MedicationQueryRepositoryImpl implements MedicationQueryRepository{
 			.leftJoin(medication.intakeDays, medicationIntakeDay).fetchJoin()
 			.where(medication.userId.eq(userId))
 			.distinct()
+			.orderBy(medication.id.desc())
 			.fetch();
 	}
+
 	@Override
 	public List<MedicationDto> findMedicationsByDate(LocalDate date, DayOfWeek dayOfWeek) {
 		return queryFactory

@@ -1,13 +1,12 @@
 package server.yakssok.domain.medication.presentation.dto.response;
 
 import java.util.List;
-import java.util.Map;
 
 public record MedicationGroupedResponse(
-	Map<String, List<MedicationCardResponse>> medications
+	List<MedicationCardResponse> medicationCardResponses
 ) {
 
-	public static MedicationGroupedResponse of(Map<String, List<MedicationCardResponse>> medications) {
-		return new MedicationGroupedResponse(medications);
+	public static MedicationGroupedResponse of(List<MedicationCardResponse> medicationCardResponses) {
+		return new MedicationGroupedResponse(medicationCardResponses);
 	}
 }
