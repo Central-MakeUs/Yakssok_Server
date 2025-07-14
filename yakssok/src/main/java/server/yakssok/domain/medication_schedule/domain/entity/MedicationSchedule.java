@@ -35,4 +35,8 @@ public class MedicationSchedule {
 		this.isTaken = isTaken;
 		this.medicationId = medicationId;
 	}
+
+	public void take() {
+		this.isTaken = true;
+	}
 }

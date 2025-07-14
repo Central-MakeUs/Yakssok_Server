@@ -23,6 +23,9 @@ public enum ErrorCode implements ResponseCode{
     ALREADY_FRIEND(HttpStatus.BAD_REQUEST, 4000, "이미 친구로 등록된 사용자입니다."),
     CANNOT_FOLLOW_SELF(HttpStatus.BAD_REQUEST, 4001, "자기 자신을 친구로 추가할 수 없습니다."),
 
+    // medication
+    NOT_FOUND_MEDICATION_SCHEDULE(HttpStatus.NOT_FOUND, 5000, "존재하지 않는 복약 스케줄입니다."),
+
 
     //common
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, 9000, "서버 오류가 발생했습니다."),
@@ -33,6 +36,7 @@ public enum ErrorCode implements ResponseCode{
     FAILED_FILE_DELETE(HttpStatus.INTERNAL_SERVER_ERROR, 9101, "이미지 삭제에 실패했습니다."),
     UNSUPPORTED_FILE_TYPE(HttpStatus.BAD_REQUEST, 9102, "지원하지 않는 파일 타입입니다."),
     INVALID_FILE_EXTENSION(HttpStatus.BAD_REQUEST, 9103, "지원하지 않는 파일 확장자입니다.");
+
 
 
 

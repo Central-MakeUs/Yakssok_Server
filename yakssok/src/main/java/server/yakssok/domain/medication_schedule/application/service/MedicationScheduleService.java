@@ -16,6 +16,7 @@ import server.yakssok.domain.medication_schedule.domain.repository.MedicationSch
 import server.yakssok.domain.medication_schedule.domain.repository.dto.MedicationScheduleDto;
 import server.yakssok.domain.medication_schedule.presentation.dto.TodayMedicationScheduleGroupResponse;
 import server.yakssok.domain.medication_schedule.presentation.dto.TodayMedicationScheduleResponse;
+import server.yakssok.global.exception.ErrorCode;
 
 @Service
 @RequiredArgsConstructor
@@ -67,5 +68,12 @@ public class MedicationScheduleService {
 					}
 				).toList();
 		return TodayMedicationScheduleGroupResponse.of(todayMedicationScheduleResponses);
+	}
+
+	@Transactional
+	public void takeMedication(Long userId, Long scheduleId) {
+		MedicationSchedule schedule = medicationScheduleRepository.findById(scheduleId)
+			.orElseThrow(() -> new MedicationScheduleException(ErrorCode.NOT_FOUND_MEDICATION_SCHEDULE));
+		schedule.take();
 	}
 }
