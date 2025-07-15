@@ -13,6 +13,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.medication.domain.entity.Medication;
+import server.yakssok.domain.medication.domain.entity.MedicationStatus;
+import server.yakssok.domain.medication.domain.repository.dto.FutureMedicationSchedulesDto;
 import server.yakssok.domain.medication.domain.repository.dto.MedicationDto;
 
 @RequiredArgsConstructor
@@ -48,6 +50,24 @@ public class MedicationQueryRepositoryImpl implements MedicationQueryRepository{
 				medication.startDate.loe(date),
 				medication.endDate.goe(date),
 				medicationIntakeDay.dayOfWeek.eq(dayOfWeek)
+			)
+			.fetch();
+	}
+
+	@Override
+	public List<FutureMedicationSchedulesDto> findFutureMedicationSchedules(Long userId) {
+		return queryFactory
+			.select(Projections.constructor(
+				FutureMedicationSchedulesDto.class,
+				medication,
+				medicationIntakeDay,
+				medicationIntakeTime
+			))
+			.from(medication)
+			.leftJoin(medicationIntakeTime).on(medicationIntakeTime.medication.id.eq(medication.id))
+			.leftJoin(medicationIntakeDay).on(medicationIntakeDay.medication.id.eq(medication.id))
+			.where(
+				medication.medicationStatus.ne(MedicationStatus.COMPLETED)
 			)
 			.fetch();
 	}

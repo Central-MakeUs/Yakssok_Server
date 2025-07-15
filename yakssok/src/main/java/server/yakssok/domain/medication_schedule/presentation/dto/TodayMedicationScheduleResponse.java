@@ -1,6 +1,7 @@
 package server.yakssok.domain.medication_schedule.presentation.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import server.yakssok.domain.medication_schedule.domain.repository.dto.MedicationScheduleDto;
 
 public record TodayMedicationScheduleResponse(
 	@Schema(description = "복용일 (yyyy-MM-dd)", example = "2025-07-14")
@@ -17,13 +18,15 @@ public record TodayMedicationScheduleResponse(
 	boolean isTaken
 ) {
 	public static TodayMedicationScheduleResponse from(
-		String date,
-		Long scheduleId,
-		String medicationType,
-		String medicationName,
-		String intakeTime,
-		boolean isTaken
+		MedicationScheduleDto medicationScheduleDto
 	) {
-		return new TodayMedicationScheduleResponse(date, scheduleId, medicationType, medicationName, intakeTime, isTaken);
+		return new TodayMedicationScheduleResponse(
+			String.valueOf(medicationScheduleDto.date()),
+			medicationScheduleDto.scheduleId(),
+			medicationScheduleDto.medicationType().name(),
+			medicationScheduleDto.medicationName(),
+			String.valueOf(medicationScheduleDto.intakeTime()),
+			medicationScheduleDto.isTaken()
+		);
 	}
 }

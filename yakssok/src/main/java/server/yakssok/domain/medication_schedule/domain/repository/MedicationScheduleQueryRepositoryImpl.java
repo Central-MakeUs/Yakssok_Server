@@ -17,7 +17,9 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public List<MedicationScheduleDto> findUserSchedule(Long userId, LocalDate date) {
+	public List<MedicationScheduleDto> findUserMedicationSchedule(
+		Long userId, LocalDate date
+	) {
 		return jpaQueryFactory
 			.select(Projections.constructor(
 				MedicationScheduleDto.class,
@@ -37,6 +39,36 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 			.orderBy(
 				medicationSchedule.isTaken.asc(),
 				medicationSchedule.scheduledTime.asc())
+			.fetch();
+	}
+
+	@Override
+	public List<MedicationScheduleDto> findRangeMedicationSchedule(
+		Long userId, LocalDate startDate,
+		LocalDate endDate
+	) {
+		return jpaQueryFactory
+			.select(Projections.constructor(
+				MedicationScheduleDto.class,
+				medicationSchedule.scheduledDate,
+				medicationSchedule.id,
+				medication.medicationType,
+				medication.medicineName,
+				medicationSchedule.scheduledTime,
+				medicationSchedule.isTaken
+			))
+			.from(medicationSchedule)
+			.leftJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
+			.where(
+				medication.userId.eq(userId),
+				medicationSchedule.scheduledDate.goe(startDate),
+				medicationSchedule.scheduledDate.loe(endDate)
+			)
+			.orderBy(
+				medicationSchedule.scheduledDate.asc(),
+				medicationSchedule.isTaken.asc(),
+				medicationSchedule.scheduledTime.asc()
+			)
 			.fetch();
 	}
 }
