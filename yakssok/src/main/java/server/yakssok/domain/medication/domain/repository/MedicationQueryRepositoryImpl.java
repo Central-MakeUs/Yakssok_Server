@@ -48,7 +48,7 @@ public class MedicationQueryRepositoryImpl implements MedicationQueryRepository{
 			.join(medication.intakeTimes, medicationIntakeTime)
 			.where(
 				medication.startDate.loe(date),
-				medication.endDate.isNull().or(medication.endDate.goe(date)),
+				medication.endDate.goe(date),
 				medicationIntakeDay.dayOfWeek.eq(dayOfWeek)
 			)
 			.fetch();
