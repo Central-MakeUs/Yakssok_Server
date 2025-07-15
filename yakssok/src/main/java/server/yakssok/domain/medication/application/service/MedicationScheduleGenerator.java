@@ -1,4 +1,4 @@
-package server.yakssok.domain.medication_schedule.application.service;
+package server.yakssok.domain.medication.application.service;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -62,7 +62,6 @@ public class MedicationScheduleGenerator {
 
 	public List<MedicationSchedule> generateTodaySchedules(LocalDate today) {
 		List<MedicationDto> medicationDtos = medicationRepository.findMedicationsByDate(today, today.getDayOfWeek());
-
 		return medicationDtos.stream()
 			.map(dto -> MedicationSchedule.create(today, dto.intakeTime(), dto.medicationId()))
 			.toList();

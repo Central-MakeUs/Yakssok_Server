@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import server.yakssok.domain.medication.application.service.MedicationScheduleGenerator;
 import server.yakssok.domain.medication_schedule.domain.entity.MedicationSchedule;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleJdbcRepository;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleRepository;

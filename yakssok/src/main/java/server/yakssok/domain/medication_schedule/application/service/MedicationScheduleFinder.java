@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
+import server.yakssok.domain.medication.application.service.MedicationScheduleGenerator;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleRepository;
 import server.yakssok.domain.medication_schedule.domain.repository.dto.MedicationScheduleDto;
 
