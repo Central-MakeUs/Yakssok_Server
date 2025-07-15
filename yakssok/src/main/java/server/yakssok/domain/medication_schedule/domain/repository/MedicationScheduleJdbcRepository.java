@@ -1,4 +1,4 @@
-package server.yakssok.domain.medication.domain.repository;
+package server.yakssok.domain.medication_schedule.domain.repository;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import lombok.RequiredArgsConstructor;
-import server.yakssok.domain.medication.domain.entity.MedicationSchedule;
+import server.yakssok.domain.medication_schedule.domain.entity.MedicationSchedule;
 
 @RequiredArgsConstructor
 @Repository
@@ -28,7 +28,6 @@ public class MedicationScheduleJdbcRepository {
 				@Override
 				public void setValues(PreparedStatement ps, int i) throws SQLException {
 					MedicationSchedule schedule = schedules.get(i);
-					ps.setString(1, schedule.getMedicineName());
 					ps.setObject(2, schedule.getScheduledDate()); // LocalDate
 					ps.setObject(3, schedule.getScheduledTime()); // LocalTime
 					ps.setBoolean(4, schedule.isTaken());

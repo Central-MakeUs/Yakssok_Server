@@ -36,12 +36,12 @@ public record CreateMedicationRequest(
 	@Schema(description = "하루 복용 횟수", example = "1")
 	Integer intakeCount,
 
-	@Schema(description = "알람 종류", example = "YAKSSUK")
+	@Schema(description = "알람 종류", example = "FEEL_GOOD")
 	String alarmSound,
 
 	@Schema(
 		description = "복용 시간",
-		example = "[\"8:00\", \"13:00\"]"
+		example = "[\"08:00\", \"13:00\"]"
 	)
 	List<String> intakeTimes
 ) {
