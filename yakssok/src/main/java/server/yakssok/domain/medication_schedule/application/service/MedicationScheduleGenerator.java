@@ -1,7 +1,6 @@
 package server.yakssok.domain.medication_schedule.application.service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -30,31 +29,35 @@ public class MedicationScheduleGenerator {
 			.toList();
 	}
 
-	private Stream<MedicationScheduleDto> createMedicationScheduleDtos(FutureMedicationSchedulesDto schedule,
-		LocalDate start, LocalDate end) {
-
+	private Stream<MedicationScheduleDto> createMedicationScheduleDtos(
+		FutureMedicationSchedulesDto schedule, LocalDate start, LocalDate end) {
 		Medication medication = schedule.medication();
 		MedicationIntakeDay intakeDay = schedule.medicationIntakeDay();
 		MedicationIntakeTime intakeTime = schedule.medicationIntakeTime();
 
-		LocalDate actualStart = start.isAfter(medication.getStartDate()) ? start : medication.getStartDate();
-		LocalDate actualEnd = (medication.getEndDate() == null) ? end
-			: (end.isBefore(medication.getEndDate()) ? end : medication.getEndDate());
+		LocalDate actualStart = getActualStart(start, medication);
+		LocalDate actualEnd = getActualEnd(end, medication);
 
 		if (actualEnd.isBefore(actualStart)) {
 			return Stream.empty();
 		}
-
 		return actualStart.datesUntil(actualEnd.plusDays(1))
-			.filter(date -> intakeDay.getDayOfWeek() == date.getDayOfWeek())
-			.map(date -> new MedicationScheduleDto(
-				date,
-				null,
-				medication.getMedicationType(),
-				medication.getMedicineName(),
-				intakeTime.getTime(),
-				false
-			));
+			.filter(date -> isSameDayOfWeek(date, intakeDay))
+			.map(date -> MedicationScheduleDto.forFutureSchedule(date, medication, intakeTime));
+	}
+
+
+	private boolean isSameDayOfWeek(LocalDate date, MedicationIntakeDay intakeDay) {
+		return intakeDay.getDayOfWeek() == date.getDayOfWeek();
+	}
+
+	private LocalDate getActualStart(LocalDate inputStart, Medication medication) {
+		return inputStart.isAfter(medication.getStartDate()) ? inputStart : medication.getStartDate();
+	}
+
+	private LocalDate getActualEnd(LocalDate inputEnd, Medication medication) {
+		LocalDate routineEnd = medication.getEndDate();
+		return (routineEnd == null) ? inputEnd : (inputEnd.isBefore(routineEnd) ? inputEnd : routineEnd);
 	}
 
 	public List<MedicationSchedule> generateTodaySchedules(LocalDate today) {

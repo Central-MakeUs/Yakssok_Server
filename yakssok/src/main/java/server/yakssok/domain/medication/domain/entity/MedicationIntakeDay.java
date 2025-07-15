@@ -1,6 +1,8 @@
 package server.yakssok.domain.medication.domain.entity;
 
 import java.time.DayOfWeek;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
