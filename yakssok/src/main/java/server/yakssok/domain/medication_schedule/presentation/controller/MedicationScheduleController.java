@@ -39,7 +39,7 @@ public class MedicationScheduleController {
 
 	@Operation(summary = "나의 복약 스케줄 조회 (기간)")
 	@GetMapping
-	public ApiResponse findRangeMedicationSchedule(
+	public ApiResponse<MedicationScheduleGroupResponse> findRangeMedicationSchedule(
 		@Parameter(description = "시작일 (YYYY-MM-DD)", required = true)
 		@RequestParam String startDate,
 		@Parameter(description = "종료일 (YYYY-MM-DD)", required = true)

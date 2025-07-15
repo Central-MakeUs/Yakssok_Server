@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "복용일별 복약 스케줄 그룹핑 응답")
 public record MedicationScheduleGroupResponse(
 	Map<LocalDate, List<MedicationScheduleResponse>> groupedSchedules
 ) {
