@@ -64,11 +64,6 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 				medicationSchedule.scheduledDate.goe(startDate),
 				medicationSchedule.scheduledDate.loe(endDate)
 			)
-			.orderBy(
-				medicationSchedule.scheduledDate.asc(),
-				medicationSchedule.isTaken.asc(),
-				medicationSchedule.scheduledTime.asc()
-			)
 			.fetch();
 	}
 }

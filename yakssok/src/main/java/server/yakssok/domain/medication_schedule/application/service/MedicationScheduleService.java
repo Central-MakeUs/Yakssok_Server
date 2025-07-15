@@ -67,8 +67,8 @@ public class MedicationScheduleService {
 		return schedules.stream()
 			.map(MedicationScheduleResponse::from)
 			.sorted(
-				Comparator.comparing(MedicationScheduleResponse::date)
-					.thenComparing(r -> r.intakeTime())
+				Comparator.comparing(MedicationScheduleResponse::isTaken)
+					.thenComparing(MedicationScheduleResponse::intakeTime)
 			)
 			.toList();
 	}
