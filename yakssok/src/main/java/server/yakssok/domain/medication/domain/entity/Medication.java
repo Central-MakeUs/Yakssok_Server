@@ -102,7 +102,7 @@ public class Medication {
 		LocalDate today = LocalDate.now();
 		if (today.isBefore(startDate)) {
 			return MedicationStatus.PLANNED;
-		} else if (!today.isAfter(endDate)) {
+		} else if (endDate == null || !today.isAfter(endDate)) {
 			return MedicationStatus.TAKING;
 		} else {
 			return MedicationStatus.COMPLETED;
