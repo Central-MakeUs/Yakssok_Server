@@ -17,7 +17,7 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public List<MedicationScheduleDto> findUserMedicationSchedule(
+	public List<MedicationScheduleDto> findUserScheduleByDate(
 		Long userId, LocalDate date
 	) {
 		return jpaQueryFactory
@@ -43,7 +43,7 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 	}
 
 	@Override
-	public List<MedicationScheduleDto> findRangeMedicationSchedule(
+	public List<MedicationScheduleDto> findSchedulesInPastRange(
 		Long userId, LocalDate startDate,
 		LocalDate endDate
 	) {

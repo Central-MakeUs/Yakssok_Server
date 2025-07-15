@@ -1,5 +1,6 @@
 package server.yakssok.domain.medication.presentation.dto.response;
 
+import java.time.LocalTime;
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,8 +23,8 @@ public record MedicationCardResponse(
 	@Schema(description = "하루 복약 횟수", example = "3")
 	int intakeCount,
 
-	@Schema(description = "복약 시간 리스트 (HH:mm)", example = "[\"08:00\", \"13:00\"]")
-	List<String> intakeTimes
+	@Schema(description = "복약 시간 리스트 (HH:mm)", example = "[\"08:00:00\", \"13:00:00\"]")
+	List<LocalTime> intakeTimes
 
 ) {
 	public static MedicationCardResponse from(Medication medication) {
@@ -36,7 +37,7 @@ public record MedicationCardResponse(
 				.toList(),
 			medication.getIntakeCount(),
 			medication.getIntakeTimes().stream()
-				.map(time -> time.getTime().toString())
+				.map(time -> time.getTime())
 				.toList()
 		);
 	}

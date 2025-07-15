@@ -13,7 +13,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.medication_schedule.application.service.MedicationScheduleService;
-import server.yakssok.domain.medication_schedule.presentation.dto.TodayMedicationScheduleGroupResponse;
+import server.yakssok.domain.medication_schedule.presentation.dto.MedicationScheduleGroupResponse;
 import server.yakssok.global.common.reponse.ApiResponse;
 import server.yakssok.global.common.security.YakssokUserDetails;
 import server.yakssok.global.common.swagger.ApiErrorResponse;
@@ -28,13 +28,13 @@ public class MedicationScheduleController {
 
 	@Operation(summary = "나의 복약 스케줄 조회 (오늘)")
 	@GetMapping("/today")
-	public ApiResponse<TodayMedicationScheduleGroupResponse> findTodayMedicationSchedule(
+	public ApiResponse<MedicationScheduleGroupResponse> findTodayMedicationSchedule(
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
 		Long userId = userDetails.getUserId();
-		TodayMedicationScheduleGroupResponse todayMedicationScheduleGroup
+		MedicationScheduleGroupResponse medicationScheduleGroupResponse
 			= medicationScheduleService.findTodayMedicationSchedule(userId);
-		return ApiResponse.success(todayMedicationScheduleGroup);
+		return ApiResponse.success(medicationScheduleGroupResponse);
 	}
 
 	@Operation(summary = "나의 복약 스케줄 조회 (기간)")
@@ -47,7 +47,7 @@ public class MedicationScheduleController {
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
 		Long userId = userDetails.getUserId();
-		TodayMedicationScheduleGroupResponse rangeMedicationSchedule = medicationScheduleService.findRangeMedicationSchedule(
+		MedicationScheduleGroupResponse rangeMedicationSchedule = medicationScheduleService.findRangeMedicationSchedule(
 			userId, startDate, endDate);
 		return ApiResponse.success(rangeMedicationSchedule);
 	}
