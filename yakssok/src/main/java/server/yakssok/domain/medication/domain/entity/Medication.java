@@ -43,10 +43,6 @@ public class Medication {
 
 	private Long userId;
 
-	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
-	private MedicationStatus medicationStatus;
-
 	@OneToMany(mappedBy = "medication", cascade = CascadeType.PERSIST)
 	private List<MedicationIntakeTime> intakeTimes = new ArrayList<>();
 
@@ -70,7 +66,6 @@ public class Medication {
 		this.alarmSound = alarmSound;
 		this.medicationType = medicationType;
 		this.userId = userId;
-		this.medicationStatus = calculateStatus(startDate, endDate);
 		this.intakeCount = intakeCount;
 	}
 
@@ -94,10 +89,6 @@ public class Medication {
 		);
 	}
 
-	public void updateStatus() {
-		this.medicationStatus = calculateStatus(this.startDate, this.endDate);
-	}
-
 	private MedicationStatus calculateStatus(LocalDate startDate, LocalDate endDate) {
 		LocalDate today = LocalDate.now();
 		if (today.isBefore(startDate)) {
@@ -107,5 +98,9 @@ public class Medication {
 		} else {
 			return MedicationStatus.COMPLETED;
 		}
+	}
+
+	public MedicationStatus getMedicationStatus() {
+		return calculateStatus(startDate, endDate);
 	}
 }
