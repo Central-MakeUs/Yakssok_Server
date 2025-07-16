@@ -21,10 +21,10 @@ public record CreateMedicationRequest(
 	String medicineType,
 
 	@Schema(description = "복용 시작일 (yyyy-MM-dd)", example = "2025-07-06")
-	LocalDate startDate,
+	String startDate,
 
 	@Schema(description = "복용 종료일 (yyyy-MM-dd)", example = "2025-07-13")
-	LocalDate endDate,
+	String endDate,
 
 	@Schema(
 		description = "복용 요일",
@@ -33,7 +33,7 @@ public record CreateMedicationRequest(
 	)
 	List<String> intakeDays,
 
-	@Schema(description = "하루 복용 횟수", example = "2")
+	@Schema(description = "하루 복용 횟수", example = "1")
 	Integer intakeCount,
 
 	@Schema(description = "알람 종류", example = "FEEL_GOOD")
@@ -41,16 +41,16 @@ public record CreateMedicationRequest(
 
 	@Schema(
 		description = "복용 시간",
-		example = "[\"08:00:00\", \"13:00:00\"]"
+		example = "[\"08:00\", \"13:00\"]"
 	)
-	List<LocalTime> intakeTimes
+	List<String> intakeTimes
 ) {
 
 	public Medication toMedication(Long userId) {
 		return Medication.create(
 			name,
-			startDate,
-			endDate,
+			LocalDate.parse(startDate),
+			LocalDate.parse(endDate),
 			AlarmSound.from(alarmSound),
 			MedicationType.from(medicineType),
 			userId,
@@ -61,7 +61,7 @@ public record CreateMedicationRequest(
 	public List<MedicationIntakeTime> toMedicationsTimes(Medication medication){
 		return intakeTimes.stream()
 			.map(intakeTime -> MedicationIntakeTime.create(
-				intakeTime, medication
+				LocalTime.parse(intakeTime), medication
 			))
 			.toList();
 	}

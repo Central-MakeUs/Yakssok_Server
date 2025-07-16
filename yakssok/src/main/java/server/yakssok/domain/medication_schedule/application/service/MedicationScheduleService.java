@@ -24,12 +24,12 @@ public class MedicationScheduleService {
 	private final MedicationScheduleJdbcRepository medicationScheduleJdbcRepository;
 	private final MedicationScheduleRepository medicationScheduleRepository;
 	private final MedicationScheduleFinder medicationScheduleFinder;
-	private final MedicationScheduleGenerator medicationScheduleGenerator;
+	private final MedicationScheduleGenerator MedicationScheduleGenerator;
 
 	@Transactional
 	public void generateTodaySchedules() {
 		LocalDate today = LocalDate.now();
-		List<MedicationSchedule> schedules = medicationScheduleGenerator.generateTodaySchedules(today);
+		List<MedicationSchedule> schedules = MedicationScheduleGenerator.generateTodaySchedules(today);
 		medicationScheduleJdbcRepository.batchInsert(schedules);
 	}
 
@@ -57,9 +57,7 @@ public class MedicationScheduleService {
 		LocalDate start = LocalDate.parse(startDate);
 		LocalDate end = LocalDate.parse(endDate);
 		LocalDate today = LocalDate.now();
-		if (start.isAfter(end)) {
-			throw new MedicationScheduleException(ErrorCode.INVALID_INPUT_VALUE);
-		}
+
 		List<MedicationScheduleDto> schedules =
 			medicationScheduleFinder.findSchedulesInPeriod(userId, start, end, today);
 		return MedicationScheduleGroupResponse.fromList(sortedResponses(schedules));
