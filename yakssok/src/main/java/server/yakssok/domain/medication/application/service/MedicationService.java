@@ -1,11 +1,14 @@
 package server.yakssok.domain.medication.application.service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import server.yakssok.domain.medication.application.exception.MedicationException;
 import server.yakssok.domain.medication.domain.entity.Medication;
 import server.yakssok.domain.medication.domain.entity.MedicationIntakeDay;
 import server.yakssok.domain.medication.domain.entity.MedicationIntakeTime;
@@ -15,7 +18,8 @@ import server.yakssok.domain.medication.domain.repository.MedicationRepository;
 import server.yakssok.domain.medication.presentation.dto.request.CreateMedicationRequest;
 import server.yakssok.domain.medication.presentation.dto.response.MedicationCardResponse;
 import server.yakssok.domain.medication.presentation.dto.response.MedicationGroupedResponse;
-
+import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleRepository;
+import server.yakssok.global.exception.ErrorCode;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +27,7 @@ public class MedicationService {
 	private final MedicationRepository medicationRepository;
 	private final MedicationIntakeDayRepository medicationIntakeDayRepository;
 	private final MedicationIntakeTimeRepository medicationIntakeTimeRepository;
+	private final MedicationScheduleRepository medicationScheduleRepository;
 
 	@Transactional(readOnly = true)
 	public MedicationGroupedResponse findMedications(Long userId) {
@@ -54,5 +59,24 @@ public class MedicationService {
 		Medication medication = request.toMedication(userId);
 		medicationRepository.save(medication);
 		return medication;
+	}
+
+	@Transactional
+	public void endMedication(Long medicationId) {
+		Medication medication = getMedication(medicationId);
+		LocalDate todayDate = LocalDate.now();
+		LocalTime currentTime = LocalTime.now();
+		medication.changeEndDate(todayDate);
+		deleteTodayUpcomingSchedules(medicationId, todayDate, currentTime);
+	}
+
+	private Medication getMedication(Long medicationId) {
+		Medication medication = medicationRepository.findById(medicationId)
+			.orElseThrow(() -> new MedicationException(ErrorCode.NOT_FOUND_MEDICATION));
+		return medication;
+	}
+
+	private void deleteTodayUpcomingSchedules(Long medicationId, LocalDate todayDate, LocalTime currentTime) {
+		medicationScheduleRepository.deleteTodayUpcomingSchedules(medicationId, todayDate, currentTime);
 	}
 }

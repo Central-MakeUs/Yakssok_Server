@@ -93,14 +93,22 @@ public class Medication {
 		LocalDate today = LocalDate.now();
 		if (today.isBefore(startDate)) {
 			return MedicationStatus.PLANNED;
-		} else if (!today.isAfter(endDate)) {
+		} else if (isNotExistEndDate() || !today.isAfter(endDate)) {
 			return MedicationStatus.TAKING;
 		} else {
 			return MedicationStatus.COMPLETED;
 		}
 	}
 
+	private boolean isNotExistEndDate() {
+		return this.endDate == null;
+	}
+
 	public MedicationStatus getMedicationStatus() {
 		return calculateStatus(startDate, endDate);
+	}
+
+	public void changeEndDate(LocalDate date) {
+		this.endDate = date;
 	}
 }

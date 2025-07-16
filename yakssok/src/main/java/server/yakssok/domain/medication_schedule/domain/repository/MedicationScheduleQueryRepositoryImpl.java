@@ -4,6 +4,7 @@ import static server.yakssok.domain.medication.domain.entity.QMedication.*;
 import static server.yakssok.domain.medication_schedule.domain.entity.QMedicationSchedule.*;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import com.querydsl.core.types.Projections;
@@ -65,5 +66,17 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 				medicationSchedule.scheduledDate.loe(endDate)
 			)
 			.fetch();
+	}
+
+	@Override
+	public void deleteTodayUpcomingSchedules(Long medicationId, LocalDate todayDate, LocalTime currentTime) {
+		jpaQueryFactory
+			.delete(medicationSchedule)
+			.where(
+				medicationSchedule.medicationId.eq(medicationId),
+				medicationSchedule.scheduledDate.eq(todayDate),
+				medicationSchedule.scheduledTime.after(currentTime)
+			)
+			.execute(); // 삭제된 row 개수 리턴
 	}
 }

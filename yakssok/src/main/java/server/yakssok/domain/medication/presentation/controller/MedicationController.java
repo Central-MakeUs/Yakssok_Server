@@ -2,7 +2,9 @@ package server.yakssok.domain.medication.presentation.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,12 +15,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.medication.application.service.MedicationService;
 import server.yakssok.domain.medication.presentation.dto.request.CreateMedicationRequest;
-import server.yakssok.domain.medication.presentation.dto.response.MedicationCardResponse;
 import server.yakssok.domain.medication.presentation.dto.response.MedicationGroupedResponse;
 import server.yakssok.global.common.reponse.ApiResponse;
-import server.yakssok.global.common.reponse.PageResponse;
 import server.yakssok.global.common.security.YakssokUserDetails;
 import server.yakssok.global.common.swagger.ApiErrorResponse;
+import server.yakssok.global.common.swagger.ApiErrorResponses;
 import server.yakssok.global.exception.ErrorCode;
 
 @RestController
@@ -47,5 +48,15 @@ public class MedicationController {
 	) {
 		Long userId = userDetails.getUserId();
 		return ApiResponse.success(medicationService.findMedications(userId));
+	}
+
+	@Operation(summary = "복약 종료")
+	@ApiErrorResponse(ErrorCode.NOT_FOUND_MEDICATION)
+	@PutMapping("/{medicationId}/end")
+	public ApiResponse endMedication(
+		@PathVariable Long medicationId
+	) {
+		medicationService.endMedication(medicationId);
+		return ApiResponse.success();
 	}
 }
