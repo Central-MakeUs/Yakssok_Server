@@ -8,7 +8,7 @@ public record OAuthLoginRequest(
 	@NotNull
 	String oauthAuthorizationCode,
 
-	@Schema(description = "oauth 타입(apple/kakao)", example = "apple")
+	@Schema(description = "oauth 타입(apple/kakao)", example = "kakao")
 	@NotNull
 	String oauthType,
 

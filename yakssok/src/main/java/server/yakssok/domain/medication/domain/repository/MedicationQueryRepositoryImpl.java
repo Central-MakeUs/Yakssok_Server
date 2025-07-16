@@ -9,11 +9,11 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.medication.domain.entity.Medication;
-import server.yakssok.domain.medication.domain.entity.MedicationStatus;
 import server.yakssok.domain.medication.domain.repository.dto.FutureMedicationSchedulesDto;
 import server.yakssok.domain.medication.domain.repository.dto.MedicationDto;
 
@@ -47,9 +47,9 @@ public class MedicationQueryRepositoryImpl implements MedicationQueryRepository{
 			.join(medication.intakeDays, medicationIntakeDay)
 			.join(medication.intakeTimes, medicationIntakeTime)
 			.where(
-				medication.startDate.loe(date),
-				medication.endDate.goe(date),
-				medicationIntakeDay.dayOfWeek.eq(dayOfWeek)
+				isMedicationStarted(date),
+				isMedicationNotEnded(date),
+				isIntakeDayOfWeek(dayOfWeek)
 			)
 			.fetch();
 	}
@@ -67,9 +67,27 @@ public class MedicationQueryRepositoryImpl implements MedicationQueryRepository{
 			.leftJoin(medicationIntakeTime).on(medicationIntakeTime.medication.id.eq(medication.id))
 			.leftJoin(medicationIntakeDay).on(medicationIntakeDay.medication.id.eq(medication.id))
 			.where(
-				medication.medicationStatus.ne(MedicationStatus.COMPLETED)
+				isMedicationNotEnded(LocalDate.now())
 			)
 			.fetch();
+	}
+
+	private static BooleanExpression notCompletedMedication() {
+		return medication.endDate.isNull()
+			.or(medication.endDate.goe(LocalDate.now()));
+	}
+
+	private BooleanExpression isMedicationStarted(LocalDate targetDate) {
+		return medication.startDate.loe(targetDate);
+	}
+
+	private BooleanExpression isMedicationNotEnded(LocalDate targetDate) {
+		return medication.endDate.isNull()
+			.or(medication.endDate.goe(targetDate));
+	}
+
+	private BooleanExpression isIntakeDayOfWeek(DayOfWeek targetDayOfWeek) {
+		return medicationIntakeDay.dayOfWeek.eq(targetDayOfWeek);
 	}
 
 }
