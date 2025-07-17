@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class MedicationSchedule {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;

@@ -1,6 +1,7 @@
 package server.yakssok.domain.medication_schedule.application.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 
@@ -24,12 +25,12 @@ public class MedicationScheduleService {
 	private final MedicationScheduleJdbcRepository medicationScheduleJdbcRepository;
 	private final MedicationScheduleRepository medicationScheduleRepository;
 	private final MedicationScheduleFinder medicationScheduleFinder;
-	private final MedicationScheduleGenerator MedicationScheduleGenerator;
+	private final MedicationScheduleGenerator medicationScheduleGenerator;
 
 	@Transactional
 	public void generateTodaySchedules() {
-		LocalDate today = LocalDate.now();
-		List<MedicationSchedule> schedules = MedicationScheduleGenerator.generateTodaySchedules(today);
+		LocalDateTime currentDateTime = LocalDateTime.now();
+		List<MedicationSchedule> schedules = medicationScheduleGenerator.generateTodaySchedules(currentDateTime);
 		medicationScheduleJdbcRepository.batchInsert(schedules);
 	}
 
@@ -57,6 +58,9 @@ public class MedicationScheduleService {
 		LocalDate start = LocalDate.parse(startDate);
 		LocalDate end = LocalDate.parse(endDate);
 		LocalDate today = LocalDate.now();
+		if (start.isAfter(end)) {
+			throw new MedicationScheduleException(ErrorCode.INVALID_INPUT_VALUE);
+		}
 
 		List<MedicationScheduleDto> schedules =
 			medicationScheduleFinder.findSchedulesInPeriod(userId, start, end, today);

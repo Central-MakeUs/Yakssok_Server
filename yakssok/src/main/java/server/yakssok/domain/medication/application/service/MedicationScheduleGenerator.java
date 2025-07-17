@@ -1,6 +1,7 @@
 package server.yakssok.domain.medication.application.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -56,14 +57,14 @@ public class MedicationScheduleGenerator {
 	}
 
 	private LocalDate getActualEnd(LocalDate inputEnd, Medication medication) {
-		LocalDate routineEnd = medication.getEndDate();
-		return (routineEnd == null) ? inputEnd : (inputEnd.isBefore(routineEnd) ? inputEnd : routineEnd);
+		LocalDate endDate = medication.getEndDate();
+		return (endDate == null) ? inputEnd : (inputEnd.isBefore(endDate) ? inputEnd : endDate);
 	}
 
-	public List<MedicationSchedule> generateTodaySchedules(LocalDate today) {
-		List<MedicationDto> medicationDtos = medicationRepository.findMedicationsByDate(today, today.getDayOfWeek());
+	public List<MedicationSchedule> generateTodaySchedules(LocalDateTime currentDateTime) {
+		List<MedicationDto> medicationDtos = medicationRepository.findMedicationsByDate(currentDateTime, currentDateTime.getDayOfWeek());
 		return medicationDtos.stream()
-			.map(dto -> MedicationSchedule.create(today, dto.intakeTime(), dto.medicationId()))
+			.map(dto -> MedicationSchedule.create(currentDateTime.toLocalDate(), dto.intakeTime(), dto.medicationId()))
 			.toList();
 	}
 }

@@ -18,7 +18,6 @@ import server.yakssok.domain.user.domain.entity.User;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Feedback {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
