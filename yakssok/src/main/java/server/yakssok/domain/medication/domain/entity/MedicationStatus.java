@@ -6,5 +6,5 @@ import lombok.Getter;
 public enum MedicationStatus {
 	PLANNED,
 	TAKING,
-	COMPLETED;
+	ENDED;
 }

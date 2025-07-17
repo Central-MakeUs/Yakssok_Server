@@ -101,7 +101,7 @@ public class Medication {
 		if (isNotExistEndDate() || !now.isAfter(endDateTime)) {
 			return MedicationStatus.TAKING;
 		}
-		return MedicationStatus.COMPLETED;
+		return MedicationStatus.ENDED;
 	}
 
 	private boolean isNotExistEndDate() {
