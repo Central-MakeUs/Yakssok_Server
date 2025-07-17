@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Friend {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
