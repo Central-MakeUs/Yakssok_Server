@@ -30,7 +30,7 @@ public class Medication {
 	private String medicineName;
 
 	@Column(nullable = false)
-	private LocalDate startDate;
+	private LocalDateTime startDateTime;
 	private LocalDateTime endDateTime;
 
 	@Column(nullable = false)
@@ -53,7 +53,7 @@ public class Medication {
 
 	private Medication(
 		String medicineName,
-		LocalDate startDate,
+		LocalDateTime startDateTime,
 		LocalDateTime endDateTime,
 		AlarmSound alarmSound,
 		MedicationType medicationType,
@@ -61,7 +61,7 @@ public class Medication {
 		int intakeCount
 	) {
 		this.medicineName = medicineName;
-		this.startDate = startDate;
+		this.startDateTime = startDateTime;
 		this.endDateTime = endDateTime;
 		this.alarmSound = alarmSound;
 		this.medicationType = medicationType;
@@ -71,6 +71,10 @@ public class Medication {
 
 	private static LocalDateTime convertToEndDateTime(LocalDate endDate) {
 		return endDate == null ? null : MedicationUtils.toEndOfDay(endDate);
+	}
+
+	private static LocalDateTime convertToStartDateTime(LocalDate startDate) {
+		return startDate.atStartOfDay();
 	}
 
 	public static Medication create(
@@ -84,7 +88,7 @@ public class Medication {
 	) {
 		return new Medication(
 			medicineName,
-			startDate,
+			convertToStartDateTime(startDate),
 			convertToEndDateTime(endDate),
 			alarmSound,
 			medicationType,
@@ -93,9 +97,9 @@ public class Medication {
 		);
 	}
 
-	private MedicationStatus calculateStatus(LocalDate startDate, LocalDateTime endDateTime) {
+	private MedicationStatus calculateStatus(LocalDateTime startDateTime, LocalDateTime endDateTime) {
 		LocalDateTime now = LocalDateTime.now();
-		if (now.toLocalDate().isBefore(startDate)) {
+		if (now.isBefore(startDateTime)) {
 			return MedicationStatus.PLANNED;
 		}
 		if (isNotExistEndDate() || !now.isAfter(endDateTime)) {
@@ -109,7 +113,7 @@ public class Medication {
 	}
 
 	public MedicationStatus getMedicationStatus() {
-		return calculateStatus(startDate, endDateTime);
+		return calculateStatus(startDateTime, endDateTime);
 	}
 
 	public void end(LocalDateTime endDateTime) {
@@ -118,5 +122,9 @@ public class Medication {
 
 	public LocalDate getEndDate() {
 		return endDateTime == null ? null : endDateTime.toLocalDate();
+	}
+
+	public LocalDate getStartDate() {
+		return startDateTime.toLocalDate();
 	}
 }

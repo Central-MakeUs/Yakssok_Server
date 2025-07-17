@@ -48,7 +48,7 @@ public class MedicationQueryRepositoryImpl implements MedicationQueryRepository{
 			.join(medication.intakeDays, medicationIntakeDay)
 			.join(medication.intakeTimes, medicationIntakeTime)
 			.where(
-				isMedicationStarted(dateTime.toLocalDate()),
+				isMedicationStarted(dateTime),
 				isMedicationNotEnded(dateTime),
 				isIntakeDayOfWeek(dayOfWeek)
 			)
@@ -73,8 +73,8 @@ public class MedicationQueryRepositoryImpl implements MedicationQueryRepository{
 			.fetch();
 	}
 
-	private BooleanExpression isMedicationStarted(LocalDate targetDate) {
-		return medication.startDate.loe(targetDate);
+	private BooleanExpression isMedicationStarted(LocalDateTime dateTime) {
+		return medication.startDateTime.loe(dateTime);
 	}
 
 	private BooleanExpression isMedicationNotEnded(LocalDateTime dateTime) {
