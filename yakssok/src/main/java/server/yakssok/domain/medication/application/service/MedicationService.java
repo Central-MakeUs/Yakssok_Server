@@ -1,6 +1,7 @@
 package server.yakssok.domain.medication.application.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -64,10 +65,9 @@ public class MedicationService {
 	@Transactional
 	public void endMedication(Long medicationId) {
 		Medication medication = getMedication(medicationId);
-		LocalDate todayDate = LocalDate.now();
-		LocalTime currentTime = LocalTime.now();
-		medication.changeEndDate(todayDate);
-		deleteTodayUpcomingSchedules(medicationId, todayDate, currentTime);
+		LocalDateTime currentDateTime = LocalDateTime.now();
+		medication.end(currentDateTime);
+		deleteTodayUpcomingSchedules(medicationId, currentDateTime.toLocalDate(), currentDateTime.toLocalTime());
 	}
 
 	private Medication getMedication(Long medicationId) {
@@ -76,7 +76,7 @@ public class MedicationService {
 		return medication;
 	}
 
-	private void deleteTodayUpcomingSchedules(Long medicationId, LocalDate todayDate, LocalTime currentTime) {
-		medicationScheduleRepository.deleteTodayUpcomingSchedules(medicationId, todayDate, currentTime);
+	private void deleteTodayUpcomingSchedules(Long medicationId, LocalDate currentDate, LocalTime currentTime) {
+		medicationScheduleRepository.deleteTodayUpcomingSchedules(medicationId, currentDate, currentTime);
 	}
 }

@@ -1,6 +1,7 @@
 package server.yakssok.domain.medication_schedule.application.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 
@@ -28,8 +29,8 @@ public class MedicationScheduleService {
 
 	@Transactional
 	public void generateTodaySchedules() {
-		LocalDate today = LocalDate.now();
-		List<MedicationSchedule> schedules = medicationScheduleGenerator.generateTodaySchedules(today);
+		LocalDateTime currentDateTime = LocalDateTime.now();
+		List<MedicationSchedule> schedules = medicationScheduleGenerator.generateTodaySchedules(currentDateTime);
 		medicationScheduleJdbcRepository.batchInsert(schedules);
 	}
 

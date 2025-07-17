@@ -6,6 +6,7 @@ import static server.yakssok.domain.medication.domain.entity.QMedicationIntakeTi
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.querydsl.core.types.Projections;
@@ -34,7 +35,7 @@ public class MedicationQueryRepositoryImpl implements MedicationQueryRepository{
 	}
 
 	@Override
-	public List<MedicationDto> findMedicationsByDate(LocalDate date, DayOfWeek dayOfWeek) {
+	public List<MedicationDto> findMedicationsByDate(LocalDateTime dateTime, DayOfWeek dayOfWeek) {
 		return queryFactory
 			.select(Projections.constructor(
 				MedicationDto.class,
@@ -47,8 +48,8 @@ public class MedicationQueryRepositoryImpl implements MedicationQueryRepository{
 			.join(medication.intakeDays, medicationIntakeDay)
 			.join(medication.intakeTimes, medicationIntakeTime)
 			.where(
-				isMedicationStarted(date),
-				isMedicationNotEnded(date),
+				isMedicationStarted(dateTime.toLocalDate()),
+				isMedicationNotEnded(dateTime),
 				isIntakeDayOfWeek(dayOfWeek)
 			)
 			.fetch();
@@ -67,27 +68,21 @@ public class MedicationQueryRepositoryImpl implements MedicationQueryRepository{
 			.leftJoin(medicationIntakeTime).on(medicationIntakeTime.medication.id.eq(medication.id))
 			.leftJoin(medicationIntakeDay).on(medicationIntakeDay.medication.id.eq(medication.id))
 			.where(
-				isMedicationNotEnded(LocalDate.now())
+				isMedicationNotEnded(LocalDateTime.now())
 			)
 			.fetch();
-	}
-
-	private static BooleanExpression notCompletedMedication() {
-		return medication.endDate.isNull()
-			.or(medication.endDate.goe(LocalDate.now()));
 	}
 
 	private BooleanExpression isMedicationStarted(LocalDate targetDate) {
 		return medication.startDate.loe(targetDate);
 	}
 
-	private BooleanExpression isMedicationNotEnded(LocalDate targetDate) {
-		return medication.endDate.isNull()
-			.or(medication.endDate.goe(targetDate));
+	private BooleanExpression isMedicationNotEnded(LocalDateTime dateTime) {
+		return medication.endDateTime.isNull()
+			.or(medication.endDateTime.goe(dateTime));
 	}
 
 	private BooleanExpression isIntakeDayOfWeek(DayOfWeek targetDayOfWeek) {
 		return medicationIntakeDay.dayOfWeek.eq(targetDayOfWeek);
 	}
-
 }

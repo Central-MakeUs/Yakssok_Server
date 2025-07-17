@@ -1,6 +1,7 @@
 package server.yakssok.domain.medication.domain.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,14 +15,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import server.yakssok.domain.medication.application.service.MedicationUtils;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Medication {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -31,7 +31,7 @@ public class Medication {
 
 	@Column(nullable = false)
 	private LocalDate startDate;
-	private LocalDate endDate;
+	private LocalDateTime endDateTime;
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -54,7 +54,7 @@ public class Medication {
 	private Medication(
 		String medicineName,
 		LocalDate startDate,
-		LocalDate endDate,
+		LocalDateTime endDateTime,
 		AlarmSound alarmSound,
 		MedicationType medicationType,
 		Long userId,
@@ -62,11 +62,15 @@ public class Medication {
 	) {
 		this.medicineName = medicineName;
 		this.startDate = startDate;
-		this.endDate = endDate;
+		this.endDateTime = endDateTime;
 		this.alarmSound = alarmSound;
 		this.medicationType = medicationType;
 		this.userId = userId;
 		this.intakeCount = intakeCount;
+	}
+
+	private static LocalDateTime convertToEndDateTime(LocalDate endDate) {
+		return endDate == null ? null : MedicationUtils.toEndOfDay(endDate);
 	}
 
 	public static Medication create(
@@ -81,7 +85,7 @@ public class Medication {
 		return new Medication(
 			medicineName,
 			startDate,
-			endDate,
+			convertToEndDateTime(endDate),
 			alarmSound,
 			medicationType,
 			userId,
@@ -89,26 +93,30 @@ public class Medication {
 		);
 	}
 
-	private MedicationStatus calculateStatus(LocalDate startDate, LocalDate endDate) {
-		LocalDate today = LocalDate.now();
-		if (today.isBefore(startDate)) {
+	private MedicationStatus calculateStatus(LocalDate startDate, LocalDateTime endDateTime) {
+		LocalDateTime now = LocalDateTime.now();
+		if (now.toLocalDate().isBefore(startDate)) {
 			return MedicationStatus.PLANNED;
-		} else if (isNotExistEndDate() || !today.isAfter(endDate)) {
-			return MedicationStatus.TAKING;
-		} else {
-			return MedicationStatus.COMPLETED;
 		}
+		if (isNotExistEndDate() || !now.isAfter(endDateTime)) {
+			return MedicationStatus.TAKING;
+		}
+		return MedicationStatus.COMPLETED;
 	}
 
 	private boolean isNotExistEndDate() {
-		return this.endDate == null;
+		return this.endDateTime == null;
 	}
 
 	public MedicationStatus getMedicationStatus() {
-		return calculateStatus(startDate, endDate);
+		return calculateStatus(startDate, endDateTime);
 	}
 
-	public void changeEndDate(LocalDate date) {
-		this.endDate = date;
+	public void end(LocalDateTime endDateTime) {
+		this.endDateTime = endDateTime;
+	}
+
+	public LocalDate getEndDate() {
+		return endDateTime == null ? null : endDateTime.toLocalDate();
 	}
 }

@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -17,20 +18,21 @@ import server.yakssok.domain.medication_schedule.domain.repository.dto.Medicatio
 public class MedicationScheduleQueryRepositoryImpl implements MedicationScheduleQueryRepository{
 	private final JPAQueryFactory jpaQueryFactory;
 
+	private static final ConstructorExpression<MedicationScheduleDto> SCHEDULE_DTO_PROJECTION =
+		Projections.constructor(
+			MedicationScheduleDto.class,
+			medicationSchedule.scheduledDate,
+			medicationSchedule.id,
+			medication.medicationType,
+			medication.medicineName,
+			medicationSchedule.scheduledTime,
+			medicationSchedule.isTaken
+		);
+
 	@Override
-	public List<MedicationScheduleDto> findUserScheduleByDate(
-		Long userId, LocalDate date
-	) {
+	public List<MedicationScheduleDto> findUserScheduleByDate(Long userId, LocalDate date) {
 		return jpaQueryFactory
-			.select(Projections.constructor(
-				MedicationScheduleDto.class,
-				medicationSchedule.scheduledDate,
-				medicationSchedule.id,
-				medication.medicationType,
-				medication.medicineName,
-				medicationSchedule.scheduledTime,
-				medicationSchedule.isTaken
-			))
+			.select(SCHEDULE_DTO_PROJECTION)
 			.from(medicationSchedule)
 			.leftJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
 			.where(
@@ -39,44 +41,37 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 			)
 			.orderBy(
 				medicationSchedule.isTaken.asc(),
-				medicationSchedule.scheduledTime.asc())
+				medicationSchedule.scheduledTime.asc()
+			)
 			.fetch();
 	}
 
 	@Override
-	public List<MedicationScheduleDto> findSchedulesInPastRange(
-		Long userId, LocalDate startDate,
-		LocalDate endDate
-	) {
+	public List<MedicationScheduleDto> findSchedulesInPastRange(Long userId, LocalDate startDate, LocalDate endDate) {
 		return jpaQueryFactory
-			.select(Projections.constructor(
-				MedicationScheduleDto.class,
-				medicationSchedule.scheduledDate,
-				medicationSchedule.id,
-				medication.medicationType,
-				medication.medicineName,
-				medicationSchedule.scheduledTime,
-				medicationSchedule.isTaken
-			))
+			.select(SCHEDULE_DTO_PROJECTION)
 			.from(medicationSchedule)
 			.leftJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
 			.where(
 				medication.userId.eq(userId),
-				medicationSchedule.scheduledDate.goe(startDate),
-				medicationSchedule.scheduledDate.loe(endDate)
+				medicationSchedule.scheduledDate.between(startDate, endDate)
+			)
+			.orderBy(
+				medicationSchedule.scheduledDate.asc(),
+				medicationSchedule.scheduledTime.asc()
 			)
 			.fetch();
 	}
 
 	@Override
-	public void deleteTodayUpcomingSchedules(Long medicationId, LocalDate todayDate, LocalTime currentTime) {
+	public void deleteTodayUpcomingSchedules(Long medicationId, LocalDate currentDate, LocalTime currentTime) {
 		jpaQueryFactory
 			.delete(medicationSchedule)
 			.where(
 				medicationSchedule.medicationId.eq(medicationId),
-				medicationSchedule.scheduledDate.eq(todayDate),
+				medicationSchedule.scheduledDate.eq(currentDate),
 				medicationSchedule.scheduledTime.after(currentTime)
 			)
-			.execute(); // 삭제된 row 개수 리턴
+			.execute();
 	}
 }
