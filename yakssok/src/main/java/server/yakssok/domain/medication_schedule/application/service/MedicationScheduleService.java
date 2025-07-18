@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import server.yakssok.domain.friend.applcation.service.RelationshipService;
 import server.yakssok.domain.medication.application.service.MedicationScheduleGenerator;
 import server.yakssok.domain.medication_schedule.domain.entity.MedicationSchedule;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleJdbcRepository;
@@ -26,6 +27,7 @@ public class MedicationScheduleService {
 	private final MedicationScheduleRepository medicationScheduleRepository;
 	private final MedicationScheduleFinder medicationScheduleFinder;
 	private final MedicationScheduleGenerator medicationScheduleGenerator;
+	private final RelationshipService relationshipService;
 
 	@Transactional
 	public void generateTodaySchedules() {
@@ -34,8 +36,7 @@ public class MedicationScheduleService {
 		medicationScheduleJdbcRepository.batchInsert(schedules);
 	}
 
-	@Transactional(readOnly = true)
-	public MedicationScheduleGroupResponse findTodayMedicationSchedules(Long userId) {
+	public MedicationScheduleGroupResponse findTodayMedicationSchedule(Long userId) {
 		List<MedicationScheduleDto> schedules = medicationScheduleFinder.findUserSchedulesByDate(userId, LocalDate.now());
 		return MedicationScheduleGroupResponse.fromList(convertToResponses(schedules));
 	}
@@ -46,6 +47,7 @@ public class MedicationScheduleService {
 			.toList();
 	}
 
+	//TODO: 유저인지 확인 필요
 	@Transactional
 	public void takeMedication(Long userId, Long scheduleId) {
 		MedicationSchedule schedule = medicationScheduleRepository.findById(scheduleId)
@@ -53,8 +55,7 @@ public class MedicationScheduleService {
 		schedule.take();
 	}
 
-	@Transactional(readOnly = true)
-	public MedicationScheduleGroupResponse findRangeMedicationSchedules(Long userId, String startDate, String endDate) {
+	private MedicationScheduleGroupResponse findRangeMedicationSchedule(Long userId, String startDate, String endDate) {
 		LocalDate start = LocalDate.parse(startDate);
 		LocalDate end = LocalDate.parse(endDate);
 		LocalDate today = LocalDate.now();
@@ -75,6 +76,30 @@ public class MedicationScheduleService {
 					.thenComparing(MedicationScheduleResponse::intakeTime)
 			)
 			.toList();
+	}
+
+	@Transactional(readOnly = true)
+	public MedicationScheduleGroupResponse findMyTodayMedicationSchedule(Long userId) {
+		return findTodayMedicationSchedule(userId);
+	}
+
+	@Transactional(readOnly = true)
+	public MedicationScheduleGroupResponse findMyRangeMedicationSchedule(Long userId, String startDate,
+		String endDate) {
+		return findRangeMedicationSchedule(userId, startDate, endDate);
+	}
+
+	@Transactional(readOnly = true)
+	public MedicationScheduleGroupResponse findFriendTodayMedicationSchedule(Long userId, Long friendId) {
+		relationshipService.validateFriendship(userId, friendId);
+		return findTodayMedicationSchedule(friendId);
+	}
+
+	@Transactional(readOnly = true)
+	public MedicationScheduleGroupResponse findFriendRangeMedicationSchedule(Long userId, Long friendId,
+		String startDate, String endDate) {
+		relationshipService.validateFriendship(userId, friendId);
+		return findRangeMedicationSchedule(friendId, startDate, endDate);
 	}
 
 	@Transactional

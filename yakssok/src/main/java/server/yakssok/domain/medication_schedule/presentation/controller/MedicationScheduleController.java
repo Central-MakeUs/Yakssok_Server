@@ -28,18 +28,18 @@ public class MedicationScheduleController {
 
 	@Operation(summary = "나의 복약 스케줄 조회 (오늘)")
 	@GetMapping("/today")
-	public ApiResponse<MedicationScheduleGroupResponse> findTodayMedicationSchedules(
+	public ApiResponse<MedicationScheduleGroupResponse> findMyTodayMedicationSchedule(
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
 		Long userId = userDetails.getUserId();
 		MedicationScheduleGroupResponse medicationScheduleGroupResponse
-			= medicationScheduleService.findTodayMedicationSchedules(userId);
+			= medicationScheduleService.findMyTodayMedicationSchedule(userId);
 		return ApiResponse.success(medicationScheduleGroupResponse);
 	}
 
 	@Operation(summary = "나의 복약 스케줄 조회 (기간)")
 	@GetMapping
-	public ApiResponse<MedicationScheduleGroupResponse> findRangeMedicationSchedules(
+	public ApiResponse<MedicationScheduleGroupResponse> findMyRangeMedicationSchedule(
 		@Parameter(description = "시작일 (YYYY-MM-DD)", required = true)
 		@RequestParam String startDate,
 		@Parameter(description = "종료일 (YYYY-MM-DD)", required = true)
@@ -47,7 +47,7 @@ public class MedicationScheduleController {
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
 		Long userId = userDetails.getUserId();
-		MedicationScheduleGroupResponse rangeMedicationSchedule = medicationScheduleService.findRangeMedicationSchedules(
+		MedicationScheduleGroupResponse rangeMedicationSchedule = medicationScheduleService.findMyRangeMedicationSchedule(
 			userId, startDate, endDate);
 		return ApiResponse.success(rangeMedicationSchedule);
 	}
@@ -63,4 +63,33 @@ public class MedicationScheduleController {
 		medicationScheduleService.takeMedication(userId, scheduleId);
 		return ApiResponse.success();
 	}
+
+	@Operation(summary = "지인 복약 스케줄 조회 (오늘)")
+	@GetMapping("/friends/{friendId}/today")
+	public ApiResponse<MedicationScheduleGroupResponse> findFriendTodayMedicationSchedule(
+		@AuthenticationPrincipal YakssokUserDetails userDetails,
+		@PathVariable Long friendId
+	) {
+		Long userId = userDetails.getUserId();
+		MedicationScheduleGroupResponse medicationScheduleGroupResponse
+			= medicationScheduleService.findFriendTodayMedicationSchedule(userId, friendId);
+		return ApiResponse.success(medicationScheduleGroupResponse);
+	}
+
+	@Operation(summary = "지인 복약 스케줄 조회 (기간)")
+	@GetMapping("/friends/{friendId}")
+	public ApiResponse<MedicationScheduleGroupResponse> findFriendRangeMedicationSchedule(
+		@Parameter(description = "시작일 (YYYY-MM-DD)", required = true)
+		@RequestParam String startDate,
+		@Parameter(description = "종료일 (YYYY-MM-DD)", required = true)
+		@RequestParam String endDate,
+		@AuthenticationPrincipal YakssokUserDetails userDetails,
+		@PathVariable Long friendId
+	) {
+		Long userId = userDetails.getUserId();
+		MedicationScheduleGroupResponse rangeMedicationSchedule = medicationScheduleService.findFriendRangeMedicationSchedule(
+			userId, friendId, startDate, endDate);
+		return ApiResponse.success(rangeMedicationSchedule);
+	}
+
 }

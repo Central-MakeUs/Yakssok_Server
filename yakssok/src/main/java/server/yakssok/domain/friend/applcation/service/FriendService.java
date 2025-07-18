@@ -61,7 +61,7 @@ public class FriendService {
 		List<Friend> friendsList = friendRepository.findAllByUserId(userId);
 		List<FriendInfoResponse> friendInfoResponses = friendsList.stream()
 			.map(friend -> {
-				Long friendId = friend.getFollowingFriendId();
+				Long friendId = friend.getFriendId();
 				String relationName = friend.getRelationName();
 				String profileImageUrl = userService.findUserProfileByUserId(friendId);
 				return new FriendInfoResponse(friendId, relationName, profileImageUrl);

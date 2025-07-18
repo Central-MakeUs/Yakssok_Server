@@ -17,7 +17,7 @@ public class FriendRepositoryImpl implements FriendRepositoryCustom {
 			.from(friend)
 			.where(
 				friend.userId.eq(userId),
-				friend.followingFriendId.eq(followingFriendId)
+				friend.friendId.eq(followingFriendId)
 			)
 			.fetchFirst();
 		return fetchOne != null;
