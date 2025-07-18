@@ -76,4 +76,13 @@ public class MedicationScheduleService {
 			)
 			.toList();
 	}
+
+	@Transactional
+	public void deleteTodayUpcomingSchedules(Long medicationId, LocalDateTime now) {
+		medicationScheduleRepository.deleteTodayUpcomingSchedules(
+			medicationId,
+			now.toLocalDate(),
+			now.toLocalTime()
+		);
+	}
 }

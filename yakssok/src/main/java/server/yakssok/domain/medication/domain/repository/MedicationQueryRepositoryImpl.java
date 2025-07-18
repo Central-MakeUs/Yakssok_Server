@@ -5,7 +5,6 @@ import static server.yakssok.domain.medication.domain.entity.QMedicationIntakeDa
 import static server.yakssok.domain.medication.domain.entity.QMedicationIntakeTime.medicationIntakeTime;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,11 +26,54 @@ public class MedicationQueryRepositoryImpl implements MedicationQueryRepository{
 		return queryFactory
 			.selectFrom(medication)
 			.leftJoin(medication.intakeDays, medicationIntakeDay).fetchJoin()
-			.where(medication.userId.eq(userId))
+			.where(isUser(userId))
 			.distinct()
 			.orderBy(medication.id.desc())
 			.fetch();
 	}
+
+	@Override
+	public List<Medication> findUserPlannedMedications(Long userId, LocalDateTime now) {
+		return queryFactory
+			.selectFrom(medication)
+			.leftJoin(medication.intakeDays, medicationIntakeDay).fetchJoin()
+			.where(
+				isUser(userId),
+				isPlanned(now)
+			)
+			.distinct()
+			.orderBy(medication.id.desc())
+			.fetch();
+	}
+
+	@Override
+	public List<Medication> findUserTakingMedications(Long userId, LocalDateTime now) {
+		return queryFactory
+			.selectFrom(medication)
+			.leftJoin(medication.intakeDays, medicationIntakeDay).fetchJoin()
+			.where(
+				isUser(userId),
+				isTaking(now)
+			)
+			.distinct()
+			.orderBy(medication.id.desc())
+			.fetch();
+	}
+
+	@Override
+	public List<Medication> findUserEndedMedications(Long userId, LocalDateTime now) {
+		return queryFactory
+			.selectFrom(medication)
+			.leftJoin(medication.intakeDays, medicationIntakeDay).fetchJoin()
+			.where(
+				isUser(userId),
+				isEnded(now)
+			)
+			.distinct()
+			.orderBy(medication.id.desc())
+			.fetch();
+	}
+
 
 	@Override
 	public List<MedicationDto> findMedicationsForScheduleGeneration(LocalDateTime dateTime, DayOfWeek dayOfWeek) {
@@ -47,8 +89,7 @@ public class MedicationQueryRepositoryImpl implements MedicationQueryRepository{
 			.join(medication.intakeDays, medicationIntakeDay)
 			.join(medication.intakeTimes, medicationIntakeTime)
 			.where(
-				isMedicationStarted(dateTime),
-				isMedicationNotEnded(dateTime),
+				isTaking(dateTime),
 				isIntakeDayOfWeek(dayOfWeek)
 			)
 			.fetch();
@@ -67,21 +108,33 @@ public class MedicationQueryRepositoryImpl implements MedicationQueryRepository{
 			.leftJoin(medicationIntakeTime).on(medicationIntakeTime.medication.id.eq(medication.id))
 			.leftJoin(medicationIntakeDay).on(medicationIntakeDay.medication.id.eq(medication.id))
 			.where(
-				isMedicationNotEnded(LocalDateTime.now())
+				isEnded(LocalDateTime.now()).not()
 			)
 			.fetch();
 	}
 
-	private BooleanExpression isMedicationStarted(LocalDateTime dateTime) {
-		return medication.startDateTime.loe(dateTime);
-	}
-
-	private BooleanExpression isMedicationNotEnded(LocalDateTime dateTime) {
-		return medication.endDateTime.isNull()
-			.or(medication.endDateTime.goe(dateTime));
-	}
-
 	private BooleanExpression isIntakeDayOfWeek(DayOfWeek targetDayOfWeek) {
 		return medicationIntakeDay.dayOfWeek.eq(targetDayOfWeek);
+	}
+
+	private BooleanExpression isUser(Long userId) {
+		return medication.userId.eq(userId);
+	}
+
+	private BooleanExpression isPlanned(LocalDateTime now) {
+		return medication.startDateTime.gt(now);
+	}
+
+	private BooleanExpression isTaking(LocalDateTime now) {
+		return medication.startDateTime.loe(now)
+			.and(
+				medication.endDateTime.isNull()
+					.or(medication.endDateTime.goe(now))
+			);
+	}
+
+	private BooleanExpression isEnded(LocalDateTime now) {
+		return medication.endDateTime.isNotNull()
+			.and(medication.endDateTime.lt(now));
 	}
 }
