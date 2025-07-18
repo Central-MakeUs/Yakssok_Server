@@ -55,16 +55,14 @@ public class MedicationScheduleService {
 		schedule.take();
 	}
 
-	private MedicationScheduleGroupResponse findRangeMedicationSchedule(Long userId, String startDate, String endDate) {
-		LocalDate start = LocalDate.parse(startDate);
-		LocalDate end = LocalDate.parse(endDate);
+	private MedicationScheduleGroupResponse findRangeMedicationSchedule(Long userId, LocalDate startDate, LocalDate endDate) {
 		LocalDate today = LocalDate.now();
-		if (start.isAfter(end)) {
+		if (startDate.isAfter(endDate)) {
 			throw new MedicationScheduleException(ErrorCode.INVALID_INPUT_VALUE);
 		}
 
 		List<MedicationScheduleDto> schedules =
-			medicationScheduleFinder.findSchedulesInPeriod(userId, start, end, today);
+			medicationScheduleFinder.findSchedulesInPeriod(userId, startDate, endDate, today);
 		return MedicationScheduleGroupResponse.fromList(sortedResponses(schedules));
 	}
 
@@ -84,8 +82,8 @@ public class MedicationScheduleService {
 	}
 
 	@Transactional(readOnly = true)
-	public MedicationScheduleGroupResponse findMyRangeMedicationSchedule(Long userId, String startDate,
-		String endDate) {
+	public MedicationScheduleGroupResponse findMyRangeMedicationSchedule(Long userId, LocalDate startDate,
+		LocalDate endDate) {
 		return findRangeMedicationSchedule(userId, startDate, endDate);
 	}
 
@@ -97,12 +95,11 @@ public class MedicationScheduleService {
 
 	@Transactional(readOnly = true)
 	public MedicationScheduleGroupResponse findFriendRangeMedicationSchedule(Long userId, Long friendId,
-		String startDate, String endDate) {
+		LocalDate startDate, LocalDate endDate) {
 		relationshipService.validateFriendship(userId, friendId);
 		return findRangeMedicationSchedule(friendId, startDate, endDate);
 	}
 
-	@Transactional
 	public void deleteTodayUpcomingSchedules(Long medicationId, LocalDateTime now) {
 		medicationScheduleRepository.deleteTodayUpcomingSchedules(
 			medicationId,

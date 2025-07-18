@@ -1,5 +1,7 @@
 package server.yakssok.domain.medication_schedule.presentation.controller;
 
+import java.time.LocalDate;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,9 +43,9 @@ public class MedicationScheduleController {
 	@GetMapping
 	public ApiResponse<MedicationScheduleGroupResponse> findMyRangeMedicationSchedule(
 		@Parameter(description = "시작일 (YYYY-MM-DD)", required = true)
-		@RequestParam String startDate,
+		@RequestParam LocalDate startDate,
 		@Parameter(description = "종료일 (YYYY-MM-DD)", required = true)
-		@RequestParam String endDate,
+		@RequestParam LocalDate endDate,
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
 		Long userId = userDetails.getUserId();
@@ -80,9 +82,9 @@ public class MedicationScheduleController {
 	@GetMapping("/friends/{friendId}")
 	public ApiResponse<MedicationScheduleGroupResponse> findFriendRangeMedicationSchedule(
 		@Parameter(description = "시작일 (YYYY-MM-DD)", required = true)
-		@RequestParam String startDate,
+		@RequestParam LocalDate startDate,
 		@Parameter(description = "종료일 (YYYY-MM-DD)", required = true)
-		@RequestParam String endDate,
+		@RequestParam LocalDate endDate,
 		@AuthenticationPrincipal YakssokUserDetails userDetails,
 		@PathVariable Long friendId
 	) {
