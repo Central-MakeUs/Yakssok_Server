@@ -42,7 +42,7 @@ public class MedicationController {
 		return ApiResponse.success();
 	}
 
-	@Operation(summary = "전체 복약 루틴 목록 조회")
+	@Operation(summary = "내 복약 목록 조회")
 	@GetMapping
 	public ApiResponse<MedicationGroupedResponse> getMedications(
 		@Parameter @RequestParam(required = false) String status,
