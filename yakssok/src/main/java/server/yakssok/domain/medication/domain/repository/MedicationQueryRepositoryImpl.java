@@ -22,7 +22,6 @@ import server.yakssok.domain.medication.domain.repository.dto.MedicationDto;
 public class MedicationQueryRepositoryImpl implements MedicationQueryRepository{
 	private final JPAQueryFactory queryFactory;
 
-	//TODO : 다 가져와서 가공하기
 	@Override
 	public List<Medication> findAllUserMedications(Long userId) {
 		return queryFactory
@@ -35,7 +34,7 @@ public class MedicationQueryRepositoryImpl implements MedicationQueryRepository{
 	}
 
 	@Override
-	public List<MedicationDto> findMedicationsByDate(LocalDateTime dateTime, DayOfWeek dayOfWeek) {
+	public List<MedicationDto> findMedicationsForScheduleGeneration(LocalDateTime dateTime, DayOfWeek dayOfWeek) {
 		return queryFactory
 			.select(Projections.constructor(
 				MedicationDto.class,

@@ -10,6 +10,6 @@ import server.yakssok.domain.medication.domain.repository.dto.MedicationDto;
 
 public interface MedicationQueryRepository {
 	List<Medication> findAllUserMedications(Long userId);
-	List<MedicationDto> findMedicationsByDate(LocalDateTime dateTime, DayOfWeek dayOfWeek);
+	List<MedicationDto> findMedicationsForScheduleGeneration(LocalDateTime dateTime, DayOfWeek dayOfWeek);
 	List<FutureMedicationSchedulesDto> findFutureMedicationSchedules(Long userId);
 }
