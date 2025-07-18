@@ -62,7 +62,7 @@ public class MedicationScheduleGenerator {
 	}
 
 	public List<MedicationSchedule> generateTodaySchedules(LocalDateTime currentDateTime) {
-		List<MedicationDto> medicationDtos = medicationRepository.findMedicationsByDate(currentDateTime, currentDateTime.getDayOfWeek());
+		List<MedicationDto> medicationDtos = medicationRepository.findMedicationsForScheduleGeneration(currentDateTime, currentDateTime.getDayOfWeek());
 		return medicationDtos.stream()
 			.map(dto -> MedicationSchedule.create(currentDateTime.toLocalDate(), dto.intakeTime(), dto.medicationId()))
 			.toList();

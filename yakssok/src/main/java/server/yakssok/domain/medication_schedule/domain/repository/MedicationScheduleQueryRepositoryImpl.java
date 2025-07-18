@@ -30,11 +30,11 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 		);
 
 	@Override
-	public List<MedicationScheduleDto> findUserScheduleByDate(Long userId, LocalDate date) {
+	public List<MedicationScheduleDto> findUserSchedulesByDate(Long userId, LocalDate date) {
 		return jpaQueryFactory
 			.select(SCHEDULE_DTO_PROJECTION)
 			.from(medicationSchedule)
-			.leftJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
+			.innerJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
 			.where(
 				medication.userId.eq(userId),
 				medicationSchedule.scheduledDate.eq(date)
@@ -47,7 +47,7 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 	}
 
 	@Override
-	public List<MedicationScheduleDto> findSchedulesInPastRange(Long userId, LocalDate startDate, LocalDate endDate) {
+	public List<MedicationScheduleDto> findUserSchedulesInPastRange(Long userId, LocalDate startDate, LocalDate endDate) {
 		return jpaQueryFactory
 			.select(SCHEDULE_DTO_PROJECTION)
 			.from(medicationSchedule)

@@ -35,8 +35,8 @@ public class MedicationScheduleService {
 	}
 
 	@Transactional(readOnly = true)
-	public MedicationScheduleGroupResponse findTodayMedicationSchedule(Long userId) {
-		List<MedicationScheduleDto> schedules = medicationScheduleFinder.findUserScheduleByDate(userId, LocalDate.now());
+	public MedicationScheduleGroupResponse findTodayMedicationSchedules(Long userId) {
+		List<MedicationScheduleDto> schedules = medicationScheduleFinder.findUserSchedulesByDate(userId, LocalDate.now());
 		return MedicationScheduleGroupResponse.fromList(convertToResponses(schedules));
 	}
 
@@ -54,7 +54,7 @@ public class MedicationScheduleService {
 	}
 
 	@Transactional(readOnly = true)
-	public MedicationScheduleGroupResponse findRangeMedicationSchedule(Long userId, String startDate, String endDate) {
+	public MedicationScheduleGroupResponse findRangeMedicationSchedules(Long userId, String startDate, String endDate) {
 		LocalDate start = LocalDate.parse(startDate);
 		LocalDate end = LocalDate.parse(endDate);
 		LocalDate today = LocalDate.now();
@@ -75,5 +75,14 @@ public class MedicationScheduleService {
 					.thenComparing(MedicationScheduleResponse::intakeTime)
 			)
 			.toList();
+	}
+
+	@Transactional
+	public void deleteTodayUpcomingSchedules(Long medicationId, LocalDateTime now) {
+		medicationScheduleRepository.deleteTodayUpcomingSchedules(
+			medicationId,
+			now.toLocalDate(),
+			now.toLocalTime()
+		);
 	}
 }

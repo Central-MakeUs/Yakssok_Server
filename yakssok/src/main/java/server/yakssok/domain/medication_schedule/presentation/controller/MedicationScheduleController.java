@@ -28,18 +28,18 @@ public class MedicationScheduleController {
 
 	@Operation(summary = "나의 복약 스케줄 조회 (오늘)")
 	@GetMapping("/today")
-	public ApiResponse<MedicationScheduleGroupResponse> findTodayMedicationSchedule(
+	public ApiResponse<MedicationScheduleGroupResponse> findTodayMedicationSchedules(
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
 		Long userId = userDetails.getUserId();
 		MedicationScheduleGroupResponse medicationScheduleGroupResponse
-			= medicationScheduleService.findTodayMedicationSchedule(userId);
+			= medicationScheduleService.findTodayMedicationSchedules(userId);
 		return ApiResponse.success(medicationScheduleGroupResponse);
 	}
 
 	@Operation(summary = "나의 복약 스케줄 조회 (기간)")
 	@GetMapping
-	public ApiResponse<MedicationScheduleGroupResponse> findRangeMedicationSchedule(
+	public ApiResponse<MedicationScheduleGroupResponse> findRangeMedicationSchedules(
 		@Parameter(description = "시작일 (YYYY-MM-DD)", required = true)
 		@RequestParam String startDate,
 		@Parameter(description = "종료일 (YYYY-MM-DD)", required = true)
@@ -47,7 +47,7 @@ public class MedicationScheduleController {
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
 		Long userId = userDetails.getUserId();
-		MedicationScheduleGroupResponse rangeMedicationSchedule = medicationScheduleService.findRangeMedicationSchedule(
+		MedicationScheduleGroupResponse rangeMedicationSchedule = medicationScheduleService.findRangeMedicationSchedules(
 			userId, startDate, endDate);
 		return ApiResponse.success(rangeMedicationSchedule);
 	}

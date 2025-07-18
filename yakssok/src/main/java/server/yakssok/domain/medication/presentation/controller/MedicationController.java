@@ -7,9 +7,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +21,6 @@ import server.yakssok.domain.medication.presentation.dto.response.MedicationGrou
 import server.yakssok.global.common.reponse.ApiResponse;
 import server.yakssok.global.common.security.YakssokUserDetails;
 import server.yakssok.global.common.swagger.ApiErrorResponse;
-import server.yakssok.global.common.swagger.ApiErrorResponses;
 import server.yakssok.global.exception.ErrorCode;
 
 @RestController
@@ -41,13 +42,14 @@ public class MedicationController {
 		return ApiResponse.success();
 	}
 
-	@Operation(summary = "전체 복약 루틴 목록 조회")
+	@Operation(summary = "내 복약 목록 조회")
 	@GetMapping
 	public ApiResponse<MedicationGroupedResponse> getMedications(
+		@Parameter @RequestParam(required = false) String status,
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
 		Long userId = userDetails.getUserId();
-		return ApiResponse.success(medicationService.findMedications(userId));
+		return ApiResponse.success(medicationService.findMedications(userId, status));
 	}
 
 	@Operation(summary = "복약 종료")

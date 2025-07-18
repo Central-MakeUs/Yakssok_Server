@@ -18,8 +18,8 @@ public class MedicationScheduleFinder {
 	private final MedicationScheduleRepository medicationScheduleRepository;
 	private final MedicationScheduleGenerator medicationScheduleGenerator;
 
-	public List<MedicationScheduleDto> findUserScheduleByDate(Long userId, LocalDate date) {
-		return medicationScheduleRepository.findUserScheduleByDate(userId, date);
+	public List<MedicationScheduleDto> findUserSchedulesByDate(Long userId, LocalDate date) {
+		return medicationScheduleRepository.findUserSchedulesByDate(userId, date);
 	}
 
 	public List<MedicationScheduleDto> findSchedulesInPeriod(Long userId, LocalDate start, LocalDate end, LocalDate today) {
@@ -41,12 +41,12 @@ public class MedicationScheduleFinder {
 	}
 
 	private List<MedicationScheduleDto> findPastSchedules(Long userId, LocalDate start, LocalDate end) {
-		return medicationScheduleRepository.findSchedulesInPastRange(userId, start, end);
+		return medicationScheduleRepository.findUserSchedulesInPastRange(userId, start, end);
 	}
 
 	private List<MedicationScheduleDto> findMixedSchedules(Long userId, LocalDate start, LocalDate end, LocalDate today) {
 		List<MedicationScheduleDto> schedules = new ArrayList<>(
-			medicationScheduleRepository.findSchedulesInPastRange(userId, start, today));
+			medicationScheduleRepository.findUserSchedulesInPastRange(userId, start, today));
 		schedules.addAll(medicationScheduleGenerator.generateFutureScheduleDtos(userId, today.plusDays(1), end));
 		return schedules;
 	}
