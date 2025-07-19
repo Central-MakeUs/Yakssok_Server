@@ -34,9 +34,7 @@ public class MedicationScheduleController {
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
 		Long userId = userDetails.getUserId();
-		MedicationScheduleGroupResponse medicationScheduleGroupResponse
-			= medicationScheduleService.findMyTodayMedicationSchedule(userId);
-		return ApiResponse.success(medicationScheduleGroupResponse);
+		return ApiResponse.success(medicationScheduleService.getMyTodaySchedules(userId));
 	}
 
 	@Operation(summary = "나의 복약 스케줄 조회 (기간)")
@@ -49,9 +47,7 @@ public class MedicationScheduleController {
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
 		Long userId = userDetails.getUserId();
-		MedicationScheduleGroupResponse rangeMedicationSchedule = medicationScheduleService.findMyRangeMedicationSchedule(
-			userId, startDate, endDate);
-		return ApiResponse.success(rangeMedicationSchedule);
+		return ApiResponse.success(medicationScheduleService.getMyRangeSchedules(userId, startDate, endDate));
 	}
 
 	@Operation(summary = "복약 스케줄 복용 처리")
@@ -73,9 +69,7 @@ public class MedicationScheduleController {
 		@PathVariable Long friendId
 	) {
 		Long userId = userDetails.getUserId();
-		MedicationScheduleGroupResponse medicationScheduleGroupResponse
-			= medicationScheduleService.findFriendTodayMedicationSchedule(userId, friendId);
-		return ApiResponse.success(medicationScheduleGroupResponse);
+		return ApiResponse.success(medicationScheduleService.getFriendTodaySchedules(userId, friendId));
 	}
 
 	@Operation(summary = "지인 복약 스케줄 조회 (기간)")
@@ -89,9 +83,7 @@ public class MedicationScheduleController {
 		@PathVariable Long friendId
 	) {
 		Long userId = userDetails.getUserId();
-		MedicationScheduleGroupResponse rangeMedicationSchedule = medicationScheduleService.findFriendRangeMedicationSchedule(
-			userId, friendId, startDate, endDate);
-		return ApiResponse.success(rangeMedicationSchedule);
+		return ApiResponse.success(medicationScheduleService.getFriendRangeSchedules(userId, friendId, startDate, endDate));
 	}
 
 }
