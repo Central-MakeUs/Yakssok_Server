@@ -22,10 +22,12 @@ public enum ErrorCode implements ResponseCode{
     //follow, feedback
     ALREADY_FRIEND(HttpStatus.BAD_REQUEST, 4000, "이미 친구로 등록된 사용자입니다."),
     CANNOT_FOLLOW_SELF(HttpStatus.BAD_REQUEST, 4001, "자기 자신을 친구로 추가할 수 없습니다."),
+    NOT_FRIEND(HttpStatus.BAD_REQUEST, 4002, "친구가 아닌 사용자입니다."),
 
     // medication
     NOT_FOUND_MEDICATION(HttpStatus.NOT_FOUND, 5000, "존재하지 않는 복약 스케줄입니다."),
     NOT_FOUND_MEDICATION_SCHEDULE(HttpStatus.NOT_FOUND, 5001, "존재하지 않는 복약 스케줄입니다."),
+    FORBIDDEN(HttpStatus.FORBIDDEN, 5002, "해당 작업을 수행할 권한이 없습니다."),
 
 
     //common
