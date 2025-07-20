@@ -1,9 +1,12 @@
 package server.yakssok.domain.user.application.service;
 
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import server.yakssok.domain.friend.domain.repository.FriendRepository;
+import server.yakssok.domain.medication.domain.repository.MedicationRepository;
 import server.yakssok.domain.user.application.exception.UserException;
 import server.yakssok.domain.user.domain.entity.User;
 import server.yakssok.domain.user.domain.repository.UserRepository;
@@ -17,14 +20,15 @@ import server.yakssok.global.exception.ErrorCode;
 @RequiredArgsConstructor
 public class UserService {
 	private final UserRepository userRepository;
+	private final MedicationRepository medicationRepository;
+	private final FriendRepository friendRepository;
 
 	@Transactional
 	public FindMyInfoResponse findMyInfo(Long userId) {
 		User user = getUserByUserId(userId);
-		return new FindMyInfoResponse(
-			user.getNickName(),
-			user.getProfileImageUrl()
-		);
+		int medicationCount = medicationRepository.countByUserId(userId);
+		int followingCount = friendRepository.countByUserId(userId);
+		return FindMyInfoResponse.of(user, medicationCount, followingCount);
 	}
 
 	@Transactional
@@ -44,19 +48,14 @@ public class UserService {
 	@Transactional(readOnly = true)
 	public FindUserInviteCodeResponse findUserInviteCode(Long userId) {
 		User user = getUserByUserId(userId);
-		return new FindUserInviteCodeResponse(
-			user.getInviteCode().getValue()
-		);
+		return FindUserInviteCodeResponse.of(user.getInviteCode().getValue());
 	}
 
 	@Transactional(readOnly = true)
 	public FindUserInfoResponse findUserInfoByInviteCode(String inviteCode) {
 		User user = userRepository.findByInviteCodeValue(inviteCode)
 			.orElseThrow(() -> new UserException(ErrorCode.INVALID_INVITE_CODE));
-		return new FindUserInfoResponse(
-			user.getNickName(),
-			user.getProfileImageUrl()
-		);
+		return FindUserInfoResponse.from(user);
 	}
 
 	public User getUserIdByInviteCode(String inviteCode) {

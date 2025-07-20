@@ -6,4 +6,7 @@ public record FindUserInviteCodeResponse(
 	@Schema(description = "초대 코드", example = "YAKdSO1as")
 	String inviteCode
 ) {
+	public static FindUserInviteCodeResponse of(String inviteCode) {
+		return new FindUserInviteCodeResponse(inviteCode);
+	}
 }

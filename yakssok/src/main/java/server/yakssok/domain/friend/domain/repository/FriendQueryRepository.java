@@ -6,6 +6,6 @@ import server.yakssok.domain.friend.domain.entity.Friend;
 
 public interface FriendQueryRepository {
 	boolean isAlreadyFollow(Long userId, Long followingId);
-	List<Friend> findFollowingsByUserId(Long userId);
-
+	List<Friend> findMyFollowings(Long userId);
+	List<Friend> findMyFollowers(Long userId);
 }
