@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 import server.yakssok.domain.friend.domain.entity.Friend;
 
 @Repository
-public interface FriendRepository extends JpaRepository<Friend, Long>, FriendRepositoryCustom {
+public interface FriendRepository extends JpaRepository<Friend, Long>, FriendQueryRepository {
 }

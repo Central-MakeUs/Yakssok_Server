@@ -19,7 +19,7 @@ import server.yakssok.global.common.security.YakssokUserDetails;
 @Tag(name = "Friend", description = "지인 API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/friend")
+@RequestMapping("/api/friends")
 public class FriendController {
 
 	private final FriendService friendService;

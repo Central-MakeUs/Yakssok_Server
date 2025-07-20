@@ -1,13 +1,16 @@
 package server.yakssok.domain.friend.domain.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import server.yakssok.domain.user.domain.entity.User;
 
 @Entity
 @Getter
@@ -15,17 +18,25 @@ import lombok.NoArgsConstructor;
 public class Friend {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private Long userId;
-	private Long friendId;
+
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
+	private User user;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "following_id")
+	private User following;
+
 	private String relationName;
 
-	public static Friend create(Long userId, Long friendId, String relationName) {
-		return new Friend(userId, friendId, relationName);
+	public static Friend create(User user, User following, String relationName) {
+		return new Friend(user, following, relationName);
 	}
 
-	private Friend(Long userId, Long friendId, String relationName) {
-		this.userId = userId;
-		this.friendId = friendId;
+	private Friend(User user, User following, String relationName) {
+		this.user = user;
+		this.following = following;
 		this.relationName = relationName;
 	}
 }

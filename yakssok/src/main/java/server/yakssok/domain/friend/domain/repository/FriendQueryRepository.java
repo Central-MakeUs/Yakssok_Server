@@ -4,8 +4,8 @@ import java.util.List;
 
 import server.yakssok.domain.friend.domain.entity.Friend;
 
-public interface FriendRepositoryCustom {
-	boolean isAlreadyFollow(Long userId, Long friendId);
+public interface FriendQueryRepository {
+	boolean isAlreadyFollow(Long userId, Long followingId);
 	List<Friend> findFollowingsByUserId(Long userId);
 
 }

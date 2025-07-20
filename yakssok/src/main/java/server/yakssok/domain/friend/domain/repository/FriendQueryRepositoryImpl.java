@@ -11,17 +11,17 @@ import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.friend.domain.entity.Friend;
 
 @RequiredArgsConstructor
-public class FriendRepositoryImpl implements FriendRepositoryCustom {
+public class FriendQueryRepositoryImpl implements FriendQueryRepository {
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public boolean isAlreadyFollow(Long userId, Long friendId) {
+	public boolean isAlreadyFollow(Long userId, Long followingId) {
 		Integer fetchOne = queryFactory
 			.selectOne()
 			.from(friend)
 			.where(
-				friend.userId.eq(userId),
-				friend.friendId.eq(friendId)
+				friend.user.id.eq(userId),
+				friend.following.id.eq(followingId)
 			)
 			.fetchFirst();
 		return fetchOne != null;
@@ -31,7 +31,8 @@ public class FriendRepositoryImpl implements FriendRepositoryCustom {
 	public List<Friend> findFollowingsByUserId(Long userId) {
 		return queryFactory
 			.selectFrom(friend)
-			.where(friend.userId.eq(userId))
+			.join(friend.following).fetchJoin()
+			.where(friend.user.id.eq(userId))
 			.orderBy(friend.id.desc())
 			.fetch();
 	}

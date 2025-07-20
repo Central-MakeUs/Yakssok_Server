@@ -14,6 +14,7 @@ import server.yakssok.domain.friend.presentation.dto.request.FollowFriendRequest
 import server.yakssok.domain.friend.presentation.dto.response.FriendInfoGroupResponse;
 import server.yakssok.domain.friend.presentation.dto.response.FriendInfoResponse;
 import server.yakssok.domain.user.application.service.UserService;
+import server.yakssok.domain.user.domain.entity.User;
 import server.yakssok.global.exception.ErrorCode;
 
 @Service
@@ -25,28 +26,29 @@ public class FriendService {
 	@Transactional
 	public void followFriendByInviteCode(Long userId, FollowFriendRequest followFriendRequest) {
 		String inviteCode = followFriendRequest.inviteCode();
-		String relationName = followFriendRequest.relationName();
-
-		Long followingId = userService.getUserIdByInviteCode(inviteCode);
-		validateCanFollow(userId, followingId);
-		Friend friend = followFriendRequest.createFriend(userId, followingId);
+		User following = userService.getUserIdByInviteCode(inviteCode);
+		User user = userService.getUserByUserId(userId);
+		validateCanFollow(user, following);
+		Friend friend = followFriendRequest.createFriend(user, following);
 		friendRepository.save(friend);
 	}
 
-	private void validateCanFollow(Long userId, Long friendId) {
-		validateSelfFollow(userId, friendId);
-		validateAlreadyFollow(userId, friendId);
+	private void validateCanFollow(User user, User following) {
+		Long userId = user.getId();
+		Long followingId = following.getId();
+		validateSelfFollow(userId, followingId);
+		validateAlreadyFollow(userId, followingId);
 	}
 
-	private static void validateSelfFollow(Long userId, Long friendId) {
-		boolean isSelf = Objects.equals(userId, friendId);
+	private static void validateSelfFollow(Long userId, Long followingId) {
+		boolean isSelf = Objects.equals(userId, followingId);
 		if (isSelf) {
 			throw new FriendException(ErrorCode.CANNOT_FOLLOW_SELF);
 		}
 	}
 
-	private void validateAlreadyFollow(Long userId, Long friendId) {
-		boolean isExists = friendRepository.isAlreadyFollow(userId, friendId);
+	private void validateAlreadyFollow(Long userId, Long followingId) {
+		boolean isExists = friendRepository.isAlreadyFollow(userId, followingId);
 		if (isExists) {
 			throw new FriendException(ErrorCode.ALREADY_FRIEND);
 		}
@@ -54,19 +56,16 @@ public class FriendService {
 
 	@Transactional
 	public FriendInfoGroupResponse findMyFollowings(Long userId) {
-		List<Friend> followings = friendRepository.findFollowingsByUserId(userId);
-		List<FriendInfoResponse> friendInfoResponses = followings.stream()
-			.map(following -> {
-				Long followingId = following.getFriendId();
-				String relationName = following.getRelationName();
-				String profileImageUrl = userService.findUserProfileByUserId(followingId);
-				return new FriendInfoResponse(followingId, relationName, profileImageUrl);
+		List<Friend> friends = friendRepository.findFollowingsByUserId(userId);
+		List<FriendInfoResponse> friendInfoResponses = friends.stream()
+			.map(friend -> {
+				return FriendInfoResponse.of(friend);
 			}).toList();
 		return FriendInfoGroupResponse.of(friendInfoResponses);
 	}
 
-	public boolean isFollowing(Long userId, Long friendId) {
-		return friendRepository.isAlreadyFollow(userId, friendId);
+	public boolean isFollowing(Long userId, Long followingId) {
+		return friendRepository.isAlreadyFollow(userId, followingId);
 	}
 }
 

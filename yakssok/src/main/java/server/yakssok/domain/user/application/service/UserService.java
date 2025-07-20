@@ -59,10 +59,10 @@ public class UserService {
 		);
 	}
 
-	public Long getUserIdByInviteCode(String inviteCode) {
+	public User getUserIdByInviteCode(String inviteCode) {
 		User user = userRepository.findByInviteCodeValue(inviteCode)
 			.orElseThrow(() -> new UserException(ErrorCode.INVALID_INVITE_CODE));
-		return user.getId();
+		return user;
 	}
 
 	public String findUserProfileByUserId(Long followingId) {
