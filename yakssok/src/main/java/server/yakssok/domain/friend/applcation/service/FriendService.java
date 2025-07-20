@@ -27,19 +27,15 @@ public class FriendService {
 		String inviteCode = followFriendRequest.inviteCode();
 		String relationName = followFriendRequest.relationName();
 
-		Long friendId = userService.getUserIdByInviteCode(inviteCode);
-		validateCanFollow(userId, friendId);
-		createFriend(userId, friendId, relationName);
-	}
-
-	private void createFriend(Long userId, Long friendId, String relationName) {
-		Friend friend = Friend.create(userId, friendId, relationName);
+		Long followingId = userService.getUserIdByInviteCode(inviteCode);
+		validateCanFollow(userId, followingId);
+		Friend friend = followFriendRequest.createFriend(userId, followingId);
 		friendRepository.save(friend);
 	}
 
 	private void validateCanFollow(Long userId, Long friendId) {
 		validateSelfFollow(userId, friendId);
-		validateAlreadyFriend(userId, friendId);
+		validateAlreadyFollow(userId, friendId);
 	}
 
 	private static void validateSelfFollow(Long userId, Long friendId) {
@@ -49,28 +45,28 @@ public class FriendService {
 		}
 	}
 
-	private void validateAlreadyFriend(Long userId, Long friendId) {
-		boolean isExists = friendRepository.isAlreadyFriend(userId, friendId);
+	private void validateAlreadyFollow(Long userId, Long friendId) {
+		boolean isExists = friendRepository.isAlreadyFollow(userId, friendId);
 		if (isExists) {
 			throw new FriendException(ErrorCode.ALREADY_FRIEND);
 		}
 	}
 
 	@Transactional
-	public FriendInfoGroupResponse findMyFriends(Long userId) {
-		List<Friend> friendsList = friendRepository.findAllByUserId(userId);
-		List<FriendInfoResponse> friendInfoResponses = friendsList.stream()
-			.map(friend -> {
-				Long friendId = friend.getFriendId();
-				String relationName = friend.getRelationName();
-				String profileImageUrl = userService.findUserProfileByUserId(friendId);
-				return new FriendInfoResponse(friendId, relationName, profileImageUrl);
+	public FriendInfoGroupResponse findMyFollowings(Long userId) {
+		List<Friend> followings = friendRepository.findFollowingsByUserId(userId);
+		List<FriendInfoResponse> friendInfoResponses = followings.stream()
+			.map(following -> {
+				Long followingId = following.getFriendId();
+				String relationName = following.getRelationName();
+				String profileImageUrl = userService.findUserProfileByUserId(followingId);
+				return new FriendInfoResponse(followingId, relationName, profileImageUrl);
 			}).toList();
 		return FriendInfoGroupResponse.of(friendInfoResponses);
 	}
 
 	public boolean isFollowing(Long userId, Long friendId) {
-		return friendRepository.isAlreadyFriend(userId, friendId);
+		return friendRepository.isAlreadyFollow(userId, friendId);
 	}
 }
 

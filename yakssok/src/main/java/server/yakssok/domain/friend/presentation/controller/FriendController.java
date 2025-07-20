@@ -39,7 +39,7 @@ public class FriendController {
 	public ApiResponse<FriendInfoGroupResponse> findMyFriends(
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
-		FriendInfoGroupResponse friends = friendService.findMyFriends(userDetails.getUserId());
+		FriendInfoGroupResponse friends = friendService.findMyFollowings(userDetails.getUserId());
 		return ApiResponse.success(friends);
 	}
 }
