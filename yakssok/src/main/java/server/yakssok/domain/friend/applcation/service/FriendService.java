@@ -29,7 +29,7 @@ public class FriendService {
 		User following = userService.getUserIdByInviteCode(inviteCode);
 		User user = userService.getUserByUserId(userId);
 		relationshipService.validateCanFollow(user.getId(), following.getId());
-		Friend friend = followFriendRequest.createFriend(user, following);
+		Friend friend = followFriendRequest.toFriend(user, following);
 		friendRepository.save(friend);
 	}
 
@@ -38,7 +38,7 @@ public class FriendService {
 		List<Friend> friends = friendRepository.findMyFollowings(userId);
 		List<FollowingInfoResponse> friendInfoResponses = friends.stream()
 			.map(friend -> {
-				return FollowingInfoResponse.of(friend);
+				return FollowingInfoResponse.from(friend);
 			}).toList();
 		return FollowingInfoGroupResponse.of(friendInfoResponses);
 	}
@@ -48,7 +48,7 @@ public class FriendService {
 		List<Friend> friends = friendRepository.findMyFollowers(userId);
 		List<FollowerInfoResponse> followerInfoResponses = friends.stream()
 			.map(friend -> {
-				return FollowerInfoResponse.of(friend);
+				return FollowerInfoResponse.from(friend);
 			}).toList();
 		return FollowerInfoGroupResponse.of(followerInfoResponses);
 	}

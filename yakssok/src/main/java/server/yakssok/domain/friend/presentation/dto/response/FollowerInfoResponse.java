@@ -11,7 +11,7 @@ public record FollowerInfoResponse(
 	@Schema(description = "닉네임", example = "홍길동")
 	String nickName
 ) {
-	public static FollowerInfoResponse of(Friend friend) {
+	public static FollowerInfoResponse from(Friend friend) {
 		return new FollowerInfoResponse(
 			friend.getUser().getId(),
 			friend.getUser().getProfileImageUrl(),

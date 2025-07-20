@@ -13,7 +13,7 @@ public record FollowingInfoResponse(
 	@Schema(description = "닉네임", example = "홍길동")
 	String nickName
 ) {
-	public static FollowingInfoResponse of(Friend friend) {
+	public static FollowingInfoResponse from(Friend friend) {
 		return new FollowingInfoResponse(
 			friend.getFollowing().getId(),
 			friend.getRelationName(),
