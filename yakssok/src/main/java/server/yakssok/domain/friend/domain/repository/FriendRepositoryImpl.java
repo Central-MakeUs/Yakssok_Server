@@ -1,5 +1,6 @@
 package server.yakssok.domain.friend.domain.repository;
 
+
 import static server.yakssok.domain.friend.domain.entity.QFriend.*;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -11,13 +12,13 @@ public class FriendRepositoryImpl implements FriendRepositoryCustom {
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public boolean isAlreadyFriend(Long userId, Long followingFriendId) {
+	public boolean isAlreadyFriend(Long userId, Long friendId) {
 		Integer fetchOne = queryFactory
 			.selectOne()
 			.from(friend)
 			.where(
 				friend.userId.eq(userId),
-				friend.followingFriendId.eq(followingFriendId)
+				friend.friendId.eq(friendId)
 			)
 			.fetchFirst();
 		return fetchOne != null;

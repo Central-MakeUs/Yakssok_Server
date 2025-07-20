@@ -16,16 +16,16 @@ public class Friend {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private Long userId;
-	private Long followingFriendId;
+	private Long friendId;
 	private String relationName;
 
-	public static Friend create(Long userId, Long followingFriendId, String relationName) {
-		return new Friend(userId, followingFriendId, relationName);
+	public static Friend create(Long userId, Long friendId, String relationName) {
+		return new Friend(userId, friendId, relationName);
 	}
 
-	private Friend(Long userId, Long followingFriendId, String relationName) {
+	private Friend(Long userId, Long friendId, String relationName) {
 		this.userId = userId;
-		this.followingFriendId = followingFriendId;
+		this.friendId = friendId;
 		this.relationName = relationName;
 	}
 }

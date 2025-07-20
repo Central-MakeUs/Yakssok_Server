@@ -36,7 +36,7 @@ public class UserService {
 		);
 	}
 
-	private User getUserByUserId(Long userId) {
+	public User getUserByUserId(Long userId) {
 		return userRepository.findById(userId)
 			.orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 	}
