@@ -10,4 +10,6 @@ public interface MedicationScheduleQueryRepository {
 	List<MedicationScheduleDto> findUserSchedulesByDate(Long userId, LocalDate date);
 	List<MedicationScheduleDto> findUserSchedulesInPastRange(Long userId, LocalDate startDate, LocalDate endDate);
 	void deleteTodayUpcomingSchedules(Long medicationId, LocalDate currentDate, LocalTime currentTime);
+	int countRemainingMedicationsForToday(Long id);
+	boolean existsTodayScheduleByUserId(Long id);
 }

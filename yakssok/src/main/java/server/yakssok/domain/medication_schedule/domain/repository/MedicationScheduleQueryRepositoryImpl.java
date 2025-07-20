@@ -12,6 +12,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
+import server.yakssok.domain.friend.applcation.service.NotTakenMedicationInfo;
 import server.yakssok.domain.medication_schedule.domain.repository.dto.MedicationScheduleDto;
 
 @RequiredArgsConstructor
@@ -74,4 +75,35 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 			)
 			.execute();
 	}
+
+	@Override
+	public int countRemainingMedicationsForToday(Long userId) {
+		return jpaQueryFactory
+			.select(medicationSchedule.count())
+			.from(medicationSchedule)
+			.innerJoin(medication).fetchJoin()
+			.on(medication.id.eq(medicationSchedule.medicationId))
+			.where(
+				medication.userId.eq(userId),
+				medicationSchedule.scheduledDate.eq(LocalDate.now()),
+				medicationSchedule.isTaken.isFalse()
+			)
+			.fetchOne()
+			.intValue();
+	}
+
+
+	@Override
+	public boolean existsTodayScheduleByUserId(Long id) {
+		return jpaQueryFactory
+			.selectOne()
+			.from(medicationSchedule)
+			.innerJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
+			.where(
+				medication.userId.eq(id),
+				medicationSchedule.scheduledDate.eq(LocalDate.now())
+			)
+			.fetchFirst() != null;
+	}
+
 }

@@ -1,5 +1,6 @@
 package server.yakssok.domain.friend.presentation.controller;
 
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import server.yakssok.domain.friend.applcation.service.FriendService;
 import server.yakssok.domain.friend.presentation.dto.request.FollowFriendRequest;
 import server.yakssok.domain.friend.presentation.dto.response.FollowerInfoGroupResponse;
 import server.yakssok.domain.friend.presentation.dto.response.FollowingInfoGroupResponse;
+import server.yakssok.domain.friend.presentation.dto.response.FollowingMedicationStatusGroupResponse;
 import server.yakssok.global.common.reponse.ApiResponse;
 import server.yakssok.global.common.security.YakssokUserDetails;
 
@@ -31,7 +33,8 @@ public class FriendController {
 		@RequestBody FollowFriendRequest followRequest,
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
-		friendService.followFriendByInviteCode(userDetails.getUserId(), followRequest);
+		Long userId = userDetails.getUserId();
+		friendService.followFriendByInviteCode(userId, followRequest);
 		return ApiResponse.success();
 	}
 
@@ -40,7 +43,8 @@ public class FriendController {
 	public ApiResponse<FollowingInfoGroupResponse> findMyFollowings(
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
-		FollowingInfoGroupResponse friends = friendService.findMyFollowings(userDetails.getUserId());
+		Long userId = userDetails.getUserId();
+		FollowingInfoGroupResponse friends = friendService.findMyFollowings(userId);
 		return ApiResponse.success(friends);
 	}
 
@@ -49,7 +53,17 @@ public class FriendController {
 	public ApiResponse<FollowerInfoGroupResponse> findMyFollowers(
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
-		FollowerInfoGroupResponse friends = friendService.findMyFollowers(userDetails.getUserId());
+		Long userId = userDetails.getUserId();
+		FollowerInfoGroupResponse friends = friendService.findMyFollowers(userId);
 		return ApiResponse.success(friends);
+	}
+
+	@Operation(summary = "오늘 칭찬/잔소리 대상 지인 목록 조회")
+	@GetMapping("/medication-status")
+	public ApiResponse<FollowingMedicationStatusGroupResponse> getFollowingMedicationStatuses(
+		@AuthenticationPrincipal YakssokUserDetails userDetails
+	) {
+		Long userId = userDetails.getUserId();
+		return ApiResponse.success(friendService.getFollowingMedicationStatuses(userId));
 	}
 }
