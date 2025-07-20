@@ -12,7 +12,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.friend.applcation.service.FriendService;
 import server.yakssok.domain.friend.presentation.dto.request.FollowFriendRequest;
-import server.yakssok.domain.friend.presentation.dto.response.FriendInfoGroupResponse;
+import server.yakssok.domain.friend.presentation.dto.response.FollowerInfoGroupResponse;
+import server.yakssok.domain.friend.presentation.dto.response.FollowingInfoGroupResponse;
 import server.yakssok.global.common.reponse.ApiResponse;
 import server.yakssok.global.common.security.YakssokUserDetails;
 
@@ -35,11 +36,20 @@ public class FriendController {
 	}
 
 	@Operation(summary = "나의 팔로잉 목록 조회")
-	@GetMapping
-	public ApiResponse<FriendInfoGroupResponse> findMyFollowings(
+	@GetMapping("/followings")
+	public ApiResponse<FollowingInfoGroupResponse> findMyFollowings(
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
-		FriendInfoGroupResponse friends = friendService.findMyFollowings(userDetails.getUserId());
+		FollowingInfoGroupResponse friends = friendService.findMyFollowings(userDetails.getUserId());
+		return ApiResponse.success(friends);
+	}
+
+	@Operation(summary = "나의 팔로워 목록 조회")
+	@GetMapping("/followers")
+	public ApiResponse<FollowerInfoGroupResponse> findMyFollowers(
+		@AuthenticationPrincipal YakssokUserDetails userDetails
+	) {
+		FollowerInfoGroupResponse friends = friendService.findMyFollowers(userDetails.getUserId());
 		return ApiResponse.success(friends);
 	}
 }

@@ -28,11 +28,21 @@ public class FriendQueryRepositoryImpl implements FriendQueryRepository {
 	}
 
 	@Override
-	public List<Friend> findFollowingsByUserId(Long userId) {
+	public List<Friend> findMyFollowings(Long userId) {
 		return queryFactory
 			.selectFrom(friend)
 			.join(friend.following).fetchJoin()
 			.where(friend.user.id.eq(userId))
+			.orderBy(friend.id.desc())
+			.fetch();
+	}
+
+	@Override
+	public List<Friend> findMyFollowers(Long userId) {
+		return queryFactory
+			.selectFrom(friend)
+			.join(friend.user).fetchJoin()
+			.where(friend.following.id.eq(userId))
 			.orderBy(friend.id.desc())
 			.fetch();
 	}

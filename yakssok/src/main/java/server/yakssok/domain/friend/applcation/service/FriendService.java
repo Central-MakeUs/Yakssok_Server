@@ -9,8 +9,10 @@ import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.friend.domain.entity.Friend;
 import server.yakssok.domain.friend.domain.repository.FriendRepository;
 import server.yakssok.domain.friend.presentation.dto.request.FollowFriendRequest;
-import server.yakssok.domain.friend.presentation.dto.response.FriendInfoGroupResponse;
-import server.yakssok.domain.friend.presentation.dto.response.FriendInfoResponse;
+import server.yakssok.domain.friend.presentation.dto.response.FollowerInfoGroupResponse;
+import server.yakssok.domain.friend.presentation.dto.response.FollowerInfoResponse;
+import server.yakssok.domain.friend.presentation.dto.response.FollowingInfoGroupResponse;
+import server.yakssok.domain.friend.presentation.dto.response.FollowingInfoResponse;
 import server.yakssok.domain.user.application.service.UserService;
 import server.yakssok.domain.user.domain.entity.User;
 
@@ -32,13 +34,23 @@ public class FriendService {
 	}
 
 	@Transactional
-	public FriendInfoGroupResponse findMyFollowings(Long userId) {
-		List<Friend> friends = friendRepository.findFollowingsByUserId(userId);
-		List<FriendInfoResponse> friendInfoResponses = friends.stream()
+	public FollowingInfoGroupResponse findMyFollowings(Long userId) {
+		List<Friend> friends = friendRepository.findMyFollowings(userId);
+		List<FollowingInfoResponse> friendInfoResponses = friends.stream()
 			.map(friend -> {
-				return FriendInfoResponse.of(friend);
+				return FollowingInfoResponse.of(friend);
 			}).toList();
-		return FriendInfoGroupResponse.of(friendInfoResponses);
+		return FollowingInfoGroupResponse.of(friendInfoResponses);
+	}
+
+	@Transactional
+	public FollowerInfoGroupResponse findMyFollowers(Long userId) {
+		List<Friend> friends = friendRepository.findMyFollowers(userId);
+		List<FollowerInfoResponse> followerInfoResponses = friends.stream()
+			.map(friend -> {
+				return FollowerInfoResponse.of(friend);
+			}).toList();
+		return FollowerInfoGroupResponse.of(followerInfoResponses);
 	}
 }
 
