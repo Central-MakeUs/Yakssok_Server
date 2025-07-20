@@ -1,6 +1,7 @@
 package server.yakssok.domain.friend.presentation.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import server.yakssok.domain.friend.domain.entity.Friend;
 
 public record FriendInfoResponse(
 	@Schema(description = "지인 ID", example = "1")
@@ -8,6 +9,16 @@ public record FriendInfoResponse(
 	@Schema(description = "관계명", example = "엄마")
 	String relationName,
 	@Schema(description = "지인 프로필 이미지 URL", example = "https://example.com/profile.jpg")
-	String profileImageUrl
+	String profileImageUrl,
+	@Schema(description = "닉네임", example = "홍길동")
+	String nickName
 ) {
+	public static FriendInfoResponse of(Friend friend) {
+		return new FriendInfoResponse(
+			friend.getFollowing().getId(),
+			friend.getRelationName(),
+			friend.getFollowing().getProfileImageUrl(),
+			friend.getFollowing().getNickName()
+		);
+	}
 }

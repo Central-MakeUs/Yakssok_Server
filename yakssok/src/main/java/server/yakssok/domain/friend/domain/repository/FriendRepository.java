@@ -8,7 +8,5 @@ import org.springframework.stereotype.Repository;
 import server.yakssok.domain.friend.domain.entity.Friend;
 
 @Repository
-public interface FriendRepository extends JpaRepository<Friend, Long>, FriendRepositoryCustom {
-	List<Friend> findAllByUserId(Long userId);
-	boolean existsByUserIdAndFriendId(Long userId, Long friendId);
+public interface FriendRepository extends JpaRepository<Friend, Long>, FriendQueryRepository {
 }

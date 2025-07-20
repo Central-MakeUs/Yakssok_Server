@@ -19,7 +19,7 @@ import server.yakssok.global.common.security.YakssokUserDetails;
 @Tag(name = "Friend", description = "지인 API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/friend")
+@RequestMapping("/api/friends")
 public class FriendController {
 
 	private final FriendService friendService;
@@ -34,12 +34,12 @@ public class FriendController {
 		return ApiResponse.success();
 	}
 
-	@Operation(summary = "나의 지인 목록 조회")
+	@Operation(summary = "나의 팔로잉 목록 조회")
 	@GetMapping
-	public ApiResponse<FriendInfoGroupResponse> findMyFriends(
+	public ApiResponse<FriendInfoGroupResponse> findMyFollowings(
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
-		FriendInfoGroupResponse friends = friendService.findMyFriends(userDetails.getUserId());
+		FriendInfoGroupResponse friends = friendService.findMyFollowings(userDetails.getUserId());
 		return ApiResponse.success(friends);
 	}
 }
