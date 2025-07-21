@@ -38,4 +38,8 @@ public class MedicationSchedule {
 	public void take() {
 		this.isTaken = true;
 	}
+
+	public boolean isTodaySchedule() {
+		return scheduledDate.equals(LocalDate.now());
+	}
 }

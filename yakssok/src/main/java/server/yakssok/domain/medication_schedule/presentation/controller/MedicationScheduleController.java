@@ -15,7 +15,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.medication_schedule.application.service.MedicationScheduleService;
-import server.yakssok.domain.medication_schedule.presentation.dto.MedicationScheduleGroupResponse;
+import server.yakssok.domain.medication_schedule.presentation.dto.response.MedicationScheduleGroupResponse;
 import server.yakssok.global.common.reponse.ApiResponse;
 import server.yakssok.global.common.security.YakssokUserDetails;
 import server.yakssok.global.common.swagger.ApiErrorResponse;

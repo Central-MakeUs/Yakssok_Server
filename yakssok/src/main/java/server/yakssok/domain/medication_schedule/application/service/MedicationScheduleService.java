@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -14,9 +15,9 @@ import server.yakssok.domain.friend.applcation.service.RelationshipService;
 import server.yakssok.domain.medication.application.service.MedicationScheduleGenerator;
 import server.yakssok.domain.medication_schedule.domain.entity.MedicationSchedule;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleJdbcRepository;
-import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleRepository;
-import server.yakssok.domain.medication_schedule.presentation.dto.MedicationScheduleGroupResponse;
-import server.yakssok.domain.medication_schedule.presentation.dto.MedicationScheduleResponse;
+import server.yakssok.domain.medication_schedule.presentation.dto.response.DailyMedicationScheduleGroupResponse;
+import server.yakssok.domain.medication_schedule.presentation.dto.response.MedicationScheduleGroupResponse;
+import server.yakssok.domain.medication_schedule.presentation.dto.response.MedicationScheduleResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +29,6 @@ public class MedicationScheduleService {
 	private final MedicationScheduleManager medicationScheduleManager;
 	private final RelationshipService relationshipService;
 	private final MedicationScheduleValidator medicationScheduleValidator;
-	private final MedicationScheduleRepository medicationScheduleRepository;
 
 	@Transactional
 	public void generateTodaySchedules() {
@@ -41,6 +41,7 @@ public class MedicationScheduleService {
 	public void takeMedication(Long userId, Long scheduleId) {
 		MedicationSchedule schedule = medicationScheduleFinder.findScheduleById(scheduleId);
 		medicationScheduleValidator.validateOwnership(userId, schedule);
+		medicationScheduleValidator.validateTodaySchedule(schedule);
 		schedule.take();
 	}
 
@@ -72,14 +73,22 @@ public class MedicationScheduleService {
 	}
 
 	private MedicationScheduleGroupResponse groupAndSort(List<MedicationScheduleResponse> list) {
-		List<MedicationScheduleResponse> sorted = list.stream()
-			.sorted(Comparator.comparing(MedicationScheduleResponse::isTaken)
-				.thenComparing(MedicationScheduleResponse::intakeTime))
-			.collect(Collectors.toList());
-		return MedicationScheduleGroupResponse.fromList(sorted);
-	}
+		Map<LocalDate, List<MedicationScheduleResponse>> grouped = list.stream()
+			.collect(Collectors.groupingBy(MedicationScheduleResponse::date));
 
-	public boolean isExistTodaySchedule(Long userId) {
-		return medicationScheduleRepository.existsTodayScheduleByUserId(userId);
+		List<DailyMedicationScheduleGroupResponse> dailyGroups = grouped.entrySet().stream()
+			.map(entry -> {
+				LocalDate date = entry.getKey();
+				List<MedicationScheduleResponse> schedules = entry.getValue().stream()
+					.sorted(Comparator.comparing(MedicationScheduleResponse::isTaken)
+						.thenComparing(MedicationScheduleResponse::intakeTime))
+					.collect(Collectors.toList());
+
+				return DailyMedicationScheduleGroupResponse.of(date, schedules);
+			})
+			.sorted(Comparator.comparing(DailyMedicationScheduleGroupResponse::date))
+			.collect(Collectors.toList());
+
+		return MedicationScheduleGroupResponse.fromList(dailyGroups);
 	}
 }
