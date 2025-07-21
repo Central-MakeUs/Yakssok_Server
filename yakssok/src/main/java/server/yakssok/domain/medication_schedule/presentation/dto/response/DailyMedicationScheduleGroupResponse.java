@@ -6,7 +6,7 @@ import java.util.List;
 
 public record DailyMedicationScheduleGroupResponse(
 	LocalDate date,
-	boolean allTaken,
+	Boolean allTaken,
 	List<MedicationScheduleResponse> schedules
 ) {
 	public static DailyMedicationScheduleGroupResponse of(
