@@ -8,7 +8,7 @@ public record FollowingMedicationStatusResponse(
 	String nickName,
 	String relationName,
 	String profileImageUrl,
-	Integer remainingMedicationCount
+	Integer notTakenCount
 ) {
 
 	public static FollowingMedicationStatusResponse of(Friend friend, int remainingMedicationCount) {

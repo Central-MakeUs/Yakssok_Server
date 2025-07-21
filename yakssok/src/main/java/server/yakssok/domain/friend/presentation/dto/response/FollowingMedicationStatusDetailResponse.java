@@ -6,10 +6,10 @@ import java.util.List;
 import server.yakssok.domain.medication_schedule.domain.repository.dto.MedicationScheduleDto;
 
 public record FollowingMedicationStatusDetailResponse(
-	int remainingCount,
+	int notTakenCount,
 	String nickName,
 	String relationship,
-	List<MedicationInfo> remainingMedications
+	List<MedicationInfo> notTakenMedications
 ) {
 	public record MedicationInfo(
 		String type,
@@ -20,9 +20,9 @@ public record FollowingMedicationStatusDetailResponse(
 	public static FollowingMedicationStatusDetailResponse of(
 		String nickName,
 		String relationship,
-		List<MedicationScheduleDto> remainingMedications
+		List<MedicationScheduleDto> notTakenMedications
 	) {
-		List<MedicationInfo> medicationInfos = remainingMedications.stream()
+		List<MedicationInfo> medicationInfos = notTakenMedications.stream()
 			.map(dto -> new MedicationInfo(
 				dto.medicationType().name(),
 				dto.medicationName(),
