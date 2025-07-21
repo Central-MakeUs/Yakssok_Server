@@ -2,8 +2,10 @@ package server.yakssok.domain.friend.domain.repository;
 
 
 import static server.yakssok.domain.friend.domain.entity.QFriend.*;
+import static server.yakssok.domain.user.domain.entity.QUser.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -45,5 +47,17 @@ public class FriendQueryRepositoryImpl implements FriendQueryRepository {
 			.where(friend.following.id.eq(userId))
 			.orderBy(friend.id.desc())
 			.fetch();
+	}
+
+	@Override
+	public Optional<Friend> findByUserIdAndFollowingId(Long userId, Long followingId) {
+		return Optional.ofNullable(queryFactory
+			.selectFrom(friend)
+			.join(friend.following, user).fetchJoin()
+			.where(
+				friend.user.id.eq(userId),
+				friend.following.id.eq(followingId)
+			)
+			.fetchOne());
 	}
 }

@@ -14,6 +14,7 @@ import server.yakssok.domain.friend.applcation.service.RelationshipService;
 import server.yakssok.domain.medication.application.service.MedicationScheduleGenerator;
 import server.yakssok.domain.medication_schedule.domain.entity.MedicationSchedule;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleJdbcRepository;
+import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleRepository;
 import server.yakssok.domain.medication_schedule.presentation.dto.MedicationScheduleGroupResponse;
 import server.yakssok.domain.medication_schedule.presentation.dto.MedicationScheduleResponse;
 
@@ -27,6 +28,7 @@ public class MedicationScheduleService {
 	private final MedicationScheduleManager medicationScheduleManager;
 	private final RelationshipService relationshipService;
 	private final MedicationScheduleValidator medicationScheduleValidator;
+	private final MedicationScheduleRepository medicationScheduleRepository;
 
 	@Transactional
 	public void generateTodaySchedules() {
@@ -75,5 +77,9 @@ public class MedicationScheduleService {
 				.thenComparing(MedicationScheduleResponse::intakeTime))
 			.collect(Collectors.toList());
 		return MedicationScheduleGroupResponse.fromList(sorted);
+	}
+
+	public boolean isExistTodaySchedule(Long userId) {
+		return medicationScheduleRepository.existsTodayScheduleByUserId(userId);
 	}
 }
