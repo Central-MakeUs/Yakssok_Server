@@ -28,7 +28,7 @@ public enum ErrorCode implements ResponseCode{
     NOT_FOUND_MEDICATION(HttpStatus.NOT_FOUND, 5000, "존재하지 않는 복약 스케줄입니다."),
     NOT_FOUND_MEDICATION_SCHEDULE(HttpStatus.NOT_FOUND, 5001, "존재하지 않는 복약 스케줄입니다."),
     FORBIDDEN(HttpStatus.FORBIDDEN, 5002, "해당 작업을 수행할 권한이 없습니다."),
-
+    NOT_TODAY_SCHEDULE(HttpStatus.BAD_REQUEST, 5003, "오늘의 복약 스케줄이 아닙니다."),
 
     //common
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, 9000, "서버 오류가 발생했습니다."),

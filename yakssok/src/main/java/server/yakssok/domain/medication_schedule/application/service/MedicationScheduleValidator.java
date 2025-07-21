@@ -21,4 +21,10 @@ public class MedicationScheduleValidator {
 			throw new MedicationScheduleException(ErrorCode.FORBIDDEN);
 		}
 	}
+
+	public void validateTodaySchedule(MedicationSchedule schedule) {
+		if (!schedule.isTodaySchedule()) {
+			throw new MedicationScheduleException(ErrorCode.NOT_TODAY_SCHEDULE);
+		}
+	}
 }

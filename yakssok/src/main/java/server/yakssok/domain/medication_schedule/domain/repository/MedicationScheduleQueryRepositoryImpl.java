@@ -78,19 +78,6 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 	}
 
 	@Override
-	public boolean existsTodayScheduleByUserId(Long id) {
-		return jpaQueryFactory
-			.selectOne()
-			.from(medicationSchedule)
-			.innerJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
-			.where(
-				medication.userId.eq(id),
-				medicationSchedule.scheduledDate.eq(LocalDate.now())
-			)
-			.fetchFirst() != null;
-	}
-
-	@Override
 	public List<Long> findFollowingIdsWithTodaySchedule(List<Long> followingIds, LocalDate now) {
 		return jpaQueryFactory
 			.select(medication.userId)

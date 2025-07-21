@@ -41,6 +41,7 @@ public class MedicationScheduleService {
 	public void takeMedication(Long userId, Long scheduleId) {
 		MedicationSchedule schedule = medicationScheduleFinder.findScheduleById(scheduleId);
 		medicationScheduleValidator.validateOwnership(userId, schedule);
+		medicationScheduleValidator.validateTodaySchedule(schedule);
 		schedule.take();
 	}
 
