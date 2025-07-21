@@ -85,5 +85,4 @@ public class MedicationScheduleController {
 		Long userId = userDetails.getUserId();
 		return ApiResponse.success(medicationScheduleService.getFriendRangeSchedules(userId, friendId, startDate, endDate));
 	}
-
 }

@@ -18,7 +18,7 @@ public class MedicationScheduleJdbcRepository {
 
 	private static final String INSERT_SQL = """
         INSERT INTO medication_schedule (medicine_name, scheduled_date, scheduled_time, is_taken, medication_id)
-        VALUES (?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?)
     """;
 
 	public void batchInsert(List<MedicationSchedule> schedules) {
@@ -28,10 +28,10 @@ public class MedicationScheduleJdbcRepository {
 				@Override
 				public void setValues(PreparedStatement ps, int i) throws SQLException {
 					MedicationSchedule schedule = schedules.get(i);
-					ps.setObject(2, schedule.getScheduledDate()); // LocalDate
-					ps.setObject(3, schedule.getScheduledTime()); // LocalTime
-					ps.setBoolean(4, schedule.isTaken());
-					ps.setLong(5, schedule.getMedicationId());
+					ps.setObject(1, schedule.getScheduledDate()); // LocalDate
+					ps.setObject(2, schedule.getScheduledTime()); // LocalTime
+					ps.setBoolean(3, schedule.isTaken());
+					ps.setLong(4, schedule.getMedicationId());
 				}
 
 				@Override

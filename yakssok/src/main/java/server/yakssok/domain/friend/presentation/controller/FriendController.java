@@ -3,6 +3,7 @@ package server.yakssok.domain.friend.presentation.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import server.yakssok.domain.friend.applcation.service.FriendService;
 import server.yakssok.domain.friend.presentation.dto.request.FollowFriendRequest;
 import server.yakssok.domain.friend.presentation.dto.response.FollowerInfoGroupResponse;
 import server.yakssok.domain.friend.presentation.dto.response.FollowingInfoGroupResponse;
+import server.yakssok.domain.friend.presentation.dto.response.FollowingMedicationStatusDetailResponse;
 import server.yakssok.domain.friend.presentation.dto.response.FollowingMedicationStatusGroupResponse;
 import server.yakssok.global.common.reponse.ApiResponse;
 import server.yakssok.global.common.security.YakssokUserDetails;
@@ -60,10 +62,19 @@ public class FriendController {
 
 	@Operation(summary = "오늘 칭찬/잔소리 대상 지인 목록 조회")
 	@GetMapping("/medication-status")
-	public ApiResponse<FollowingMedicationStatusGroupResponse> getFollowingMedicationStatuses(
+	public ApiResponse<FollowingMedicationStatusGroupResponse> getFollowingRemainingMedication(
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
 		Long userId = userDetails.getUserId();
-		return ApiResponse.success(friendService.getFollowingMedicationStatuses(userId));
+		return ApiResponse.success(friendService.getFollowingRemainingMedication(userId));
+	}
+	@Operation(summary = "오늘 지인 안먹은 약 상세 조회")
+	@GetMapping("/friends/{friendId}/medication-status")
+	public ApiResponse<FollowingMedicationStatusDetailResponse> getFollowingRemainingMedicationDetail(
+		@AuthenticationPrincipal YakssokUserDetails userDetails,
+		@PathVariable Long friendId
+	) {
+		Long userId = userDetails.getUserId();
+		return ApiResponse.success(friendService.getFollowingRemainingMedicationDetail(userId, friendId));
 	}
 }

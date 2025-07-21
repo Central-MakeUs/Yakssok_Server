@@ -16,8 +16,8 @@ public record FollowingMedicationStatusResponse(
 		return new FollowingMedicationStatusResponse(
 			following.getId(),
 			following.getNickName(),
-			following.getProfileImageUrl(),
 			friend.getRelationName(),
+			following.getProfileImageUrl(),
 			remainingMedicationCount
 		);
 
