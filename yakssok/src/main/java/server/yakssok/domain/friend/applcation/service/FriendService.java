@@ -1,10 +1,9 @@
 package server.yakssok.domain.friend.applcation.service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,6 +80,7 @@ public class FriendService {
 		List<FollowingMedicationStatusResponse> statusList = friends.stream()
 			.filter(f -> activeFollowingIds.contains(f.getFollowing().getId()))
 			.map(f -> toMedicationStatusResponse(f, remainingMap))
+			.sorted(Comparator.comparingInt(FollowingMedicationStatusResponse::notTakenCount).reversed())
 			.toList();
 
 		return FollowingMedicationStatusGroupResponse.of(statusList);

@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import lombok.extern.slf4j.Slf4j;
-import server.yakssok.domain.medication_schedule.application.batch.MedicationScheduleJob;
+import server.yakssok.domain.medication_schedule.batch.MedicationScheduleJob;
 import server.yakssok.domain.medication.domain.entity.AlarmSound;
 import server.yakssok.domain.medication.domain.entity.Medication;
 import server.yakssok.domain.medication.domain.entity.MedicationIntakeDay;
