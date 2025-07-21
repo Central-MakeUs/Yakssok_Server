@@ -8,9 +8,10 @@ import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.medication.application.service.MedicationScheduleGenerator;
+import server.yakssok.domain.medication_schedule.application.exception.MedicationScheduleException;
 import server.yakssok.domain.medication_schedule.domain.entity.MedicationSchedule;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleRepository;
-import server.yakssok.domain.medication_schedule.presentation.dto.MedicationScheduleResponse;
+import server.yakssok.domain.medication_schedule.presentation.dto.response.MedicationScheduleResponse;
 import server.yakssok.global.exception.ErrorCode;
 
 @Component

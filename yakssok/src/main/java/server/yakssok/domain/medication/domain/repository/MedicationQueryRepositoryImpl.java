@@ -108,6 +108,7 @@ public class MedicationQueryRepositoryImpl implements MedicationQueryRepository{
 			.leftJoin(medicationIntakeTime).on(medicationIntakeTime.medication.id.eq(medication.id))
 			.leftJoin(medicationIntakeDay).on(medicationIntakeDay.medication.id.eq(medication.id))
 			.where(
+				isUser(userId),
 				isEnded(LocalDateTime.now()).not()
 			)
 			.fetch();

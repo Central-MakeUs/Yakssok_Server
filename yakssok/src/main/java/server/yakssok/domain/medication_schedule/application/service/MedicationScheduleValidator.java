@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.medication.domain.entity.Medication;
 import server.yakssok.domain.medication.domain.repository.MedicationRepository;
+import server.yakssok.domain.medication_schedule.application.exception.MedicationScheduleException;
 import server.yakssok.domain.medication_schedule.domain.entity.MedicationSchedule;
 import server.yakssok.global.exception.ErrorCode;
 @RequiredArgsConstructor

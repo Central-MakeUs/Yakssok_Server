@@ -1,4 +1,4 @@
-package server.yakssok.domain.medication_schedule.presentation.dto;
+package server.yakssok.domain.medication_schedule.presentation.dto.response;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

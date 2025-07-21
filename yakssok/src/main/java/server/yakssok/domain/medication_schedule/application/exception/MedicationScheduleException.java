@@ -1,4 +1,4 @@
-package server.yakssok.domain.medication_schedule.application.service;
+package server.yakssok.domain.medication_schedule.application.exception;
 
 import server.yakssok.global.exception.GlobalException;
 import server.yakssok.global.exception.ResponseCode;
