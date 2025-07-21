@@ -25,6 +25,7 @@ public record JoinRequest(
 	Boolean pushAgreement,
 
 	@Schema(description = "FCM 토큰", example = "1234567890abcdef")
+	@NotNull
 	String fcmToken
 ) {
 	public User toUser(String providerId, String profileImageUrl) {
