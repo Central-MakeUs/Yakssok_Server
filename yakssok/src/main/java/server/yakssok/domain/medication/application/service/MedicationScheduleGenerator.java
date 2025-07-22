@@ -1,8 +1,11 @@
 package server.yakssok.domain.medication.application.service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.springframework.stereotype.Component;
@@ -24,7 +27,7 @@ public class MedicationScheduleGenerator {
 	private final MedicationRepository medicationRepository;
 
 
-	public List<MedicationScheduleDto> generateFutureScheduleDtos(Long userId, LocalDate start, LocalDate end) {
+	public List<MedicationScheduleDto> generateUserFutureScheduleDtos(Long userId, LocalDate start, LocalDate end) {
 		return medicationRepository.findFutureMedicationSchedules(userId).stream()
 			.flatMap(schedule -> createMedicationScheduleDtos(schedule, start, end))
 			.toList();
@@ -61,10 +64,26 @@ public class MedicationScheduleGenerator {
 		return (endDate == null) ? inputEnd : (inputEnd.isBefore(endDate) ? inputEnd : endDate);
 	}
 
-	public List<MedicationSchedule> generateTodaySchedules(LocalDateTime currentDateTime) {
+	public List<MedicationSchedule> generateAllTodaySchedules(LocalDateTime currentDateTime) {
 		List<MedicationDto> medicationDtos = medicationRepository.findMedicationsForScheduleGeneration(currentDateTime, currentDateTime.getDayOfWeek());
 		return medicationDtos.stream()
 			.map(dto -> MedicationSchedule.create(currentDateTime.toLocalDate(), dto.intakeTime(), dto.medicationId()))
 			.toList();
+	}
+
+	public List<MedicationSchedule> generateTodaySchedulesIfNeeded(
+		Medication medication, List<DayOfWeek> intakeDays, List<LocalTime> intakeTimes) {
+		LocalDate today = LocalDate.now();
+
+		boolean isTodayStartDate = today.equals(medication.getStartDate());
+		boolean isTodayMedicationDay = intakeDays.stream()
+			.anyMatch(day -> day == today.getDayOfWeek());
+
+		if (isTodayStartDate && isTodayMedicationDay) {
+			return intakeTimes.stream()
+				.map(intakeTime -> MedicationSchedule.create(today, intakeTime, medication.getId()))
+				.collect(Collectors.toList());
+		}
+		return List.of();
 	}
 }

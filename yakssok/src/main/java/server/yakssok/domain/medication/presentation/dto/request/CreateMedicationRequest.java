@@ -31,7 +31,7 @@ public record CreateMedicationRequest(
 		example = "[\"MONDAY\", \"TUESDAY\", \"WEDNESDAY\"]",
 		allowableValues = {"MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"}
 	)
-	List<String> intakeDays,
+	List<DayOfWeek> intakeDays,
 
 	@Schema(description = "하루 복용 횟수", example = "2")
 	Integer intakeCount,
@@ -68,8 +68,6 @@ public record CreateMedicationRequest(
 
 	public List<MedicationIntakeDay> toIntakeDays(Medication medication) {
 		return intakeDays.stream()
-			.map(String::toUpperCase)
-			.map(DayOfWeek::valueOf)
 			.map(dayOfWeek -> MedicationIntakeDay.of(dayOfWeek, medication))
 			.toList();
 	}

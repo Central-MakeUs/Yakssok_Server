@@ -76,7 +76,7 @@ public class MedicationScheduleFinder {
 			.map(MedicationScheduleResponse::from)
 			.toList();
 
-		List<MedicationScheduleResponse> future = medicationScheduleGenerator.generateFutureScheduleDtos(userId, today.plusDays(1), end).stream()
+		List<MedicationScheduleResponse> future = medicationScheduleGenerator.generateUserFutureScheduleDtos(userId, today.plusDays(1), end).stream()
 			.map(MedicationScheduleResponse::from)
 			.toList();
 
@@ -88,7 +88,7 @@ public class MedicationScheduleFinder {
 		LocalDate start,
 		LocalDate end
 	) {
-		return medicationScheduleGenerator.generateFutureScheduleDtos(userId, start, end).stream()
+		return medicationScheduleGenerator.generateUserFutureScheduleDtos(userId, start, end).stream()
 			.map(MedicationScheduleResponse::from)
 			.toList();
 	}

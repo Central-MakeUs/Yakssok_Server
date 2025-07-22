@@ -67,6 +67,7 @@ public class MedicationService {
 		Medication medication = saveMedication(request, userId);
 		saveMedicationTimes(request, medication);
 		saveMedicationDays(request, medication);
+		medicationScheduleService.createTodaySchedulesIfNeeded(medication, request.intakeDays(), request.intakeTimes());
 	}
 
 	private void saveMedicationTimes(CreateMedicationRequest request, Medication medication) {
