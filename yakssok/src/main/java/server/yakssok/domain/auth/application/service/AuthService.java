@@ -69,7 +69,7 @@ public class AuthService {
 	}
 
 	private User findUser(String oauthType, String providerId) {
-		User user = userRepository.findUserByProviderId(oauthType, providerId)
+		User user = userRepository.findUserByProviderId(OAuthType.from(oauthType), providerId)
 			.orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 		return user;
 	}

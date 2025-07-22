@@ -2,6 +2,7 @@ package server.yakssok.domain.medication_schedule.application.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.friend.applcation.service.RelationshipService;
 import server.yakssok.domain.medication.application.service.MedicationScheduleGenerator;
+import server.yakssok.domain.medication.domain.entity.Medication;
 import server.yakssok.domain.medication_schedule.domain.entity.MedicationSchedule;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleJdbcRepository;
 import server.yakssok.domain.medication_schedule.presentation.dto.response.DailyMedicationScheduleGroupResponse;
@@ -33,7 +35,7 @@ public class MedicationScheduleService {
 	@Transactional
 	public void generateTodaySchedules() {
 		LocalDateTime currentDateTime = LocalDateTime.now();
-		List<MedicationSchedule> schedules = medicationScheduleGenerator.generateTodaySchedules(currentDateTime);
+		List<MedicationSchedule> schedules = medicationScheduleGenerator.generateAllTodaySchedules(currentDateTime);
 		medicationScheduleJdbcRepository.batchInsert(schedules);
 	}
 
@@ -90,5 +92,12 @@ public class MedicationScheduleService {
 			.collect(Collectors.toList());
 
 		return MedicationScheduleGroupResponse.fromList(dailyGroups);
+	}
+
+	public void createTodaySchedules(
+		Medication medication, List<LocalTime> intakeTimes) {
+		List<MedicationSchedule> schedules = medicationScheduleGenerator.generateTodaySchedules(
+			medication, intakeTimes);
+		medicationScheduleJdbcRepository.batchInsert(schedules);
 	}
 }

@@ -52,11 +52,11 @@ public class User extends BaseEntity {
 		this.inviteCode = inviteCode;
 	}
 
-	public static User create(String nickName, String profileImageUrl, String oauthType, String providerId, boolean pushAgreement, String fcmToken) {
+	public static User create(String nickName, String profileImageUrl, OAuthType oauthType, String providerId, boolean pushAgreement, String fcmToken) {
 		return new User(
 			nickName,
 			profileImageUrl,
-			OAuthType.from(oauthType),
+			oauthType,
 			providerId,
 			pushAgreement,
 			fcmToken,

@@ -16,11 +16,11 @@ public class UserQueryRepositoryImpl implements UserQueryRepository{
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public Optional<User> findUserByProviderId(String oAuthType, String providerId) {
+	public Optional<User> findUserByProviderId(OAuthType oAuthType, String providerId) {
 		User result = queryFactory
 			.selectFrom(user)
 			.where(
-				user.oAuthType.eq(OAuthType.from(oAuthType)),
+				user.oAuthType.eq(oAuthType),
 				user.providerId.eq(providerId)
 			)
 			.fetchOne();

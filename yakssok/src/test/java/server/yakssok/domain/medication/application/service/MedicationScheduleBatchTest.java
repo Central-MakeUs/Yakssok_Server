@@ -22,6 +22,7 @@ import server.yakssok.domain.medication.domain.entity.MedicationIntakeTime;
 import server.yakssok.domain.medication.domain.entity.MedicationType;
 import server.yakssok.domain.medication.domain.repository.MedicationRepository;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleRepository;
+import server.yakssok.domain.user.domain.entity.OAuthType;
 import server.yakssok.domain.user.domain.entity.User;
 import server.yakssok.domain.user.domain.repository.UserRepository;
 
@@ -62,7 +63,7 @@ public class MedicationScheduleBatchTest {
 
 	private User createTestUser() {
 		return userRepository.save(User.create(
-			"테스트 유저", null, "kakao", "provider123", true, "testToken"
+			"테스트 유저", null, OAuthType.KAKAO, "provider123", true, "testToken"
 		));
 	}
 

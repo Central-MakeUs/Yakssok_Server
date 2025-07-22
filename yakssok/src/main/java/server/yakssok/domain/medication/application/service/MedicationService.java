@@ -1,5 +1,7 @@
 package server.yakssok.domain.medication.application.service;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -67,6 +69,18 @@ public class MedicationService {
 		Medication medication = saveMedication(request, userId);
 		saveMedicationTimes(request, medication);
 		saveMedicationDays(request, medication);
+
+		if (isTodayStart(medication, request.intakeDays())) {
+			medicationScheduleService.createTodaySchedules(medication, request.intakeTimes());
+		}
+	}
+
+	private static boolean isTodayStart(Medication medication, List<DayOfWeek> intakeDays) {
+		LocalDate today = LocalDate.now();
+		boolean isTodayStartDate = today.equals(medication.getStartDate());
+		boolean isTodayMedicationDay = intakeDays.stream()
+			.anyMatch(day -> day == today.getDayOfWeek());
+		return isTodayStartDate && isTodayMedicationDay;
 	}
 
 	private void saveMedicationTimes(CreateMedicationRequest request, Medication medication) {
