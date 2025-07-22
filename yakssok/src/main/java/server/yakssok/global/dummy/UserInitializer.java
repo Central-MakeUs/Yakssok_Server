@@ -2,6 +2,7 @@ package server.yakssok.global.dummy;
 
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,16 @@ import server.yakssok.global.common.jwt.JwtTokenUtils;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class AccountInitializer implements ApplicationRunner {
+@Order(1)
+public class UserInitializer implements ApplicationRunner {
+
+	static final String NICKNAME_RIA = "리아";
+	static final String PROVIDER_ID_RIA = "lea1234";
+	static final OAuthType OAUTH_TYPE_RIA = OAuthType.APPLE;
+
+	static final String NICKNAME_INWOO = "인우";
+	static final String PROVIDER_ID_INWOO = "inwoo1234";
+	static final OAuthType OAUTH_TYPE_INWOO = OAuthType.KAKAO;
 
 	private final UserRepository userRepository;
 	private final JwtTokenUtils jwtTokenUtils;
@@ -23,20 +33,13 @@ public class AccountInitializer implements ApplicationRunner {
 
 	@Override
 	public void run(ApplicationArguments args) {
-		createIfNotExists("리아", "lea1234");
-		createIfNotExists("인우", "inwoo1234");
+		createIfNotExists(NICKNAME_RIA, PROVIDER_ID_RIA, OAUTH_TYPE_RIA);
+		createIfNotExists(NICKNAME_INWOO, PROVIDER_ID_INWOO, OAUTH_TYPE_INWOO);
 	}
 
-	private void createIfNotExists(String nickName, String providerId) {
-		if (!userRepository.existsUserByProviderId(OAuthType.KAKAO, providerId)) {
-			User user = User.create(
-				nickName,
-				null,
-				"kakao",
-				providerId,
-				false,
-				null
-			);
+	private void createIfNotExists(String nickName, String providerId, OAuthType oauthType) {
+		if (!userRepository.existsUserByProviderId(oauthType, providerId)) {
+			User user = User.create(nickName, null, oauthType, providerId, false, null);
 			userRepository.save(user);
 			String refreshToken = jwtTokenUtils.generateRefreshToken(user.getId());
 			refreshTokenService.registerRefreshToken(user, refreshToken);

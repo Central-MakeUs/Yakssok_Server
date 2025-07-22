@@ -2,6 +2,7 @@ package server.yakssok.domain.auth.presentation.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import server.yakssok.domain.user.domain.entity.OAuthType;
 import server.yakssok.domain.user.domain.entity.User;
 
 public record JoinRequest(
@@ -29,6 +30,6 @@ public record JoinRequest(
 	String fcmToken
 ) {
 	public User toUser(String providerId, String profileImageUrl) {
-		return User.create(nickName, profileImageUrl, oauthType, providerId, pushAgreement, fcmToken);
+		return User.create(nickName, profileImageUrl, OAuthType.from(oauthType), providerId, pushAgreement, fcmToken);
 	}
 }

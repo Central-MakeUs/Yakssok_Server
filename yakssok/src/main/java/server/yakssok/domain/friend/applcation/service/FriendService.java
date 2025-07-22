@@ -20,7 +20,6 @@ import server.yakssok.domain.friend.presentation.dto.response.FollowingInfoRespo
 import server.yakssok.domain.friend.presentation.dto.response.FollowingMedicationStatusDetailResponse;
 import server.yakssok.domain.friend.presentation.dto.response.FollowingMedicationStatusGroupResponse;
 import server.yakssok.domain.friend.presentation.dto.response.FollowingMedicationStatusResponse;
-import server.yakssok.domain.medication_schedule.application.service.MedicationScheduleService;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleRepository;
 import server.yakssok.domain.medication_schedule.domain.repository.dto.MedicationScheduleDto;
 import server.yakssok.domain.user.application.service.UserService;
@@ -34,7 +33,6 @@ public class FriendService {
 	private final RelationshipService relationshipService;
 	private final FriendRepository friendRepository;
 	private final MedicationScheduleRepository medicationScheduleRepository;
-	private final MedicationScheduleService medicationScheduleService;
 
 	@Transactional
 	public void followFriendByInviteCode(Long userId, FollowFriendRequest followFriendRequest) {

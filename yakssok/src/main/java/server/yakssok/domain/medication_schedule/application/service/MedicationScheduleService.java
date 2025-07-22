@@ -1,6 +1,5 @@
 package server.yakssok.domain.medication_schedule.application.service;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -95,10 +94,10 @@ public class MedicationScheduleService {
 		return MedicationScheduleGroupResponse.fromList(dailyGroups);
 	}
 
-	public void createTodaySchedulesIfNeeded(
-		Medication medication, List<DayOfWeek> intakeDays, List<LocalTime> intakeTimes) {
-		List<MedicationSchedule> schedules = medicationScheduleGenerator.generateTodaySchedulesIfNeeded(
-			medication, intakeDays, intakeTimes);
+	public void createTodaySchedules(
+		Medication medication, List<LocalTime> intakeTimes) {
+		List<MedicationSchedule> schedules = medicationScheduleGenerator.generateTodaySchedules(
+			medication, intakeTimes);
 		medicationScheduleJdbcRepository.batchInsert(schedules);
 	}
 }

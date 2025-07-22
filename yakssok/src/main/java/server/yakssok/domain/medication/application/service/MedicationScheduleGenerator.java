@@ -26,7 +26,6 @@ public class MedicationScheduleGenerator {
 
 	private final MedicationRepository medicationRepository;
 
-
 	public List<MedicationScheduleDto> generateUserFutureScheduleDtos(Long userId, LocalDate start, LocalDate end) {
 		return medicationRepository.findFutureMedicationSchedules(userId).stream()
 			.flatMap(schedule -> createMedicationScheduleDtos(schedule, start, end))
@@ -71,19 +70,11 @@ public class MedicationScheduleGenerator {
 			.toList();
 	}
 
-	public List<MedicationSchedule> generateTodaySchedulesIfNeeded(
-		Medication medication, List<DayOfWeek> intakeDays, List<LocalTime> intakeTimes) {
-		LocalDate today = LocalDate.now();
-
-		boolean isTodayStartDate = today.equals(medication.getStartDate());
-		boolean isTodayMedicationDay = intakeDays.stream()
-			.anyMatch(day -> day == today.getDayOfWeek());
-
-		if (isTodayStartDate && isTodayMedicationDay) {
-			return intakeTimes.stream()
-				.map(intakeTime -> MedicationSchedule.create(today, intakeTime, medication.getId()))
+	public List<MedicationSchedule> generateTodaySchedules(
+		Medication medication, List<LocalTime> intakeTimes) {
+		return intakeTimes.stream()
+				.map(intakeTime -> MedicationSchedule.create(LocalDate.now(), intakeTime, medication.getId()))
 				.collect(Collectors.toList());
-		}
-		return List.of();
+
 	}
 }
