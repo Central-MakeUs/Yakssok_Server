@@ -8,6 +8,9 @@ import server.yakssok.domain.feeback.domain.entity.Feedback;
 import server.yakssok.domain.feeback.domain.repository.FeedbackRepository;
 import server.yakssok.domain.feeback.presentation.dto.request.CreateFeedbackRequest;
 import server.yakssok.domain.friend.applcation.service.RelationshipService;
+import server.yakssok.domain.notification.application.service.NotificationService;
+import server.yakssok.domain.notification.domain.entity.NotificationType;
+import server.yakssok.domain.notification.presentation.dto.NotificationRequest;
 import server.yakssok.domain.user.application.service.UserService;
 import server.yakssok.domain.user.domain.entity.User;
 
@@ -17,6 +20,7 @@ public class FeedbackService {
 	private final FeedbackRepository feedbackRepository;
 	private final RelationshipService relationshipService;
 	private final UserService userService;
+	private final NotificationService notificationService;
 
 	@Transactional
 	public void sendFeedback(Long userId, CreateFeedbackRequest request) {
@@ -25,5 +29,8 @@ public class FeedbackService {
 		relationshipService.validateFriendship(sender.getId(), receiver.getId());
 		Feedback feedback = request.toFeedback(sender, receiver);
 		feedbackRepository.save(feedback);
+
+		NotificationRequest notificationRequest = NotificationRequest.fromFeedback(sender, receiver, feedback, NotificationType.FEEDBACK);
+		notificationService.createNotification(notificationRequest);
 	}
 }
