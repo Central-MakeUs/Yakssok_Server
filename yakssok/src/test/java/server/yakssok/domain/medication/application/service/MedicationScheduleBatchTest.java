@@ -63,7 +63,7 @@ public class MedicationScheduleBatchTest {
 
 	private User createTestUser() {
 		return userRepository.save(User.create(
-			"테스트 유저", null, OAuthType.KAKAO, "provider123", true, "testToken"
+			"테스트 유저", null, OAuthType.KAKAO, "provider123"
 		));
 	}
 

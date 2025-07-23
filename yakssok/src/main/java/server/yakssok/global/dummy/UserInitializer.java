@@ -39,7 +39,7 @@ public class UserInitializer implements ApplicationRunner {
 
 	private void createIfNotExists(String nickName, String providerId, OAuthType oauthType) {
 		if (!userRepository.existsUserByProviderId(oauthType, providerId)) {
-			User user = User.create(nickName, null, oauthType, providerId, false, null);
+			User user = User.create(nickName, null, oauthType, null);
 			userRepository.save(user);
 			String refreshToken = jwtTokenUtils.generateRefreshToken(user.getId());
 			refreshTokenService.registerRefreshToken(user, refreshToken);

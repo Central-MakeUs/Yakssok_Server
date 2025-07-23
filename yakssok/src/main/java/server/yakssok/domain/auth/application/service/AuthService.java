@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.auth.presentation.dto.request.OAuthLoginRequest;
 import server.yakssok.domain.user.domain.entity.OAuthType;
 import server.yakssok.domain.user.application.exception.UserException;
+import server.yakssok.domain.user.domain.entity.UserDevice;
+import server.yakssok.domain.user.domain.repository.UserDeviceRepository;
 import server.yakssok.global.exception.ErrorCode;
 import server.yakssok.global.infra.oauth.OAuthStrategy;
 import server.yakssok.global.infra.oauth.OAuthStrategyFactory;
@@ -24,6 +26,7 @@ import server.yakssok.global.common.jwt.JwtTokenUtils;
 @RequiredArgsConstructor
 public class AuthService {
 	private final UserRepository userRepository;
+	private final UserDeviceRepository userDeviceRepository;
 	private final JwtTokenUtils jwtTokenUtils;
 	private final RefreshTokenService refreshTokenService;
 	private final OAuthStrategyFactory strategyFactory;
@@ -37,8 +40,11 @@ public class AuthService {
 		String providerId = oAuthUserResponse.getId();
 		String profileImageUrl = oAuthUserResponse.getProfileImageUrl();
 		checkDuplicateUser(oauthType, providerId);
+
 		User user = joinRequest.toUser(providerId, profileImageUrl);
+		UserDevice userDevice = joinRequest.toUserDevice(user);
 		userRepository.save(user);
+		userDeviceRepository.save(userDevice);
 	}
 
 	private void checkDuplicateUser(String oauthType, String providerId) {

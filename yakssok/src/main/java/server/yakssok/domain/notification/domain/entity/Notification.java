@@ -11,5 +11,5 @@ public class Notification extends BaseEntity {
 	private Long senderId;
 	private Long receiverId;
 	private String content;
-	private String type; //잔소리, 복약 알림, 복약 리마인드 알림, 지인 미복용 고발 알림
+	private NotificationType type;
 }
