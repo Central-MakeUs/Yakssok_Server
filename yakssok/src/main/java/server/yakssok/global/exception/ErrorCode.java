@@ -39,6 +39,9 @@ public enum ErrorCode implements ResponseCode{
     FAILED_FILE_DELETE(HttpStatus.INTERNAL_SERVER_ERROR, 9101, "이미지 삭제에 실패했습니다."),
     UNSUPPORTED_FILE_TYPE(HttpStatus.BAD_REQUEST, 9102, "지원하지 않는 파일 타입입니다."),
     INVALID_FILE_EXTENSION(HttpStatus.BAD_REQUEST, 9103, "지원하지 않는 파일 확장자입니다."),
+
+    // fcm
+    FAILED_TO_SEND_NOTIFICATION(HttpStatus.INTERNAL_SERVER_ERROR, 9200, "FCM 알림 전송에 실패했습니다.")
     ;
 
 

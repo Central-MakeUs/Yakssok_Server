@@ -1,4 +1,4 @@
-package server.yakssok.domain.notification.application.service;
+package server.yakssok.domain.user.application.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,11 +11,11 @@ import server.yakssok.domain.user.domain.repository.UserDeviceRepository;
 import server.yakssok.global.exception.ErrorCode;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
-public class FcmTokenService {
+public class UserDeviceService {
 	private final UserDeviceRepository userDeviceRepository;
 
+	@Transactional
 	public void saveFcmToken(Long userId, CreateFcmRequest createFcmRequest) {
 		UserDevice userDevice = userDeviceRepository.findByUserId(userId)
 			.orElseThrow(() -> new UserException(ErrorCode.INTERNAL_SERVER_ERROR));

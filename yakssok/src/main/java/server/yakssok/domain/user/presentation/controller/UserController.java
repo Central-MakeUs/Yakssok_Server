@@ -2,6 +2,7 @@ package server.yakssok.domain.user.presentation.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import server.yakssok.domain.notification.presentation.dto.CreateFcmRequest;
+import server.yakssok.domain.user.application.service.UserDeviceService;
 import server.yakssok.domain.user.application.service.UserService;
 import server.yakssok.domain.user.presentation.dto.response.FindUserInfoResponse;
 import server.yakssok.domain.user.presentation.dto.request.UpdateUserInfoRequest;
@@ -29,6 +32,7 @@ import server.yakssok.global.exception.ErrorCode;
 @Tag(name = "User", description = "유저 API")
 public class UserController {
 	private final UserService userService;
+	private final UserDeviceService userDeviceService;
 
 	@Operation(summary = "내 정보 조회")
 	@ApiErrorResponse(ErrorCode.NOT_FOUND_USER)
@@ -70,5 +74,16 @@ public class UserController {
 		@RequestParam String inviteCode
 	) {
 		return ApiResponse.success(userService.findUserInfoByInviteCode(inviteCode));
+	}
+
+	@Operation(summary = "fcm 토큰 저장")
+	@PostMapping("/fcm-token")
+	public ApiResponse saveFcmToken(
+		@RequestBody CreateFcmRequest createFcmRequest,
+		@AuthenticationPrincipal YakssokUserDetails userDetails
+	) {
+		Long userId = userDetails.getUserId();
+		userDeviceService.saveFcmToken(userId, createFcmRequest);
+		return ApiResponse.success();
 	}
 }
