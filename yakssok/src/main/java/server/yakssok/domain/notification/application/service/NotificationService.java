@@ -34,10 +34,13 @@ public class NotificationService {
 			.filter(token -> token != null && !token.isEmpty())
 			.toList();
 
-		if (!tokens.isEmpty()) {
-			String title = notificationRequest.title();
-			String body = notificationRequest.body();
-			fcmService.sendNotifications(tokens, title, body);
+		String title = notificationRequest.title();
+		String body = notificationRequest.body();
+
+		if (tokens.size() == 1) {
+			fcmService.sendMessage(tokens.get(0), title, body);
+		} else {
+			fcmService.sendMulticastMessages(tokens, title, body);
 		}
 	}
 

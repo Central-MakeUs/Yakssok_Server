@@ -9,7 +9,6 @@ import server.yakssok.domain.feeback.domain.repository.FeedbackRepository;
 import server.yakssok.domain.feeback.presentation.dto.request.CreateFeedbackRequest;
 import server.yakssok.domain.friend.applcation.service.RelationshipService;
 import server.yakssok.domain.notification.application.service.NotificationService;
-import server.yakssok.domain.notification.domain.entity.NotificationType;
 import server.yakssok.domain.notification.presentation.dto.NotificationRequest;
 import server.yakssok.domain.user.application.service.UserService;
 import server.yakssok.domain.user.domain.entity.User;
@@ -30,7 +29,12 @@ public class FeedbackService {
 		Feedback feedback = request.toFeedback(sender, receiver);
 		feedbackRepository.save(feedback);
 
-		NotificationRequest notificationRequest = NotificationRequest.fromFeedback(sender, receiver, feedback, NotificationType.FEEDBACK);
+		NotificationRequest notificationRequest = NotificationRequest.fromFeedback(
+			sender.getId(),
+			sender.getNickName(),
+			receiver.getId(),
+			feedback
+		);
 		notificationService.createNotification(notificationRequest);
 	}
 }

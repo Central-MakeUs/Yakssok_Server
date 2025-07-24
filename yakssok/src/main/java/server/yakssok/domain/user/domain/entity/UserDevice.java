@@ -35,16 +35,31 @@ public class UserDevice {
 	@JoinColumn(name = "user_id")
 	private User user;
 
-	public static UserDevice createUserDevice(boolean alertOn, User user) {
-		return new UserDevice(alertOn, user);
+	@Column(length = 255, nullable = false)
+	private String deviceId;
+
+	private UserDevice(User user, String deviceId, String fcmToken, boolean alertOn) {
+		this.user = user;
+		this.deviceId = deviceId;
+		this.fcmToken = fcmToken;
+		this.alertOn = alertOn;
 	}
 
-	public UserDevice(boolean alertOn, User user) {
-		this.alertOn = alertOn;
-		this.user = user;
+	public static UserDevice createUserDevice(User user, String deviceId, String fcmToken, boolean alertOn) {
+		return new UserDevice(
+			user,
+			deviceId,
+			fcmToken,
+			alertOn
+		);
 	}
 
 	public void updateFcmToken(String fcmToken) {
 		this.fcmToken = fcmToken;
+	}
+
+	public void update(String fcmToken, boolean alertOn) {
+		this.fcmToken = fcmToken;
+		this.alertOn = alertOn;
 	}
 }

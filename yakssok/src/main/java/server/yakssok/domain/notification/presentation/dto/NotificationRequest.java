@@ -4,7 +4,6 @@ import server.yakssok.domain.feeback.domain.entity.Feedback;
 import server.yakssok.domain.notification.application.service.NotificationTitleUtils;
 import server.yakssok.domain.notification.domain.entity.Notification;
 import server.yakssok.domain.notification.domain.entity.NotificationType;
-import server.yakssok.domain.user.domain.entity.User;
 
 public record NotificationRequest(
 	Long senderId,
@@ -24,13 +23,13 @@ public record NotificationRequest(
 
 	}
 
-	public static NotificationRequest fromFeedback(User sender, User receiver, Feedback feedback, NotificationType notificationType) {
+	public static NotificationRequest fromFeedback(Long senderId, String senderName, Long receiverId, Feedback feedback) {
 		return new NotificationRequest(
-			sender.getId(),
-			receiver.getId(),
-			NotificationTitleUtils.createFeedbackTitle(feedback.getFeedbackType(), sender.getNickName()),
+			senderId,
+			receiverId,
+			NotificationTitleUtils.createFeedbackTitle(feedback.getFeedbackType(), senderName),
 			feedback.getMessage(),
-			notificationType
+			NotificationType.FEEDBACK
 		);
 	}
 }

@@ -7,7 +7,6 @@ public class NotificationTitleUtils {
 	private static final String FEEDBACK_NAG_FORMAT = "%s님이 보낸 잔소리!";
 	private static final String FEEDBACK_DEFAULT_FORMAT = "%s님이 보낸 피드백!";
 
-	private static final String MEDICATION_GUIDE_FORMAT = "%s 챙길 시간이에요!";
 	private static final String MEDICATION_REMINDER_FORMAT = "%s님~ %s 안 먹었어요!";
 	private static final String FRIEND_NOT_TAKEN_FORMAT = "%s님의 %s가 약을 안먹었어요";
 
@@ -21,10 +20,6 @@ public class NotificationTitleUtils {
 			default:
 				return String.format(FEEDBACK_DEFAULT_FORMAT, senderName);
 		}
-	}
-
-	public static String createMedicationGuideTitle(String medicineName) {
-		return String.format(MEDICATION_GUIDE_FORMAT, medicineName);
 	}
 
 	public static String createMedicationReminderTitle(String userName, String medicineName) {

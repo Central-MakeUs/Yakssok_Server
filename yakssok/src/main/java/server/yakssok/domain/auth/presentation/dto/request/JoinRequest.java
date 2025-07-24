@@ -20,17 +20,9 @@ public record JoinRequest(
 
 	@Schema(description = "닉네임", example = "노을")
 	@NotNull
-	String nickName,
-
-	@Schema(description = "푸시 알림 동의 여부", example = "true")
-	@NotNull
-	Boolean pushAgreement
+	String nickName
 ) {
 	public User toUser(String providerId, String profileImageUrl) {
 		return User.create(nickName, profileImageUrl, OAuthType.from(oauthType), providerId);
-	}
-
-	public UserDevice toUserDevice(User user) {
-		return UserDevice.createUserDevice(pushAgreement, user);
 	}
 }

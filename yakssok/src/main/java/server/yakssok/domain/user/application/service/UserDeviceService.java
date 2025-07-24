@@ -1,24 +1,30 @@
 package server.yakssok.domain.user.application.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import server.yakssok.domain.notification.presentation.dto.CreateFcmRequest;
-import server.yakssok.domain.user.application.exception.UserException;
+import server.yakssok.domain.user.domain.entity.User;
 import server.yakssok.domain.user.domain.entity.UserDevice;
 import server.yakssok.domain.user.domain.repository.UserDeviceRepository;
-import server.yakssok.global.exception.ErrorCode;
+import server.yakssok.domain.user.presentation.dto.request.RegisterDeviceRequest;
 
 @Service
 @RequiredArgsConstructor
 public class UserDeviceService {
 	private final UserDeviceRepository userDeviceRepository;
+	private final UserService userService;
 
-	@Transactional
-	public void saveFcmToken(Long userId, CreateFcmRequest createFcmRequest) {
-		UserDevice userDevice = userDeviceRepository.findByUserId(userId)
-			.orElseThrow(() -> new UserException(ErrorCode.INTERNAL_SERVER_ERROR));
-		userDevice.updateFcmToken(createFcmRequest.fcmToken());
+	public void registerOrUpdateDevice(Long userId, RegisterDeviceRequest request) {
+		User user = userService.getUserByUserId(userId);
+		Optional<UserDevice> existing = userDeviceRepository.findByUserIdAndDeviceId(userId, request.deviceId());
+
+		if (existing.isPresent()) {
+			existing.get().update(request.fcmToken(), request.alertOn());
+		} else {
+			UserDevice userDevice = request.toUserDevice(user);
+			userDeviceRepository.save(userDevice);
+		}
 	}
 }

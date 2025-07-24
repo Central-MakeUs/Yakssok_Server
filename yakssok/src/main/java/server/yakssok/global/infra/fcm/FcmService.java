@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FcmService {
 
-	public void sendNotification(String token, String title, String body){
+	public void sendMessage(String token, String title, String body){
 		try {
 			Message message = Message.builder()
 				.setToken(token)
@@ -32,8 +32,7 @@ public class FcmService {
 		}
 	}
 
-	public void sendNotifications(List<String> tokens, String title, String body) {
-		if (tokens == null || tokens.isEmpty()) return;
+	public void sendMulticastMessages(List<String> tokens, String title, String body) {
 		try {
 			MulticastMessage message = MulticastMessage.builder()
 				.setNotification(Notification.builder()
