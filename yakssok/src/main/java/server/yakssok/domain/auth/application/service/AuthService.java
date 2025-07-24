@@ -37,6 +37,7 @@ public class AuthService {
 		String providerId = oAuthUserResponse.getId();
 		String profileImageUrl = oAuthUserResponse.getProfileImageUrl();
 		checkDuplicateUser(oauthType, providerId);
+
 		User user = joinRequest.toUser(providerId, profileImageUrl);
 		userRepository.save(user);
 	}

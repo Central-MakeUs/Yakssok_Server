@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import server.yakssok.domain.user.domain.entity.OAuthType;
 import server.yakssok.domain.user.domain.entity.User;
+import server.yakssok.domain.user.domain.entity.UserDevice;
 
 public record JoinRequest(
 	@Schema(description = "카카오 Access Token/ 애플 idToken", example = "1234567890abcdef")
@@ -19,17 +20,9 @@ public record JoinRequest(
 
 	@Schema(description = "닉네임", example = "노을")
 	@NotNull
-	String nickName,
-
-	@Schema(description = "푸시 알림 동의 여부", example = "true")
-	@NotNull
-	Boolean pushAgreement,
-
-	@Schema(description = "FCM 토큰", example = "1234567890abcdef")
-	@NotNull
-	String fcmToken
+	String nickName
 ) {
 	public User toUser(String providerId, String profileImageUrl) {
-		return User.create(nickName, profileImageUrl, OAuthType.from(oauthType), providerId, pushAgreement, fcmToken);
+		return User.create(nickName, profileImageUrl, OAuthType.from(oauthType), providerId);
 	}
 }

@@ -80,4 +80,7 @@ dependencies {
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'com.h2database:h2:2.2.224'
+
+	//firebase
+	implementation 'com.google.firebase:firebase-admin:9.2.0'
 }

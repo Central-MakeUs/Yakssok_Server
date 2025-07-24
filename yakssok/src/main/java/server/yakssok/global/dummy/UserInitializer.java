@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import server.yakssok.domain.auth.application.service.RefreshTokenService;
 import server.yakssok.domain.user.domain.entity.OAuthType;
 import server.yakssok.domain.user.domain.entity.User;
+import server.yakssok.domain.user.domain.entity.UserDevice;
+import server.yakssok.domain.user.domain.repository.UserDeviceRepository;
 import server.yakssok.domain.user.domain.repository.UserRepository;
 import server.yakssok.global.common.jwt.JwtTokenUtils;
 
@@ -30,6 +32,7 @@ public class UserInitializer implements ApplicationRunner {
 	private final UserRepository userRepository;
 	private final JwtTokenUtils jwtTokenUtils;
 	private final RefreshTokenService refreshTokenService;
+	private final UserDeviceRepository userDeviceRepository;
 
 	@Override
 	public void run(ApplicationArguments args) {
@@ -39,8 +42,12 @@ public class UserInitializer implements ApplicationRunner {
 
 	private void createIfNotExists(String nickName, String providerId, OAuthType oauthType) {
 		if (!userRepository.existsUserByProviderId(oauthType, providerId)) {
-			User user = User.create(nickName, null, oauthType, providerId, false, null);
+			User user = User.create(nickName, null, oauthType, providerId);
+			UserDevice userDevice = UserDevice.createUserDevice(user, "default-device-id", null, false);
+
 			userRepository.save(user);
+			userDeviceRepository.save(userDevice);
+
 			String refreshToken = jwtTokenUtils.generateRefreshToken(user.getId());
 			refreshTokenService.registerRefreshToken(user, refreshToken);
 			log.info(">>> 계정 생성: nickName={}, providerId={}", nickName, providerId);
