@@ -34,6 +34,9 @@ jobs:
           echo "🔐 Create application.yml"
           mkdir -p src/main/resources
           echo "${{ secrets.DEV_YML }}" > src/main/resources/application.yml
+          
+          echo "🔐 Create firebase key json"
+          echo '${{ secrets.FIREBASE_KEY_JSON }}' > src/main/resources/firebase-service-account.json
 
           echo "🏗️ Build Spring Boot"
           chmod +x ./gradlew
