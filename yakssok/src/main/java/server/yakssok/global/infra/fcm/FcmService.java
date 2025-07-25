@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.google.firebase.messaging.BatchResponse;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
@@ -28,7 +29,7 @@ public class FcmService {
 		FirebaseMessaging.getInstance().send(message);
 	}
 
-	public void sendMulticastMessages(List<String> tokens, String title, String body) throws
+	public BatchResponse sendMulticastMessages(List<String> tokens, String title, String body) throws
 		FirebaseMessagingException {
 		MulticastMessage message = MulticastMessage.builder()
 			.setNotification(Notification.builder()
@@ -37,6 +38,6 @@ public class FcmService {
 				.build())
 			.addAllTokens(tokens)
 			.build();
-		FirebaseMessaging.getInstance().sendMulticast(message);
+		return FirebaseMessaging.getInstance().sendMulticast(message);
 	}
 }

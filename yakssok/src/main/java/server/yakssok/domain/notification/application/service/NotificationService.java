@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.firebase.messaging.BatchResponse;
 import com.google.firebase.messaging.FirebaseMessagingException;
 
 import lombok.RequiredArgsConstructor;
@@ -26,47 +27,81 @@ public class NotificationService {
 
 	@Transactional
 	public void sendNotification(NotificationRequest notificationRequest) {
-		try {
-			pushNotification(notificationRequest);
-			log.info("Notification sent successfully to userId: {}", notificationRequest.receiverId());
-		} catch (FirebaseMessagingException e) {
-			//TODO : 토큰 무효화
-			log.warn("Failed to send notification: {}", e.getMessage());
-		}
-	}
-
-	private void pushNotification(NotificationRequest notificationRequest) throws FirebaseMessagingException {
 		Long userId = notificationRequest.receiverId();
-		List<String> tokens = getUserFcmTokens(userId);
-		if (tokens.isEmpty()) {
-			return;
-		}
-		pushMessages(notificationRequest, tokens);
-		saveNotification(notificationRequest, true);
-	}
+		List<UserDevice> devices = userDeviceRepository.findByUserIdAndAlertOnTrue(userId);
+		if (devices.isEmpty()) return;
 
-	private List<String> getUserFcmTokens(Long userId) {
-		List<String> tokens = userDeviceRepository.findByUserIdAndAlertOnTrue(userId)
-			.stream()
-			.map(UserDevice::getFcmToken)
-			.filter(token -> token != null && !token.isEmpty())
-			.toList();
-		return tokens;
-	}
-
-	private void pushMessages(NotificationRequest notificationRequest, List<String> tokens) throws
-		FirebaseMessagingException {
 		String title = notificationRequest.title();
 		String body = notificationRequest.body();
-		if (tokens.size() == 1) {
-			fcmService.sendMessage(tokens.get(0), title, body);
+		sendNotifications(devices, title, body, notificationRequest);
+	}
+
+	private void sendNotifications(List<UserDevice> devices, String title, String body, NotificationRequest req) {
+		if (devices.size() == 1) {
+			sendToSingleDevice(devices.get(0), title, body, req);
 		} else {
-			fcmService.sendMulticastMessages(tokens, title, body);
+			sendToMultipleDevices(devices, title, body, req);
 		}
 	}
 
-	private void saveNotification(NotificationRequest notificationRequest, boolean isSuccess) {
-		Notification notification = notificationRequest.toNotification(isSuccess);
+	private void sendToSingleDevice(UserDevice device, String title, String body, NotificationRequest req) {
+		String token = device.getFcmToken();
+		if (token == null || token.isEmpty()) return;
+
+		try {
+			fcmService.sendMessage(token, title, body);
+			saveNotification(req, true);
+		} catch (FirebaseMessagingException e) {
+			handleInvalidToken(e, device);
+		}
+	}
+
+	private void sendToMultipleDevices(List<UserDevice> devices, String title, String body, NotificationRequest req) {
+		List<String> tokens = devices.stream()
+			.map(UserDevice::getFcmToken)
+			.filter(t -> t != null && !t.isEmpty())
+			.toList();
+
+		if (tokens.isEmpty()) return;
+
+		try {
+			BatchResponse resp = fcmService.sendMulticastMessages(tokens, title, body);
+			handleMulticastFailures(devices, resp);
+
+			if (resp.getFailureCount() == 0) {
+				saveNotification(req, true);
+			}
+		} catch (FirebaseMessagingException e) {
+			log.warn("Failed to send multicast notification: {}", e.getMessage());
+		}
+	}
+
+	private void handleMulticastFailures(List<UserDevice> devices, BatchResponse response) {
+		for (int i = 0; i < response.getResponses().size(); i++) {
+			if (!response.getResponses().get(i).isSuccessful()) {
+				UserDevice failedDevice = devices.get(i);
+				handleInvalidToken(response.getResponses().get(i).getException(), failedDevice);
+			}
+		}
+	}
+
+	private void handleInvalidToken(Exception e, UserDevice device) {
+		if (e instanceof FirebaseMessagingException) {
+			FirebaseMessagingException fme = (FirebaseMessagingException) e;
+			if (isInvalidTokenError(fme)) {
+				log.warn("Invalid FCM token for deviceId: {}", device.getId());
+				device.invalidateFcmToken();
+			}
+		}
+	}
+
+	private boolean isInvalidTokenError(FirebaseMessagingException e) {
+		String errorCode = e.getMessagingErrorCode() != null ? e.getMessagingErrorCode().name() : "";
+		return "UNREGISTERED".equals(errorCode) || "INVALID_ARGUMENT".equals(errorCode);
+	}
+
+	private void saveNotification(NotificationRequest req, boolean isSuccess) {
+		Notification notification = req.toNotification(isSuccess);
 		notificationRepository.save(notification);
 	}
 }

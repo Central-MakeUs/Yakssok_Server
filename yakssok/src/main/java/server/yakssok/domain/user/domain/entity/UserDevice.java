@@ -54,12 +54,12 @@ public class UserDevice {
 		);
 	}
 
-	public void updateFcmToken(String fcmToken) {
-		this.fcmToken = fcmToken;
-	}
-
 	public void update(String fcmToken, boolean alertOn) {
 		this.fcmToken = fcmToken;
 		this.alertOn = alertOn;
+	}
+
+	public void invalidateFcmToken() {
+		this.fcmToken = null;
 	}
 }

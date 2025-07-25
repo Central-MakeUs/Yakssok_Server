@@ -22,7 +22,6 @@ public class MedicationAlarmJob {
 		LocalDateTime threshold = now.minusMinutes(30);
 		List<MedicationScheduleAlarmDto> notTakenSchedules = medicationScheduleRepository
 			.findNotTakenSchedules(threshold);
-
 		notTakenSchedules.stream()
 			.forEach(schedule -> {
 				notificationService.sendNotification(
