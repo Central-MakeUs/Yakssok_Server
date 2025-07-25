@@ -2,8 +2,10 @@ package server.yakssok.domain.medication_schedule.domain.repository;
 
 import static server.yakssok.domain.medication.domain.entity.QMedication.*;
 import static server.yakssok.domain.medication_schedule.domain.entity.QMedicationSchedule.*;
+import static server.yakssok.domain.user.domain.entity.QUser.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
@@ -127,4 +129,27 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 			.fetch();
 	}
 
+	@Override
+	public List<MedicationScheduleAlarmDto> findNotTakenSchedules(LocalDateTime threshold) {
+		return jpaQueryFactory
+			.select(Projections.constructor(
+				MedicationScheduleAlarmDto.class,
+				medicationSchedule.id,
+				medication.medicineName,
+				user.id,
+				user.nickName
+			))
+			.from(medicationSchedule)
+			.innerJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
+			.innerJoin(user).on(user.id.eq(medication.userId))
+			.where(
+				medicationSchedule.scheduledDate.lt(threshold.toLocalDate())
+					.or(
+						medicationSchedule.scheduledDate.eq(threshold.toLocalDate())
+							.and(medicationSchedule.scheduledTime.before(threshold.toLocalTime()))
+					),
+				medicationSchedule.isTaken.isFalse()
+			)
+			.fetch();
+	}
 }

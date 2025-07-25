@@ -18,16 +18,20 @@ public class Notification extends BaseEntity {
 	private String title;
 	private String body;
 	private NotificationType type;
+	private boolean isSuccess;
 
-	public Notification(Long senderId, Long receiverId, String title, String body, NotificationType type) {
+	public Notification(Long senderId, Long receiverId, String title, String body,
+		NotificationType type,
+		boolean isSuccess) {
 		this.senderId = senderId;
 		this.receiverId = receiverId;
 		this.title = title;
 		this.body = body;
 		this.type = type;
+		this.isSuccess = isSuccess;
 	}
 
-	public static Notification createNotification(Long senderId, Long receiverId, String title, String body, NotificationType type) {
-		return new Notification(senderId, receiverId, title, body, type);
+	public static Notification createNotification(Long senderId, Long receiverId, String title, String body, NotificationType type, boolean isSuccess) {
+		return new Notification(senderId, receiverId, title, body, type, isSuccess);
 	}
 }

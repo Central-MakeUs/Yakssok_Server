@@ -1,15 +1,10 @@
 package server.yakssok.domain.notification.application.service;
 
+import static server.yakssok.domain.notification.application.service.NotificationTitleConstants.*;
+
 import server.yakssok.domain.feeback.domain.entity.FeedbackType;
 
 public class NotificationTitleUtils {
-	private static final String FEEDBACK_PRAISE_FORMAT = "%s님이 보낸 칭찬!";
-	private static final String FEEDBACK_NAG_FORMAT = "%s님이 보낸 잔소리!";
-	private static final String FEEDBACK_DEFAULT_FORMAT = "%s님이 보낸 피드백!";
-
-	private static final String MEDICATION_REMINDER_FORMAT = "%s님~ %s 안 먹었어요!";
-	private static final String FRIEND_NOT_TAKEN_FORMAT = "%s님의 %s가 약을 안먹었어요";
-
 
 	public static String createFeedbackTitle(FeedbackType type, String senderName) {
 		switch(type) {

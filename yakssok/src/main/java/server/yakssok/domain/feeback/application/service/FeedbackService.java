@@ -35,6 +35,6 @@ public class FeedbackService {
 			receiver.getId(),
 			feedback
 		);
-		notificationService.createNotification(notificationRequest);
+		notificationService.sendNotification(notificationRequest);
 	}
 }

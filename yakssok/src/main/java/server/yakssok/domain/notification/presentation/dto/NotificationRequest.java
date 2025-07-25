@@ -1,6 +1,9 @@
 package server.yakssok.domain.notification.presentation.dto;
 
+
 import server.yakssok.domain.feeback.domain.entity.Feedback;
+import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleAlarmDto;
+import server.yakssok.domain.notification.application.service.NotificationBodyConstants;
 import server.yakssok.domain.notification.application.service.NotificationTitleUtils;
 import server.yakssok.domain.notification.domain.entity.Notification;
 import server.yakssok.domain.notification.domain.entity.NotificationType;
@@ -12,13 +15,24 @@ public record NotificationRequest(
 	String body,
 	NotificationType type
 ) {
-	public Notification toNotification() {
+
+	public static NotificationRequest fromMedicationSchedule(MedicationScheduleAlarmDto schedule) {
+		return new NotificationRequest(
+			null,
+			schedule.userId(),
+			NotificationTitleUtils.createMedicationReminderTitle(schedule.userNickName(), schedule.medicineName()),
+			NotificationBodyConstants.MEDICATION_NOT_TAKEN_BODY,
+			NotificationType.MEDICATION_NOT_TAKEN);
+	}
+
+	public Notification toNotification(boolean isSuccess) {
 		return Notification.createNotification(
 			senderId,
 			receiverId,
 			title,
 			body,
-			type
+			type,
+			isSuccess
 			);
 
 	}

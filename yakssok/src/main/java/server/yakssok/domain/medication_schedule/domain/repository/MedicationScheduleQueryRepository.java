@@ -1,6 +1,7 @@
 package server.yakssok.domain.medication_schedule.domain.repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
@@ -14,4 +15,5 @@ public interface MedicationScheduleQueryRepository {
 	List<Long> findFollowingIdsWithTodaySchedule(List<Long> followingIds, LocalDate now);
 	Map<Long, Integer> countTodayRemainingMedications(List<Long> followingIdsWithTodaySchedule, LocalDate now);
 	List<MedicationScheduleDto> findRemainingMedicationDetail(Long friendId, LocalDate now);
+	List<MedicationScheduleAlarmDto> findNotTakenSchedules(LocalDateTime threshold);
 }
