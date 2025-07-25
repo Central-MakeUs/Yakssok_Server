@@ -1,32 +1,35 @@
 package server.yakssok.domain.notification.application.service;
 
+import static server.yakssok.domain.notification.application.service.NotificationTitleConstants.*;
+
 import server.yakssok.domain.feeback.domain.entity.FeedbackType;
 
 public class NotificationTitleUtils {
-	private static final String FEEDBACK_PRAISE_FORMAT = "%s님이 보낸 칭찬!";
-	private static final String FEEDBACK_NAG_FORMAT = "%s님이 보낸 잔소리!";
-	private static final String FEEDBACK_DEFAULT_FORMAT = "%s님이 보낸 피드백!";
-
-	private static final String MEDICATION_REMINDER_FORMAT = "%s님~ %s 안 먹었어요!";
-	private static final String FRIEND_NOT_TAKEN_FORMAT = "%s님의 %s가 약을 안먹었어요";
-
 
 	public static String createFeedbackTitle(FeedbackType type, String senderName) {
-		switch(type) {
-			case PRAISE:
-				return String.format(FEEDBACK_PRAISE_FORMAT, senderName);
-			case NAG:
-				return String.format(FEEDBACK_NAG_FORMAT, senderName);
-			default:
-				return String.format(FEEDBACK_DEFAULT_FORMAT, senderName);
-		}
+		return switch (type) {
+			case PRAISE -> String.format(FEEDBACK_PRAISE_FORMAT, senderName);
+			case NAG -> String.format(FEEDBACK_NAG_FORMAT, senderName);
+		};
 	}
 
 	public static String createMedicationReminderTitle(String userName, String medicineName) {
 		return String.format(MEDICATION_REMINDER_FORMAT, userName, medicineName);
 	}
 
-	public static String createFriendNotTakenAlarmTitle(String userName, String mateRole) {
-		return String.format(FRIEND_NOT_TAKEN_FORMAT, userName, mateRole);
+	public static String createFriendNotTakenAlarmTitle(String userName, String relationName) {
+		String particle = chooseSubjectJosa(relationName);
+		return String.format(FRIEND_NOT_TAKEN_FORMAT, userName, relationName, particle);
+	}
+
+	public static String chooseSubjectJosa(String word) {
+		if (word == null || word.isEmpty()) return "";
+		char lastChar = word.charAt(word.length() - 1);
+		if (lastChar < 0xAC00 || lastChar > 0xD7A3) {
+			return "가";
+		}
+		int baseCode = lastChar - 0xAC00;
+		int jongseongIndex = baseCode % 28;
+		return (jongseongIndex == 0) ? "가" : "이";
 	}
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.google.firebase.messaging.BatchResponse;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
@@ -17,33 +18,26 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FcmService {
 
-	public void sendMessage(String token, String title, String body){
-		try {
-			Message message = Message.builder()
-				.setToken(token)
-				.setNotification(Notification.builder()
-					.setTitle(title)
-					.setBody(body)
-					.build())
-				.build();
-			FirebaseMessaging.getInstance().send(message);
-		} catch (FirebaseMessagingException e) {
-			log.warn("알림 전송 실패: {}", e.getMessage());
-		}
+	public void sendMessage(String token, String title, String body) throws FirebaseMessagingException {
+		Message message = Message.builder()
+			.setToken(token)
+			.setNotification(Notification.builder()
+				.setTitle(title)
+				.setBody(body)
+				.build())
+			.build();
+		FirebaseMessaging.getInstance().send(message);
 	}
 
-	public void sendMulticastMessages(List<String> tokens, String title, String body) {
-		try {
-			MulticastMessage message = MulticastMessage.builder()
-				.setNotification(Notification.builder()
-					.setTitle(title)
-					.setBody(body)
-					.build())
-				.addAllTokens(tokens)
-				.build();
-			FirebaseMessaging.getInstance().sendMulticast(message);
-		} catch (FirebaseMessagingException e) {
-			log.warn("알림 전송 실패: {}", e.getMessage());
-		}
+	public BatchResponse sendMulticastMessages(List<String> tokens, String title, String body) throws
+		FirebaseMessagingException {
+		MulticastMessage message = MulticastMessage.builder()
+			.setNotification(Notification.builder()
+				.setTitle(title)
+				.setBody(body)
+				.build())
+			.addAllTokens(tokens)
+			.build();
+		return FirebaseMessaging.getInstance().sendMulticast(message);
 	}
 }

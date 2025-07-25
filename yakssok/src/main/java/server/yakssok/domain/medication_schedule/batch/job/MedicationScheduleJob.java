@@ -1,4 +1,4 @@
-package server.yakssok.domain.medication_schedule.batch;
+package server.yakssok.domain.medication_schedule.batch.job;
 
 import org.springframework.stereotype.Component;
 
