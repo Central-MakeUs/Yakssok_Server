@@ -11,6 +11,7 @@ import server.yakssok.domain.notification.domain.entity.NotificationType;
 public record NotificationRequest(
 	Long senderId,
 	Long receiverId,
+	Long scheduleId,
 	String title,
 	String body,
 	NotificationType type
@@ -20,30 +21,33 @@ public record NotificationRequest(
 		return new NotificationRequest(
 			null,
 			schedule.userId(),
+			schedule.scheduleId(),
 			NotificationTitleUtils.createMedicationReminderTitle(schedule.userNickName(), schedule.medicineName()),
 			NotificationBodyConstants.MEDICATION_NOT_TAKEN_BODY,
 			NotificationType.MEDICATION_NOT_TAKEN);
-	}
-
-	public Notification toNotification(boolean isSuccess) {
-		return Notification.createNotification(
-			senderId,
-			receiverId,
-			title,
-			body,
-			type,
-			isSuccess
-			);
-
 	}
 
 	public static NotificationRequest fromFeedback(Long senderId, String senderName, Long receiverId, Feedback feedback) {
 		return new NotificationRequest(
 			senderId,
 			receiverId,
+			null,
 			NotificationTitleUtils.createFeedbackTitle(feedback.getFeedbackType(), senderName),
 			feedback.getMessage(),
 			NotificationType.FEEDBACK
 		);
+	}
+
+	public Notification toNotification(boolean isSuccess) {
+		return Notification.createNotification(
+			senderId,
+			receiverId,
+			scheduleId,
+			title,
+			body,
+			type,
+			isSuccess
+			);
+
 	}
 }

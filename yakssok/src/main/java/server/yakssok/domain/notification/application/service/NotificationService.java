@@ -28,25 +28,36 @@ public class NotificationService {
 	public void sendNotification(NotificationRequest notificationRequest) {
 		try {
 			pushNotification(notificationRequest);
-			saveNotification(notificationRequest, true);
+			log.info("Notification sent successfully to userId: {}", notificationRequest.receiverId());
 		} catch (FirebaseMessagingException e) {
-			saveNotification(notificationRequest, false);
+			//TODO : 토큰 무효화
 			log.warn("Failed to send notification: {}", e.getMessage());
 		}
-
 	}
 
 	private void pushNotification(NotificationRequest notificationRequest) throws FirebaseMessagingException {
 		Long userId = notificationRequest.receiverId();
+		List<String> tokens = getUserFcmTokens(userId);
+		if (tokens.isEmpty()) {
+			return;
+		}
+		pushMessages(notificationRequest, tokens);
+		saveNotification(notificationRequest, true);
+	}
+
+	private List<String> getUserFcmTokens(Long userId) {
 		List<String> tokens = userDeviceRepository.findByUserIdAndAlertOnTrue(userId)
 			.stream()
 			.map(UserDevice::getFcmToken)
 			.filter(token -> token != null && !token.isEmpty())
 			.toList();
+		return tokens;
+	}
 
+	private void pushMessages(NotificationRequest notificationRequest, List<String> tokens) throws
+		FirebaseMessagingException {
 		String title = notificationRequest.title();
 		String body = notificationRequest.body();
-
 		if (tokens.size() == 1) {
 			fcmService.sendMessage(tokens.get(0), title, body);
 		} else {
