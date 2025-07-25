@@ -15,5 +15,5 @@ public interface MedicationScheduleQueryRepository {
 	List<Long> findFollowingIdsWithTodaySchedule(List<Long> followingIds, LocalDate now);
 	Map<Long, Integer> countTodayRemainingMedications(List<Long> followingIdsWithTodaySchedule, LocalDate now);
 	List<MedicationScheduleDto> findRemainingMedicationDetail(Long friendId, LocalDate now);
-	List<MedicationScheduleAlarmDto> findNotTakenSchedules(LocalDateTime threshold);
+	List<MedicationScheduleAlarmDto> findNotTakenSchedules(LocalDateTime notTakenLimitTime);
 }

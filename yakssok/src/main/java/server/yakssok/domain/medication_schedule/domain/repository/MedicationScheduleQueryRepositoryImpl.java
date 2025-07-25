@@ -130,7 +130,7 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 	}
 
 	@Override
-	public List<MedicationScheduleAlarmDto> findNotTakenSchedules(LocalDateTime threshold) {
+	public List<MedicationScheduleAlarmDto> findNotTakenSchedules(LocalDateTime notTakenLimitTime) {
 		return jpaQueryFactory
 			.select(Projections.constructor(
 				MedicationScheduleAlarmDto.class,
@@ -143,9 +143,9 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 			.innerJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
 			.innerJoin(user).on(user.id.eq(medication.userId))
 			.where(
-				medicationSchedule.scheduledDate.eq(threshold.toLocalDate()),
-				medicationSchedule.scheduledTime.hour().eq(threshold.getHour()),
-				medicationSchedule.scheduledTime.minute().eq(threshold.getMinute()),
+				medicationSchedule.scheduledDate.eq(notTakenLimitTime.toLocalDate()),
+				medicationSchedule.scheduledTime.hour().eq(notTakenLimitTime.getHour()),
+				medicationSchedule.scheduledTime.minute().eq(notTakenLimitTime.getMinute()),
 				medicationSchedule.isTaken.isFalse()
 			)
 			.fetch();

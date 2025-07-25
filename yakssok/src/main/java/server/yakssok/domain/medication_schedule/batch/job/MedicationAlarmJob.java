@@ -19,12 +19,13 @@ public class MedicationAlarmJob {
 	private final NotificationService notificationService;
 	private final MedicationScheduleRepository medicationScheduleRepository;
 	private final FriendRepository friendRepository;
+	private static final int NOT_TAKEN_MINUTES_LIMIT = 30;
 
 	public void run() {
 		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime threshold = now.minusMinutes(30);
+		LocalDateTime notTakenLimitTime = now.minusMinutes(NOT_TAKEN_MINUTES_LIMIT);
 		List<MedicationScheduleAlarmDto> notTakenSchedules = medicationScheduleRepository
-			.findNotTakenSchedules(threshold);
+			.findNotTakenSchedules(notTakenLimitTime);
 		for (MedicationScheduleAlarmDto schedule : notTakenSchedules) {
 			notificationService.sendNotification(
 				NotificationRequest.fromMedicationSchedule(schedule)
