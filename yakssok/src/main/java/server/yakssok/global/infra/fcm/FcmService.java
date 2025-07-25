@@ -26,7 +26,6 @@ public class FcmService {
 				.build())
 			.build();
 		FirebaseMessaging.getInstance().send(message);
-
 	}
 
 	public void sendMulticastMessages(List<String> tokens, String title, String body) throws
@@ -39,6 +38,5 @@ public class FcmService {
 			.addAllTokens(tokens)
 			.build();
 		FirebaseMessaging.getInstance().sendMulticast(message);
-
 	}
 }
