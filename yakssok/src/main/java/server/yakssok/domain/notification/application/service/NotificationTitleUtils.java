@@ -7,14 +7,10 @@ import server.yakssok.domain.feeback.domain.entity.FeedbackType;
 public class NotificationTitleUtils {
 
 	public static String createFeedbackTitle(FeedbackType type, String senderName) {
-		switch(type) {
-			case PRAISE:
-				return String.format(FEEDBACK_PRAISE_FORMAT, senderName);
-			case NAG:
-				return String.format(FEEDBACK_NAG_FORMAT, senderName);
-			default:
-				return String.format(FEEDBACK_DEFAULT_FORMAT, senderName);
-		}
+		return switch (type) {
+			case PRAISE -> String.format(FEEDBACK_PRAISE_FORMAT, senderName);
+			case NAG -> String.format(FEEDBACK_NAG_FORMAT, senderName);
+		};
 	}
 
 	public static String createMedicationReminderTitle(String userName, String medicineName) {
