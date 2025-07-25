@@ -21,7 +21,19 @@ public class NotificationTitleUtils {
 		return String.format(MEDICATION_REMINDER_FORMAT, userName, medicineName);
 	}
 
-	public static String createFriendNotTakenAlarmTitle(String userName, String mateRole) {
-		return String.format(FRIEND_NOT_TAKEN_FORMAT, userName, mateRole);
+	public static String createFriendNotTakenAlarmTitle(String userName, String relationName) {
+		String particle = chooseSubjectJosa(relationName);
+		return String.format(FRIEND_NOT_TAKEN_FORMAT, userName, relationName, particle);
+	}
+
+	public static String chooseSubjectJosa(String word) {
+		if (word == null || word.isEmpty()) return "";
+		char lastChar = word.charAt(word.length() - 1);
+		if (lastChar < 0xAC00 || lastChar > 0xD7A3) {
+			return "가";
+		}
+		int baseCode = lastChar - 0xAC00;
+		int jongseongIndex = baseCode % 28;
+		return (jongseongIndex == 0) ? "가" : "이";
 	}
 }

@@ -9,6 +9,6 @@ public class NotificationTitleConstants {
 	public static final String FEEDBACK_DEFAULT_FORMAT = "%s님이 보낸 피드백!";
 
 	public static final String MEDICATION_REMINDER_FORMAT = "%s님~ %s 안 먹었어요!";
-	public static final String FRIEND_NOT_TAKEN_FORMAT = "%s님의 %s가 약을 안먹었어요";
+	public static final String FRIEND_NOT_TAKEN_FORMAT = "%s님의 %s%s 약을 안먹었어요";
 
 }

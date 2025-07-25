@@ -2,11 +2,13 @@ package server.yakssok.domain.notification.presentation.dto;
 
 
 import server.yakssok.domain.feeback.domain.entity.Feedback;
+import server.yakssok.domain.friend.domain.entity.Friend;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleAlarmDto;
 import server.yakssok.domain.notification.application.service.NotificationBodyConstants;
 import server.yakssok.domain.notification.application.service.NotificationTitleUtils;
 import server.yakssok.domain.notification.domain.entity.Notification;
 import server.yakssok.domain.notification.domain.entity.NotificationType;
+import server.yakssok.domain.user.domain.entity.User;
 
 public record NotificationRequest(
 	Long senderId,
@@ -35,6 +37,18 @@ public record NotificationRequest(
 			NotificationTitleUtils.createFeedbackTitle(feedback.getFeedbackType(), senderName),
 			feedback.getMessage(),
 			NotificationType.FEEDBACK
+		);
+	}
+
+	public static NotificationRequest fromScheduleForFriend(MedicationScheduleAlarmDto schedule, Friend friend) {
+		User follower = friend.getUser();
+		return new NotificationRequest(
+			null,
+			follower.getId(),
+			schedule.scheduleId(),
+			NotificationTitleUtils.createFriendNotTakenAlarmTitle(follower.getNickName(), friend.getRelationName()),
+			NotificationBodyConstants.MEDICATION_NOT_TAKEN_BODY_FOR_FRIEND,
+			NotificationType.FRIEND_NOT_TAKE
 		);
 	}
 
