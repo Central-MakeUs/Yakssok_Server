@@ -62,8 +62,7 @@ public class AppleLoginStrategy implements OAuthStrategy {
 	private JWTVerifier createVerifier(RSAPublicKey publicKey) {
 		return JWT.require(Algorithm.RSA256(publicKey, null))
 			.withIssuer(properties.issuer())
-			// TODO: clientId 검증
-			// .withAudience(clientId)
+			.withAudience(properties.clientId())
 			.build();
 	}
 
