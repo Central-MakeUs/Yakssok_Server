@@ -1,5 +1,7 @@
 package server.yakssok.domain.medication.presentation.controller;
 
+import java.time.LocalDate;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.medication.application.service.MedicationService;
 import server.yakssok.domain.medication.presentation.dto.request.CreateMedicationRequest;
 import server.yakssok.domain.medication.presentation.dto.response.MedicationGroupedResponse;
+import server.yakssok.domain.medication.presentation.dto.response.MedicationProgressResponse;
 import server.yakssok.global.common.reponse.ApiResponse;
 import server.yakssok.global.common.security.YakssokUserDetails;
 import server.yakssok.global.common.swagger.ApiErrorResponse;
@@ -60,5 +63,17 @@ public class MedicationController {
 	) {
 		medicationService.endMedication(medicationId);
 		return ApiResponse.success();
+	}
+
+	@Operation(summary = "날짜 별 복약 진행 상태 조회")
+	@GetMapping("/daily-status")
+	public ApiResponse<MedicationProgressResponse> getMedicationProgressByDate(
+		@Parameter(description = "조회할 날짜 (yyyy-MM-dd)", required = true)
+		@RequestParam LocalDate date,
+		@AuthenticationPrincipal YakssokUserDetails userDetails
+	) {
+		Long userId = userDetails.getUserId();
+		MedicationProgressResponse response = medicationService.isMedicationInProgress(userId, date);
+		return ApiResponse.success(response);
 	}
 }
