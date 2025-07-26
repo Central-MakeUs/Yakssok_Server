@@ -1,4 +1,4 @@
-package server.yakssok.domain.notification.application.service;
+package server.yakssok.domain.notification.application.service.constants;
 
 import lombok.NoArgsConstructor;
 

@@ -11,7 +11,7 @@ import server.yakssok.domain.friend.domain.repository.FriendRepository;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleAlarmDto;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleRepository;
 import server.yakssok.domain.notification.application.service.NotificationService;
-import server.yakssok.domain.notification.presentation.dto.NotificationRequest;
+import server.yakssok.domain.notification.presentation.dto.request.NotificationRequest;
 
 @Component
 @RequiredArgsConstructor

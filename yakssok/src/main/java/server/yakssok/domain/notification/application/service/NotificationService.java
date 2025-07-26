@@ -12,7 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import server.yakssok.domain.notification.domain.entity.Notification;
 import server.yakssok.domain.notification.domain.repository.NotificationRepository;
-import server.yakssok.domain.notification.presentation.dto.NotificationRequest;
+import server.yakssok.domain.notification.presentation.dto.request.MedicationNotificationRequest;
+import server.yakssok.domain.notification.presentation.dto.request.NotificationRequest;
 import server.yakssok.domain.user.domain.entity.UserDevice;
 import server.yakssok.domain.user.domain.repository.UserDeviceRepository;
 import server.yakssok.global.infra.fcm.FcmService;
@@ -36,27 +37,27 @@ public class NotificationService {
 		sendNotifications(devices, title, body, notificationRequest);
 	}
 
-	private void sendNotifications(List<UserDevice> devices, String title, String body, NotificationRequest req) {
+	private void sendNotifications(List<UserDevice> devices, String title, String body, NotificationRequest request) {
 		if (devices.size() == 1) {
-			sendToSingleDevice(devices.get(0), title, body, req);
+			sendToSingleDevice(devices.get(0), title, body, request);
 		} else {
-			sendToMultipleDevices(devices, title, body, req);
+			sendToMultipleDevices(devices, title, body, request);
 		}
 	}
 
-	private void sendToSingleDevice(UserDevice device, String title, String body, NotificationRequest req) {
+	private void sendToSingleDevice(UserDevice device, String title, String body, NotificationRequest request) {
 		String token = device.getFcmToken();
 		if (token == null || token.isEmpty()) return;
 
 		try {
 			fcmService.sendMessage(token, title, body);
-			saveNotification(req, true);
+			saveNotification(request, true);
 		} catch (FirebaseMessagingException e) {
 			handleInvalidToken(e, device);
 		}
 	}
 
-	private void sendToMultipleDevices(List<UserDevice> devices, String title, String body, NotificationRequest req) {
+	private void sendToMultipleDevices(List<UserDevice> devices, String title, String body, NotificationRequest request) {
 		List<String> tokens = devices.stream()
 			.map(UserDevice::getFcmToken)
 			.filter(t -> t != null && !t.isEmpty())
@@ -69,7 +70,7 @@ public class NotificationService {
 			handleMulticastFailures(devices, resp);
 
 			if (resp.getFailureCount() == 0) {
-				saveNotification(req, true);
+				saveNotification(request, true);
 			}
 		} catch (FirebaseMessagingException e) {
 			log.warn("Failed to send multicast notification: {}", e.getMessage());
@@ -100,8 +101,14 @@ public class NotificationService {
 		return "UNREGISTERED".equals(errorCode) || "INVALID_ARGUMENT".equals(errorCode);
 	}
 
-	private void saveNotification(NotificationRequest req, boolean isSuccess) {
-		Notification notification = req.toNotification(isSuccess);
+	private void saveNotification(NotificationRequest request, boolean isSuccess) {
+		Notification notification = request.toNotification(isSuccess);
+		notificationRepository.save(notification);
+	}
+
+	@Transactional
+	public void createNotification(Long userId, MedicationNotificationRequest createNotificationRequest) {
+		Notification notification = createNotificationRequest.toNotification(userId, true);
 		notificationRepository.save(notification);
 	}
 }
