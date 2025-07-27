@@ -64,16 +64,4 @@ public class MedicationController {
 		medicationService.endMedication(medicationId);
 		return ApiResponse.success();
 	}
-
-	@Operation(summary = "날짜 별 복약 진행 상태 조회")
-	@GetMapping("/daily-status")
-	public ApiResponse<MedicationProgressResponse> getMedicationProgressByDate(
-		@Parameter(description = "조회할 날짜 (yyyy-MM-dd)", required = true)
-		@RequestParam LocalDate date,
-		@AuthenticationPrincipal YakssokUserDetails userDetails
-	) {
-		Long userId = userDetails.getUserId();
-		MedicationProgressResponse response = medicationService.isMedicationInProgress(userId, date);
-		return ApiResponse.success(response);
-	}
 }

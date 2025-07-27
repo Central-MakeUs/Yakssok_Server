@@ -113,16 +113,4 @@ public class MedicationService {
 			.orElseThrow(() -> new MedicationException(ErrorCode.NOT_FOUND_MEDICATION));
 		return medication;
 	}
-
-	public MedicationProgressResponse isMedicationInProgress(Long userId, LocalDate date) {
-		List<Medication> medications = medicationRepository.findAllByUserId(userId);
-		boolean isProgress = medications.stream().anyMatch(medication -> {
-			LocalDate startDate = medication.getStartDate();
-			LocalDate endDate = medication.getEndDate();
-			boolean hasNoEndDate = (endDate == null);
-			boolean isStarted = !date.isBefore(startDate);
-			return hasNoEndDate ? isStarted : (isStarted && !date.isAfter(endDate));
-		});
-		return MedicationProgressResponse.of(isProgress);
-	}
 }

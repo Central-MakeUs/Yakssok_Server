@@ -10,5 +10,4 @@ import server.yakssok.domain.medication.domain.entity.Medication;
 public interface MedicationRepository extends JpaRepository<Medication, Long>, MedicationQueryRepository{
 	int countByUserId(Long userId);
 	boolean existsByUserId(Long userId);
-	List<Medication> findAllByUserId(Long userId);
 }
