@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import server.yakssok.domain.notification.domain.entity.Notification;
 
 @Repository
-public interface NotificationRepository extends JpaRepository<Notification, Long> {
+public interface NotificationRepository extends JpaRepository<Notification, Long>, NotificationQueryRepository{
 }

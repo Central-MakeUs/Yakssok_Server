@@ -2,6 +2,7 @@ package server.yakssok.domain.feeback.domain.entity;
 
 import static server.yakssok.global.exception.ErrorCode.*;
 
+import server.yakssok.domain.notification.domain.entity.NotificationType;
 
 public enum FeedbackType {
 
@@ -14,5 +15,12 @@ public enum FeedbackType {
 		} catch (IllegalArgumentException | NullPointerException e) {
 			throw new FeedbackException(INVALID_INPUT_VALUE);
 		}
+	}
+
+	public NotificationType toNotificationType() {
+		return switch(this) {
+			case PRAISE -> NotificationType.FEEDBACK_PRAISE;
+			case NAG -> NotificationType.FEEDBACK_NAG;
+		};
 	}
 }

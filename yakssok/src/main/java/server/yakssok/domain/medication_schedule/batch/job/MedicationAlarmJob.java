@@ -11,12 +11,13 @@ import server.yakssok.domain.friend.domain.repository.FriendRepository;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleAlarmDto;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleRepository;
 import server.yakssok.domain.notification.application.service.NotificationService;
-import server.yakssok.domain.notification.presentation.dto.NotificationRequest;
+import server.yakssok.domain.notification.application.service.PushService;
+import server.yakssok.domain.notification.presentation.dto.request.NotificationRequest;
 
 @Component
 @RequiredArgsConstructor
 public class MedicationAlarmJob {
-	private final NotificationService notificationService;
+	private final PushService pushService;
 	private final MedicationScheduleRepository medicationScheduleRepository;
 	private final FriendRepository friendRepository;
 	private static final int NOT_TAKEN_MINUTES_LIMIT = 30;
@@ -27,7 +28,7 @@ public class MedicationAlarmJob {
 		List<MedicationScheduleAlarmDto> notTakenSchedules = medicationScheduleRepository
 			.findNotTakenSchedules(notTakenLimitTime);
 		for (MedicationScheduleAlarmDto schedule : notTakenSchedules) {
-			notificationService.sendNotification(
+			pushService.sendNotification(
 				NotificationRequest.fromMedicationSchedule(schedule)
 			);
 
@@ -35,7 +36,7 @@ public class MedicationAlarmJob {
 			for (Friend friend : friends) {
 				NotificationRequest friendRequest =
 					NotificationRequest.fromScheduleForFriend(schedule, friend);
-				notificationService.sendNotification(friendRequest);
+				pushService.sendNotification(friendRequest);
 			}
 		}
 	}
