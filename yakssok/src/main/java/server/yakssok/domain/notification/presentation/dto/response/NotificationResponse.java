@@ -6,6 +6,7 @@ import server.yakssok.domain.notification.domain.entity.Notification;
 import server.yakssok.domain.user.domain.entity.User;
 
 public record NotificationResponse(
+	Long notificationId,
 	String senderNickName,
 	String senderProfileUrl,
 	String receiverNickName,
@@ -23,6 +24,7 @@ public record NotificationResponse(
 		String body = notification.getBody();
 
 		return new NotificationResponse(
+			notification.getId(),
 			senderNick,
 			senderProfile,
 			receiverNick,
@@ -37,6 +39,7 @@ public record NotificationResponse(
 		String title = notification.getTitle();
 		String body = notification.getBody();
 		return new NotificationResponse(
+			notification.getId(),
 			"약쏙",
 			"",
 			receiver.getNickName(),

@@ -5,5 +5,5 @@ import java.util.List;
 import server.yakssok.domain.notification.domain.entity.Notification;
 
 public interface NotificationQueryRepository {
-	List<Notification> findMyNotifications(Long userId);
+	List<Notification> findMyNotifications(Long userId, Long cursorId, int limit);
 }
