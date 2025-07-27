@@ -35,11 +35,11 @@ public class MedicationSchedule extends BaseEntity {
 		this.medicationId = medicationId;
 	}
 
-	public void take() {
-		this.isTaken = true;
-	}
-
 	public boolean isTodaySchedule() {
 		return scheduledDate.equals(LocalDate.now());
+	}
+
+	public void switchTake() {
+		this.isTaken = !this.isTaken;
 	}
 }
