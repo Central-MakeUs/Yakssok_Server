@@ -30,14 +30,14 @@ public class NotificationService {
 	private final NotificationRepository notificationRepository;
 	private final UserRepository userRepository;
 
-	void saveNotification(NotificationRequest request, boolean isSuccess) {
-		Notification notification = request.toNotification(isSuccess);
+	void saveNotification(NotificationRequest request) {
+		Notification notification = request.toNotification();
 		notificationRepository.save(notification);
 	}
 
 	@Transactional
 	public void createNotification(Long userId, MedicationNotificationRequest createNotificationRequest) {
-		Notification notification = createNotificationRequest.toNotification(userId, true);
+		Notification notification = createNotificationRequest.toNotification(userId);
 		notificationRepository.save(notification);
 	}
 
@@ -57,7 +57,7 @@ public class NotificationService {
 				} else {
 					User sender = userMap.get(notification.getSenderId());
 					boolean isSentByMe = notification.isSentBy(userId);
-					return NotificationResponse.of(notification, receiver, sender, isSentByMe);
+					return NotificationResponse.of(notification, sender, receiver, isSentByMe);
 				}
 			})
 			.toList();

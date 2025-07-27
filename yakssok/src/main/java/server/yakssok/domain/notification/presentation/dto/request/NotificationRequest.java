@@ -53,15 +53,14 @@ public record NotificationRequest(
 			.build();
 	}
 
-	public Notification toNotification(boolean isSuccess) {
+	public Notification toNotification() {
 		return Notification.createNotification(
 			senderId,
 			receiverId,
 			scheduleId,
 			title,
 			body,
-			type,
-			isSuccess
+			type
 		);
 	}
 }

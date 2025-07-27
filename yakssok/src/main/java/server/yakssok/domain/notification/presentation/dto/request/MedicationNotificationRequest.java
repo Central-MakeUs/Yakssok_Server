@@ -13,15 +13,14 @@ public record MedicationNotificationRequest(
 	String body
 ) {
 
-	public Notification toNotification(Long receiverId, boolean isSuccess) {
+	public Notification toNotification(Long receiverId) {
 		return Notification.createNotification(
 			null,
 			receiverId,
 			scheduleId,
 			title,
 			body,
-			NotificationType.MEDICATION_TAKE,
-			isSuccess
+			NotificationType.MEDICATION_TAKE
 		);
 	}
 }

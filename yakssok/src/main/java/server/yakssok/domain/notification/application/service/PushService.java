@@ -25,6 +25,7 @@ public class PushService {
 
 	@Transactional
 	public void sendNotification(NotificationRequest notificationRequest) {
+		notificationService.saveNotification(notificationRequest);
 		Long userId = notificationRequest.receiverId();
 		List<UserDevice> devices = userDeviceRepository.findByUserIdAndAlertOnTrue(userId);
 		if (devices.isEmpty()) return;
@@ -48,7 +49,6 @@ public class PushService {
 
 		try {
 			fcmService.sendMessage(token, title, body);
-			notificationService.saveNotification(request, true);
 		} catch (FirebaseMessagingException e) {
 			handleInvalidToken(e, device);
 		}
@@ -65,10 +65,6 @@ public class PushService {
 		try {
 			BatchResponse resp = fcmService.sendMulticastMessages(tokens, title, body);
 			handleMulticastFailures(devices, resp);
-
-			if (resp.getFailureCount() == 0) {
-				notificationService.saveNotification(request, true);
-			}
 		} catch (FirebaseMessagingException e) {
 			log.warn("Failed to send multicast notification: {}", e.getMessage());
 		}

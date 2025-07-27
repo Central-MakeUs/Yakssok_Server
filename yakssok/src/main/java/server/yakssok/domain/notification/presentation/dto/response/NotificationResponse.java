@@ -41,7 +41,7 @@ public record NotificationResponse(
 		return new NotificationResponse(
 			notification.getId(),
 			"약쏙",
-			"",
+			null,
 			receiver.getNickName(),
 			receiver.getProfileImageUrl(),
 			(title + " " + body).trim(),
@@ -49,5 +49,4 @@ public record NotificationResponse(
 			false
 		);
 	}
-
 }
