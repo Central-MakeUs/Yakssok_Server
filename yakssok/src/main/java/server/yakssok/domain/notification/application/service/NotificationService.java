@@ -1,6 +1,13 @@
 package server.yakssok.domain.notification.application.service;
 
+
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,10 +19,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import server.yakssok.domain.notification.domain.entity.Notification;
 import server.yakssok.domain.notification.domain.repository.NotificationRepository;
+import server.yakssok.domain.notification.presentation.dto.response.NotificationResponse;
 import server.yakssok.domain.notification.presentation.dto.request.MedicationNotificationRequest;
 import server.yakssok.domain.notification.presentation.dto.request.NotificationRequest;
+import server.yakssok.domain.user.domain.entity.User;
 import server.yakssok.domain.user.domain.entity.UserDevice;
 import server.yakssok.domain.user.domain.repository.UserDeviceRepository;
+import server.yakssok.domain.user.domain.repository.UserRepository;
 import server.yakssok.global.infra.fcm.FcmService;
 
 @Service
@@ -25,6 +35,7 @@ public class NotificationService {
 	private final NotificationRepository notificationRepository;
 	private final FcmService fcmService;
 	private final UserDeviceRepository userDeviceRepository;
+	private final UserRepository userRepository;
 
 	@Transactional
 	public void sendNotification(NotificationRequest notificationRequest) {
@@ -106,9 +117,37 @@ public class NotificationService {
 		notificationRepository.save(notification);
 	}
 
+	//TODO : 위 코드랑 분리 필요
 	@Transactional
 	public void createNotification(Long userId, MedicationNotificationRequest createNotificationRequest) {
 		Notification notification = createNotificationRequest.toNotification(userId, true);
 		notificationRepository.save(notification);
+	}
+
+	@Transactional(readOnly = true)
+	public List<NotificationResponse> findMyNotifications(Long userId) {
+		List<Notification> notifications = notificationRepository.findMyNotifications(userId);
+		Set<Long> userIds = notifications.stream()
+			.flatMap(n -> Stream.of(n.getSenderId(), n.getReceiverId()))
+			.filter(Objects::nonNull)
+			.collect(Collectors.toSet());
+
+		Map<Long, User> userMap = userRepository.findAllById(userIds).stream()
+			.collect(Collectors.toMap(User::getId, Function.identity()));
+
+		return notifications.stream()
+			.map(notification -> {
+				User receiver = userMap.get(notification.getReceiverId());
+
+				if (notification.isSystemNotification()) {
+					return NotificationResponse.of(notification, receiver);
+				} else {
+					User sender = userMap.get(notification.getSenderId());
+					boolean isSentByMe = notification.isSentBy(userId);
+					return NotificationResponse.of(notification, receiver, sender, isSentByMe);
+				}
+
+			})
+			.toList();
 	}
 }

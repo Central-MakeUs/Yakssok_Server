@@ -1,14 +1,18 @@
 package server.yakssok.domain.notification.domain.entity;
 
+import java.util.Objects;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import server.yakssok.domain.BaseEntity;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Notification extends BaseEntity {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,5 +38,13 @@ public class Notification extends BaseEntity {
 
 	public static Notification createNotification(Long senderId, Long receiverId, Long scheduleId, String title, String body, NotificationType type, boolean isSuccess) {
 		return new Notification(senderId, receiverId, scheduleId, title, body, type, isSuccess);
+	}
+
+	public boolean isSentBy(Long userId) {
+		return Objects.equals(this.senderId, userId);
+	}
+
+	public boolean isSystemNotification() {
+		return this.senderId == null;
 	}
 }
