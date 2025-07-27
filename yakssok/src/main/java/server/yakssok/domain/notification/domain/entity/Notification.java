@@ -3,6 +3,8 @@ package server.yakssok.domain.notification.domain.entity;
 import java.util.Objects;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -22,6 +24,7 @@ public class Notification extends BaseEntity {
 	private Long scheduleId;
 	private String title;
 	private String body;
+	@Enumerated(EnumType.STRING)
 	private NotificationType type;
 
 	public Notification(Long senderId, Long receiverId, Long scheduleId, String title, String body,

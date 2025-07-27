@@ -1,7 +1,5 @@
 package server.yakssok.domain.notification.presentation.controller;
 
-import java.util.List;
-
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +14,7 @@ import server.yakssok.domain.notification.application.service.NotificationServic
 import server.yakssok.domain.notification.presentation.dto.request.MedicationNotificationRequest;
 import server.yakssok.domain.notification.presentation.dto.response.NotificationResponse;
 import server.yakssok.global.common.reponse.ApiResponse;
+import server.yakssok.global.common.reponse.PageResponse;
 import server.yakssok.global.common.security.YakssokUserDetails;
 
 @RestController
@@ -38,12 +37,12 @@ public class NotificationController {
 
 	@Operation(summary = "알림 목록 조회")
 	@GetMapping
-	public List<NotificationResponse> findMyNotifications(
+	public ApiResponse<PageResponse<NotificationResponse>> findMyNotifications(
 		@RequestParam(required = false) Long lastId,
 		@RequestParam(required = false, defaultValue = "20") Integer limit,
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
 		Long userId = userDetails.getUserId();
-		return notificationService.findMyNotifications(userId, lastId, limit);
+		return ApiResponse.success(notificationService.findMyNotifications(userId, lastId, limit));
 	}
 }

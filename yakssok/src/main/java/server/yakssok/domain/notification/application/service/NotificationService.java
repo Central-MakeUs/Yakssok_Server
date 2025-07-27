@@ -9,6 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ import server.yakssok.domain.notification.presentation.dto.request.MedicationNot
 import server.yakssok.domain.notification.presentation.dto.request.NotificationRequest;
 import server.yakssok.domain.user.domain.entity.User;
 import server.yakssok.domain.user.domain.repository.UserRepository;
+import server.yakssok.global.common.reponse.PageResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -42,28 +44,31 @@ public class NotificationService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<NotificationResponse> findMyNotifications(Long userId, Long lastId, int limit) {
-		List<Notification> notifications = notificationRepository.findMyNotifications(userId, lastId, limit);
+	public PageResponse<NotificationResponse> findMyNotifications(Long userId, Long lastId, int limit) {
+		Slice<Notification> notifications = notificationRepository.findMyNotifications(userId, lastId, limit);
+
 		Set<Long> userIds = getNotificationUserIds(notifications);
 		Map<Long, User> userMap = userRepository.findAllById(userIds).stream()
 			.collect(Collectors.toMap(User::getId, Function.identity()));
 
-		return notifications.stream()
+		List<NotificationResponse> notificationResponses = notifications.stream()
 			.map(notification -> {
 				User receiver = userMap.get(notification.getReceiverId());
 
 				if (notification.isSystemNotification()) {
-					return NotificationResponse.of(notification, receiver);
+					return NotificationResponse.ofSystemNotification(notification, receiver);
 				} else {
 					User sender = userMap.get(notification.getSenderId());
 					boolean isSentByMe = notification.isSentBy(userId);
-					return NotificationResponse.of(notification, sender, receiver, isSentByMe);
+					return NotificationResponse.ofFeedbackNotification(notification, sender, receiver, isSentByMe);
 				}
 			})
 			.toList();
+		boolean hasNext = notifications.hasNext();
+		return PageResponse.of(notificationResponses, hasNext);
 	}
 
-	private Set<Long> getNotificationUserIds(List<Notification> notifications) {
+	private Set<Long> getNotificationUserIds(Slice<Notification> notifications) {
 		Set<Long> userIds = notifications.stream()
 			.flatMap(n -> Stream.of(n.getSenderId(), n.getReceiverId()))
 			.filter(Objects::nonNull)

@@ -38,7 +38,7 @@ public record NotificationRequest(
 			.receiverId(receiverId)
 			.title(NotificationTitleUtils.createFeedbackTitle(feedback.getFeedbackType(), senderName))
 			.body(feedback.getMessage())
-			.type(NotificationType.FEEDBACK)
+			.type(feedback.getFeedbackType().toNotificationType())
 			.build();
 	}
 

@@ -7,6 +7,7 @@ import server.yakssok.domain.user.domain.entity.User;
 
 public record NotificationResponse(
 	Long notificationId,
+	String notificationType,
 	String senderNickName,
 	String senderProfileUrl,
 	String receiverNickName,
@@ -15,35 +16,40 @@ public record NotificationResponse(
 	LocalDateTime createdAt,
 	boolean isSentByMe
 ) {
-	public static NotificationResponse of(Notification notification, User sender, User receiver, boolean isSentByMe) {
-		String senderNick = sender.getNickName();
-		String senderProfile = sender.getProfileImageUrl();
-		String receiverNick = receiver.getNickName();
-		String receiverProfile = receiver.getProfileImageUrl();
-		String title = notification.getTitle();
+	public static final String SYSTEM_SENDER_NAME = "약쏙";
+
+	public static NotificationResponse ofFeedbackNotification(Notification notification, User sender, User receiver, boolean isSentByMe) {
+		String senderNickName = sender.getNickName();
+		String senderProfileUrl = sender.getProfileImageUrl();
+		String receiverNickName = receiver.getNickName();
+		String receiverProfileUrl = receiver.getProfileImageUrl();
 		String body = notification.getBody();
 
 		return new NotificationResponse(
 			notification.getId(),
-			senderNick,
-			senderProfile,
-			receiverNick,
-			receiverProfile,
-			(title + " " + body).trim(),
+			notification.getType().name(),
+			senderNickName,
+			senderProfileUrl,
+			receiverNickName,
+			receiverProfileUrl,
+			body,
 			notification.getCreatedAt(),
 			isSentByMe
 		);
 	}
 
-	public static NotificationResponse of(Notification notification, User receiver) {
+	public static NotificationResponse ofSystemNotification(Notification notification, User receiver) {
+		String receiverNickName = receiver.getNickName();
+		String receiverProfileUrl = receiver.getProfileImageUrl();
 		String title = notification.getTitle();
 		String body = notification.getBody();
 		return new NotificationResponse(
 			notification.getId(),
-			"약쏙",
+			notification.getType().name(),
+			SYSTEM_SENDER_NAME,
 			null,
-			receiver.getNickName(),
-			receiver.getProfileImageUrl(),
+			receiverNickName,
+			receiverProfileUrl,
 			(title + " " + body).trim(),
 			notification.getCreatedAt(),
 			false

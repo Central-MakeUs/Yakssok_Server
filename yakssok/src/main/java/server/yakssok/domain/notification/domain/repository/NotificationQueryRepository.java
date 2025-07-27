@@ -1,9 +1,9 @@
 package server.yakssok.domain.notification.domain.repository;
 
-import java.util.List;
+import org.springframework.data.domain.Slice;
 
 import server.yakssok.domain.notification.domain.entity.Notification;
 
 public interface NotificationQueryRepository {
-	List<Notification> findMyNotifications(Long userId, Long cursorId, int limit);
+	Slice<Notification> findMyNotifications(Long userId, Long cursorId, int limit);
 }
