@@ -46,10 +46,17 @@ public class NotificationService {
 	@Transactional(readOnly = true)
 	public PageResponse<NotificationResponse> findMyNotifications(Long userId, Long lastId, int limit) {
 		Slice<Notification> notifications = notificationRepository.findMyNotifications(userId, lastId, limit);
-
 		Set<Long> userIds = getNotificationUserIds(notifications);
 		Map<Long, User> userMap = userRepository.findAllById(userIds).stream()
 			.collect(Collectors.toMap(User::getId, Function.identity()));
+
+		List<NotificationResponse> notificationResponses = convertToResponse(userId, notifications, userMap);
+		boolean hasNext = notifications.hasNext();
+		return PageResponse.of(notificationResponses, hasNext);
+	}
+
+	private static List<NotificationResponse> convertToResponse(Long userId, Slice<Notification> notifications,
+		Map<Long, User> userMap) {
 
 		List<NotificationResponse> notificationResponses = notifications.stream()
 			.map(notification -> {
@@ -64,8 +71,7 @@ public class NotificationService {
 				}
 			})
 			.toList();
-		boolean hasNext = notifications.hasNext();
-		return PageResponse.of(notificationResponses, hasNext);
+		return notificationResponses;
 	}
 
 	private Set<Long> getNotificationUserIds(Slice<Notification> notifications) {
