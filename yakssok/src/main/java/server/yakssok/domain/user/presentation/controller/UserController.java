@@ -1,8 +1,8 @@
 package server.yakssok.domain.user.presentation.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +16,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.user.application.service.UserDeviceService;
 import server.yakssok.domain.user.application.service.UserService;
-import server.yakssok.domain.user.presentation.dto.request.RegisterDeviceRequest;
 import server.yakssok.domain.user.presentation.dto.response.FindUserInfoResponse;
 import server.yakssok.domain.user.presentation.dto.request.UpdateUserInfoRequest;
 import server.yakssok.domain.user.presentation.dto.response.FindMyInfoResponse;
@@ -74,5 +73,16 @@ public class UserController {
 		@RequestParam String inviteCode
 	) {
 		return ApiResponse.success(userService.findUserInfoByInviteCode(inviteCode));
+	}
+
+	@Operation(summary = "회원 탈퇴")
+	@ApiErrorResponse(ErrorCode.NOT_FOUND_USER)
+	@DeleteMapping
+	public ApiResponse deleteUser(
+		@AuthenticationPrincipal YakssokUserDetails userDetails
+	) {
+		Long userId = userDetails.getUserId();
+		userService.deleteUser(userId);
+		return ApiResponse.success();
 	}
 }

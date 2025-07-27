@@ -63,4 +63,15 @@ public class UserService {
 			.orElseThrow(() -> new UserException(ErrorCode.INVALID_INVITE_CODE));
 		return user;
 	}
+
+	@Transactional
+	public void deleteUser(Long userId) {
+		/**
+		 * 나의 복약 정보 삭제
+		 * 나의 복약 스케줄 삭제
+		 * 내가 팔로우하는 사람 팔로우 끊기
+		 * 나를 팔로우 하는 사람 팔로우 끊기
+		 * 내가 보낸 잔소리, 나에게 보낸 잔소리??? 그리고 알림은
+		 */
+	}
 }
