@@ -1,5 +1,7 @@
 package server.yakssok.domain.medication_schedule.presentation.controller;
 
+import static server.yakssok.global.exception.ErrorCode.*;
+
 import java.time.LocalDate;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,6 +21,7 @@ import server.yakssok.domain.medication_schedule.presentation.dto.response.Medic
 import server.yakssok.global.common.reponse.ApiResponse;
 import server.yakssok.global.common.security.YakssokUserDetails;
 import server.yakssok.global.common.swagger.ApiErrorResponse;
+import server.yakssok.global.common.swagger.ApiErrorResponses;
 import server.yakssok.global.exception.ErrorCode;
 
 @RestController
@@ -51,7 +54,11 @@ public class MedicationScheduleController {
 	}
 
 	@Operation(summary = "복약 스케줄 복용/미복용 처리")
-	@ApiErrorResponse(value = ErrorCode.NOT_FOUND_MEDICATION_SCHEDULE)
+	@ApiErrorResponses(value = {
+		@ApiErrorResponse(value = NOT_FOUND_MEDICATION_SCHEDULE),
+		@ApiErrorResponse(value = FORBIDDEN),
+		@ApiErrorResponse(ErrorCode.NOT_TODAY_SCHEDULE)
+	})
 	@PutMapping("/{scheduleId}/take")
 	public ApiResponse switchTakeMedication(
 		@AuthenticationPrincipal YakssokUserDetails userDetails,

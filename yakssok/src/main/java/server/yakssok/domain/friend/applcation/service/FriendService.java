@@ -38,7 +38,7 @@ public class FriendService {
 	public void followFriendByInviteCode(Long userId, FollowFriendRequest followFriendRequest) {
 		String inviteCode = followFriendRequest.inviteCode();
 		User following = userService.getUserIdByInviteCode(inviteCode);
-		User user = userService.getUserByUserId(userId);
+		User user = userService.getActiveUser(userId);
 		relationshipService.validateCanFollow(user.getId(), following.getId());
 		Friend friend = followFriendRequest.toFriend(user, following);
 		friendRepository.save(friend);

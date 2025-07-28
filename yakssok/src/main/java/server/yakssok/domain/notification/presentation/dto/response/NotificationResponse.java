@@ -34,12 +34,21 @@ public record NotificationResponse(
 	@Schema(description = "내가 보낸 알림 여부", example = "false")
 	boolean isSentByMe
 ) {
-	public static final String SYSTEM_SENDER_NAME = "약쏙";
+	private static final String SYSTEM_SENDER_NAME = "약쏙";
+	private static final String DELETED_USER_NAME = "알 수 없음";
+
+	private static String getUserNickName(User user) {
+		if (user.isDeleted())
+			return DELETED_USER_NAME;
+		else
+			return user.getNickName();
+	}
+
 
 	public static NotificationResponse ofFeedbackNotification(Notification notification, User sender, User receiver, boolean isSentByMe) {
-		String senderNickName = sender.getNickName();
+		String senderNickName = getUserNickName(sender);
 		String senderProfileUrl = sender.getProfileImageUrl();
-		String receiverNickName = receiver.getNickName();
+		String receiverNickName = getUserNickName(receiver);
 		String receiverProfileUrl = receiver.getProfileImageUrl();
 		String body = notification.getBody();
 
@@ -57,7 +66,7 @@ public record NotificationResponse(
 	}
 
 	public static NotificationResponse ofSystemNotification(Notification notification, User receiver) {
-		String receiverNickName = receiver.getNickName();
+		String receiverNickName = getUserNickName(receiver);
 		String receiverProfileUrl = receiver.getProfileImageUrl();
 		String title = notification.getTitle();
 		String body = notification.getBody();

@@ -20,12 +20,13 @@ import server.yakssok.global.exception.ErrorCode;
 @RequiredArgsConstructor
 public class UserService {
 	private final UserRepository userRepository;
+	private final UserDeletionService userDeletionService;
 	private final MedicationRepository medicationRepository;
 	private final FriendRepository friendRepository;
 
 	@Transactional
 	public FindMyInfoResponse findMyInfo(Long userId) {
-		User user = getUserByUserId(userId);
+		User user = getActiveUser(userId);
 		int medicationCount = medicationRepository.countByUserId(userId);
 		int followingCount = friendRepository.countByUserId(userId);
 		return FindMyInfoResponse.of(user, medicationCount, followingCount);
@@ -33,21 +34,21 @@ public class UserService {
 
 	@Transactional
 	public void updateUserInfo(Long userId, UpdateUserInfoRequest userInfoRequest) {
-		User user = getUserByUserId(userId);
+		User user = getActiveUser(userId);
 		user.updateInfo(
 			userInfoRequest.nickname(),
 			userInfoRequest.profileImageUrl()
 		);
 	}
 
-	public User getUserByUserId(Long userId) {
-		return userRepository.findById(userId)
+	public User getActiveUser(Long userId) {
+		return userRepository.findByIdAndIsDeletedFalse(userId)
 			.orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 	}
 
 	@Transactional(readOnly = true)
 	public FindUserInviteCodeResponse findUserInviteCode(Long userId) {
-		User user = getUserByUserId(userId);
+		User user = getActiveUser(userId);
 		return FindUserInviteCodeResponse.of(user.getInviteCode().getValue());
 	}
 
@@ -66,12 +67,7 @@ public class UserService {
 
 	@Transactional
 	public void deleteUser(Long userId) {
-		/**
-		 * 나의 복약 정보 삭제
-		 * 나의 복약 스케줄 삭제
-		 * 내가 팔로우하는 사람 팔로우 끊기
-		 * 나를 팔로우 하는 사람 팔로우 끊기
-		 * 내가 보낸 잔소리, 나에게 보낸 잔소리??? 그리고 알림은
-		 */
+		User user = getActiveUser(userId);
+		userDeletionService.deleteUser(user);
 	}
 }

@@ -24,7 +24,6 @@ public class User extends BaseEntity {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false)
 	private String nickName;
 	private String profileImageUrl;
 
@@ -34,8 +33,9 @@ public class User extends BaseEntity {
 	private String providerId;
 
 	@Embedded
-	@AttributeOverride(name = "value", column = @Column(name = "invite_code", unique = true, nullable = false, length = 20))
+	@AttributeOverride(name = "value", column = @Column(name = "invite_code", unique = true, length = 20))
 	private InviteCode inviteCode;
+	private boolean isDeleted;
 
 	private User(String nickName, String profileImageUrl, OAuthType oAuthType, String providerId, InviteCode inviteCode) {
 		this.nickName = nickName;
@@ -58,5 +58,14 @@ public class User extends BaseEntity {
 	public void updateInfo(String nickname, String profileImageUrl) {
 		this.nickName = nickname;
 		this.profileImageUrl = profileImageUrl;
+	}
+
+	public void deactivate() {
+		this.nickName = null;
+		this.profileImageUrl = null;
+		this.oAuthType = null;
+		this.providerId = null;
+		this.inviteCode = null;
+		this.isDeleted = true;
 	}
 }

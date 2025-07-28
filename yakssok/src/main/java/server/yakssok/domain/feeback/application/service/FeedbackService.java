@@ -24,8 +24,8 @@ public class FeedbackService {
 
 	@Transactional
 	public void sendFeedback(Long userId, CreateFeedbackRequest request) {
-		User sender = userService.getUserByUserId(userId);
-		User receiver = userService.getUserByUserId(request.receiverId());
+		User sender = userService.getActiveUser(userId);
+		User receiver = userService.getActiveUser(request.receiverId());
 		relationshipService.validateFriendship(sender.getId(), receiver.getId());
 		Feedback feedback = request.toFeedback(sender, receiver);
 		feedbackRepository.save(feedback);

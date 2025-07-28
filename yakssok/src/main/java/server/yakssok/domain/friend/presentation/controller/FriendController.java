@@ -20,6 +20,9 @@ import server.yakssok.domain.friend.presentation.dto.response.FollowingMedicatio
 import server.yakssok.domain.friend.presentation.dto.response.FollowingMedicationStatusGroupResponse;
 import server.yakssok.global.common.reponse.ApiResponse;
 import server.yakssok.global.common.security.YakssokUserDetails;
+import server.yakssok.global.common.swagger.ApiErrorResponse;
+import server.yakssok.global.common.swagger.ApiErrorResponses;
+import server.yakssok.global.exception.ErrorCode;
 
 @Tag(name = "Friend", description = "지인 API")
 @RestController
@@ -29,7 +32,12 @@ public class FriendController {
 
 	private final FriendService friendService;
 
+
 	@Operation(summary = "지인 팔로우")
+	@ApiErrorResponses(value = {
+		@ApiErrorResponse(ErrorCode.ALREADY_FRIEND),
+		@ApiErrorResponse(ErrorCode.INVALID_INVITE_CODE),
+	})
 	@PostMapping
 	public ApiResponse followByInviteCode(
 		@RequestBody FollowFriendRequest followRequest,
@@ -68,6 +76,7 @@ public class FriendController {
 		Long userId = userDetails.getUserId();
 		return ApiResponse.success(friendService.getFollowingRemainingMedication(userId));
 	}
+
 	@Operation(summary = "오늘 지인 안먹은 약 상세 조회")
 	@GetMapping("/friends/{friendId}/medication-status")
 	public ApiResponse<FollowingMedicationStatusDetailResponse> getFollowingRemainingMedicationDetail(

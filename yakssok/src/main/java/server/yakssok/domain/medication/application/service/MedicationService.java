@@ -113,4 +113,15 @@ public class MedicationService {
 			.orElseThrow(() -> new MedicationException(ErrorCode.NOT_FOUND_MEDICATION));
 		return medication;
 	}
+
+	public void deleteAllByUserId(Long userId) {
+		List<Medication> medications = medicationRepository.findAllUserMedications(userId);
+		List<Long> medicationIds = medications.stream()
+			.map(Medication::getId)
+			.toList();
+		medicationIntakeDayRepository.deleteAllByMedicationIds(medicationIds);
+		medicationIntakeTimeRepository.deleteAllByMedicationIds(medicationIds);
+		medicationRepository.deleteAll(medications);
+		medicationScheduleService.deleteAllByMedicationIds(medicationIds);
+	}
 }
