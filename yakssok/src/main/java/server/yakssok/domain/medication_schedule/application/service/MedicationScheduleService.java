@@ -40,11 +40,11 @@ public class MedicationScheduleService {
 	}
 
 	@Transactional
-	public void takeMedication(Long userId, Long scheduleId) {
+	public void switchTakeMedication(Long userId, Long scheduleId) {
 		MedicationSchedule schedule = medicationScheduleFinder.findScheduleById(scheduleId);
 		medicationScheduleValidator.validateOwnership(userId, schedule);
 		medicationScheduleValidator.validateTodaySchedule(schedule);
-		schedule.take();
+		schedule.switchTake();
 	}
 
 	public void deleteTodayUpcomingSchedules(Long medicationId, LocalDateTime now) {

@@ -50,15 +50,15 @@ public class MedicationScheduleController {
 		return ApiResponse.success(medicationScheduleService.getMyRangeSchedules(userId, startDate, endDate));
 	}
 
-	@Operation(summary = "복약 스케줄 복용 처리")
+	@Operation(summary = "복약 스케줄 복용/미복용 처리")
 	@ApiErrorResponse(value = ErrorCode.NOT_FOUND_MEDICATION_SCHEDULE)
 	@PutMapping("/{scheduleId}/take")
-	public ApiResponse takeMedication(
+	public ApiResponse switchTakeMedication(
 		@AuthenticationPrincipal YakssokUserDetails userDetails,
 		@PathVariable Long scheduleId
 	) {
 		Long userId = userDetails.getUserId();
-		medicationScheduleService.takeMedication(userId, scheduleId);
+		medicationScheduleService.switchTakeMedication(userId, scheduleId);
 		return ApiResponse.success();
 	}
 
