@@ -40,3 +40,4 @@ application-local.yml
 application-dev.yml
 application-test.yml
 firebase-service-account.json
+prometheus.yml
