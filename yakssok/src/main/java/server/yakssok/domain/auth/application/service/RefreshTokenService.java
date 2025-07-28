@@ -27,6 +27,6 @@ public class RefreshTokenService {
 	}
 
 	public void deleteRefreshToken(Long userId) {
-		refreshTokenRepository.deleteByUserId(userId);
+		refreshTokenRepository.deleteAllByUserId(userId);
 	}
 }

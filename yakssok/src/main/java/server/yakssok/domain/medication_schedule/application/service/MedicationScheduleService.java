@@ -100,4 +100,8 @@ public class MedicationScheduleService {
 			medication, intakeTimes);
 		medicationScheduleJdbcRepository.batchInsert(schedules);
 	}
+
+	public void deleteAllByMedicationIds(List<Long> medicationIds) {
+		medicationScheduleManager.deleteAllByMedicationIds(medicationIds);
+	}
 }

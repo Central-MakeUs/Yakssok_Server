@@ -20,12 +20,13 @@ import server.yakssok.global.exception.ErrorCode;
 @RequiredArgsConstructor
 public class UserService {
 	private final UserRepository userRepository;
+	private final UserDeletionService userDeletionService;
 	private final MedicationRepository medicationRepository;
 	private final FriendRepository friendRepository;
 
 	@Transactional
 	public FindMyInfoResponse findMyInfo(Long userId) {
-		User user = getUserByUserId(userId);
+		User user = getActiveUser(userId);
 		int medicationCount = medicationRepository.countByUserId(userId);
 		int followingCount = friendRepository.countByUserId(userId);
 		return FindMyInfoResponse.of(user, medicationCount, followingCount);
@@ -33,21 +34,21 @@ public class UserService {
 
 	@Transactional
 	public void updateUserInfo(Long userId, UpdateUserInfoRequest userInfoRequest) {
-		User user = getUserByUserId(userId);
+		User user = getActiveUser(userId);
 		user.updateInfo(
 			userInfoRequest.nickname(),
 			userInfoRequest.profileImageUrl()
 		);
 	}
 
-	public User getUserByUserId(Long userId) {
-		return userRepository.findById(userId)
+	public User getActiveUser(Long userId) {
+		return userRepository.findByIdAndIsDeletedFalse(userId)
 			.orElseThrow(() -> new UserException(ErrorCode.NOT_FOUND_USER));
 	}
 
 	@Transactional(readOnly = true)
 	public FindUserInviteCodeResponse findUserInviteCode(Long userId) {
-		User user = getUserByUserId(userId);
+		User user = getActiveUser(userId);
 		return FindUserInviteCodeResponse.of(user.getInviteCode().getValue());
 	}
 
@@ -62,5 +63,11 @@ public class UserService {
 		User user = userRepository.findByInviteCodeValue(inviteCode)
 			.orElseThrow(() -> new UserException(ErrorCode.INVALID_INVITE_CODE));
 		return user;
+	}
+
+	@Transactional
+	public void deleteUser(Long userId) {
+		User user = getActiveUser(userId);
+		userDeletionService.deleteUser(user);
 	}
 }

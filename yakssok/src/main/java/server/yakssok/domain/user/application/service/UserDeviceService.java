@@ -17,7 +17,7 @@ public class UserDeviceService {
 	private final UserService userService;
 
 	public void registerOrUpdateDevice(Long userId, RegisterDeviceRequest request) {
-		User user = userService.getUserByUserId(userId);
+		User user = userService.getActiveUser(userId);
 		Optional<UserDevice> existing = userDeviceRepository.findByUserIdAndDeviceId(userId, request.deviceId());
 
 		if (existing.isPresent()) {
