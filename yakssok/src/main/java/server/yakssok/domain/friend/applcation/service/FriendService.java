@@ -93,8 +93,7 @@ public class FriendService {
 
 	@Transactional(readOnly = true)
 	public FollowingMedicationStatusDetailResponse getFollowingRemainingMedicationDetail(Long userId, Long friendId) {
-		Friend friend = friendRepository.findByUserIdAndFollowingId(userId, friendId)
-			.orElseThrow(() -> new FriendException(ErrorCode.NOT_FRIEND));
+		Friend friend = findFriend(userId, friendId);
 		List<MedicationScheduleDto> schedules = medicationScheduleRepository
 			.findRemainingMedicationDetail(friendId, LocalDate.now());
 
@@ -103,6 +102,11 @@ public class FriendService {
 			friend.getRelationName(),
 			schedules
 		);
+	}
+
+	public Friend findFriend(Long userId, Long followingId) {
+		return friendRepository.findByUserIdAndFollowingId(userId, followingId)
+			.orElseThrow(()-> new FriendException(ErrorCode.NOT_FRIEND));
 	}
 }
 
