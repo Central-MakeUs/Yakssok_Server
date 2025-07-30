@@ -6,10 +6,10 @@ import server.yakssok.domain.feeback.domain.entity.FeedbackType;
 
 public class NotificationTitleUtils {
 
-	public static String createFeedbackTitle(FeedbackType type, String senderName) {
+	public static String createFeedbackTitle(FeedbackType type, String senderName, String relationName) {
 		return switch (type) {
-			case PRAISE -> String.format(FEEDBACK_PRAISE_FORMAT, senderName);
-			case NAG -> String.format(FEEDBACK_NAG_FORMAT, senderName);
+			case PRAISE -> String.format(FEEDBACK_PRAISE_FORMAT, senderName, relationName);
+			case NAG -> String.format(FEEDBACK_NAG_FORMAT, senderName, relationName);
 		};
 	}
 

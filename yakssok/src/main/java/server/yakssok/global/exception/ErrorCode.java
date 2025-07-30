@@ -19,7 +19,7 @@ public enum ErrorCode implements ResponseCode{
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, 3000, "존재하지 않는 회원입니다."),
     INVALID_INVITE_CODE(HttpStatus.BAD_REQUEST, 3001, "유효하지 않은 초대 코드입니다."),
 
-    //follow, feedback
+    //friend, feedback
     ALREADY_FRIEND(HttpStatus.BAD_REQUEST, 4000, "이미 친구로 등록된 사용자입니다."),
     CANNOT_FOLLOW_SELF(HttpStatus.BAD_REQUEST, 4001, "자기 자신을 친구로 추가할 수 없습니다."),
     NOT_FRIEND(HttpStatus.BAD_REQUEST, 4002, "친구가 아닌 사용자입니다."),
@@ -41,8 +41,7 @@ public enum ErrorCode implements ResponseCode{
     INVALID_FILE_EXTENSION(HttpStatus.BAD_REQUEST, 9103, "지원하지 않는 파일 확장자입니다."),
 
     // fcm
-    FAILED_TO_SEND_NOTIFICATION(HttpStatus.INTERNAL_SERVER_ERROR, 9200, "FCM 알림 전송에 실패했습니다.")
-    ;
+    FAILED_TO_SEND_NOTIFICATION(HttpStatus.INTERNAL_SERVER_ERROR, 9200, "FCM 알림 전송에 실패했습니다.");
 
 
     private final HttpStatus httpStatus;

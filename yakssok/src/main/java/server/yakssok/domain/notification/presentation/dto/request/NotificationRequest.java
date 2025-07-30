@@ -32,11 +32,17 @@ public record NotificationRequest(
 			.build();
 	}
 
-	public static NotificationRequest fromFeedback(Long senderId, String senderName, Long receiverId, Feedback feedback) {
+	public static NotificationRequest fromFeedback(
+		Long senderId,
+		String senderName,
+		Long receiverId,
+		String relationName,
+		Feedback feedback
+	) {
 		return NotificationRequest.builder()
 			.senderId(senderId)
 			.receiverId(receiverId)
-			.title(NotificationTitleUtils.createFeedbackTitle(feedback.getFeedbackType(), senderName))
+			.title(NotificationTitleUtils.createFeedbackTitle(feedback.getFeedbackType(), senderName, relationName))
 			.body(feedback.getMessage())
 			.type(feedback.getFeedbackType().toNotificationType())
 			.build();
