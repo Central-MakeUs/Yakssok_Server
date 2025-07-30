@@ -38,9 +38,6 @@ jobs:
           echo "🔐 Create firebase key json"
           echo '${{ secrets.FIREBASE_KEY_JSON }}' > src/main/resources/firebase-service-account.json
 
-          echo "🔐 Create prometheus.yml"
-          echo "${{ secrets.PROMETHEUS_YML }}" > prometheus.yml
-
           echo "🏗️ Build Spring Boot"
           chmod +x ./gradlew
           ./gradlew build -x test
