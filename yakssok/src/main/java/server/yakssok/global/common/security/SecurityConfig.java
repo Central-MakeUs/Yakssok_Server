@@ -21,13 +21,14 @@ public class SecurityConfig {
 	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
 	static final String[] PERMIT_URLS = {
-			"/v3/api-docs/**",
-			"/swagger-ui/**",
-			"/swagger-ui.html",
-			"/api/auth/join/**",
-			"/api/auth/login/**",
-			"/api/auth/reissue/**",
-			"/api/auth/kakao/callback"
+		"/v3/api-docs/**",
+		"/swagger-ui/**",
+		"/swagger-ui.html",
+		"/api/auth/join/**",
+		"/api/auth/login/**",
+		"/api/auth/reissue/**",
+		"/api/auth/kakao/callback",
+		"/actuator/**"
 	};
 
 	@Bean
