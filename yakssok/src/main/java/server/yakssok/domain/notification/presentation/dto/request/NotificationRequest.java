@@ -54,8 +54,8 @@ public record NotificationRequest(
 			.receiverId(follower.getId())
 			.scheduleId(schedule.scheduleId())
 			.title(NotificationTitleUtils.createFriendNotTakenAlarmTitle(follower.getNickName(), friend.getRelationName()))
-			.body(NotificationBodyConstants.MEDICATION_NOT_TAKEN_BODY_FOR_FRIEND)
-			.type(NotificationType.FRIEND_NOT_TAKE)
+			.body(NotificationBodyConstants.MEDICATION_NOT_TAKEN_REPORT_BODY)
+			.type(NotificationType.MEDICATION_NOT_TAKEN_REPORT)
 			.build();
 	}
 

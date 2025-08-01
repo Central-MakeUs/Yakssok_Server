@@ -3,6 +3,7 @@ package server.yakssok.domain.medication_schedule.batch.job;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class MedicationAlarmJob {
 	private final MedicationScheduleRepository medicationScheduleRepository;
 	private final FriendRepository friendRepository;
 	private static final int NOT_TAKEN_MINUTES_LIMIT = 30;
+	private final RabbitTemplate rabbitTemplate;
 
 	public void run() {
 		LocalDateTime now = LocalDateTime.now();
@@ -28,15 +30,14 @@ public class MedicationAlarmJob {
 		List<MedicationScheduleAlarmDto> notTakenSchedules = medicationScheduleRepository
 			.findNotTakenSchedules(notTakenLimitTime);
 		for (MedicationScheduleAlarmDto schedule : notTakenSchedules) {
-			pushService.sendNotification(
-				NotificationRequest.fromMedicationSchedule(schedule)
-			);
+			NotificationRequest notificationRequest = NotificationRequest.fromMedicationSchedule(schedule);
+			rabbitTemplate.convertAndSend("not-taken-exchange", "not-taken-key", notificationRequest);
 
 			List<Friend> friends = friendRepository.findMyFollowers(schedule.userId());
 			for (Friend friend : friends) {
 				NotificationRequest friendRequest =
 					NotificationRequest.fromScheduleForFriend(schedule, friend);
-				pushService.sendNotification(friendRequest);
+				rabbitTemplate.convertAndSend("report-exchange", "report-key", friendRequest);
 			}
 		}
 	}

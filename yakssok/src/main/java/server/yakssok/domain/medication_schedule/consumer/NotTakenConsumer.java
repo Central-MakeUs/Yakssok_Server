@@ -1,4 +1,4 @@
-package server.yakssok.global.infra.rabbitmq;
+package server.yakssok.domain.medication_schedule.consumer;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
@@ -9,12 +9,12 @@ import server.yakssok.domain.notification.presentation.dto.request.NotificationR
 
 @Component
 @RequiredArgsConstructor
-public class FeedbackConsumer {
+public class NotTakenConsumer {
 
 	private final PushService pushService;
 
-	@RabbitListener(queues = "feedback-queue")
-	public void receiveFeedback(NotificationRequest notificationRequest) {
+	@RabbitListener(queues = "not-taken-queue")
+	public void receiveNotTaken(NotificationRequest notificationRequest) {
 		pushService.sendNotification(notificationRequest);
 	}
 }

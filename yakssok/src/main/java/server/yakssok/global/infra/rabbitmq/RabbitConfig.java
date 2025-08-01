@@ -14,6 +14,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitConfig {
+
+	// 피드백 알림
 	@Bean
 	public Queue feedbackQueue() {
 		return QueueBuilder.durable("feedback-queue").build();
@@ -28,6 +30,41 @@ public class RabbitConfig {
 			.bind(feedbackQueue())
 			.to(feedbackExchange())
 			.with("feedback-key");
+	}
+
+
+	// 미복용(본인) 알림
+	@Bean
+	public Queue notTakenQueue() {
+		return QueueBuilder.durable("not-taken-queue").build();
+	}
+	@Bean
+	public DirectExchange notTakenExchange() {
+		return new DirectExchange("not-taken-exchange");
+	}
+	@Bean
+	public Binding notTakenBind() {
+		return BindingBuilder
+			.bind(notTakenQueue())
+			.to(notTakenExchange())
+			.with("not-taken-key");
+	}
+
+	// 미복용 고발(친구) 알림
+	@Bean
+	public Queue reportQueue() {
+		return QueueBuilder.durable("report-queue").build();
+	}
+	@Bean
+	public DirectExchange reportExchange() {
+		return new DirectExchange("report-exchange");
+	}
+	@Bean
+	public Binding reportBind() {
+		return BindingBuilder
+			.bind(reportQueue())
+			.to(reportExchange())
+			.with("report-key");
 	}
 
 	@Bean
