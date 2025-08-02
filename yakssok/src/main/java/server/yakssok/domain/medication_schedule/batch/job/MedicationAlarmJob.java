@@ -10,9 +10,9 @@ import server.yakssok.domain.friend.domain.entity.Friend;
 import server.yakssok.domain.friend.domain.repository.FriendRepository;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleAlarmDto;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleRepository;
-import server.yakssok.domain.notification.application.service.NotificationService;
 import server.yakssok.domain.notification.application.service.PushService;
 import server.yakssok.domain.notification.presentation.dto.request.NotificationRequest;
+import server.yakssok.domain.user.domain.entity.User;
 
 @Component
 @RequiredArgsConstructor
@@ -33,9 +33,11 @@ public class MedicationAlarmJob {
 			);
 
 			List<Friend> friends = friendRepository.findMyFollowers(schedule.userId());
+			String followingNickName = schedule.userNickName();
 			for (Friend friend : friends) {
+				User receiver = friend.getUser();
 				NotificationRequest friendRequest =
-					NotificationRequest.fromScheduleForFriend(schedule, friend);
+					NotificationRequest.fromScheduleForFriend(schedule, receiver.getId(), followingNickName);
 				pushService.sendNotification(friendRequest);
 			}
 		}

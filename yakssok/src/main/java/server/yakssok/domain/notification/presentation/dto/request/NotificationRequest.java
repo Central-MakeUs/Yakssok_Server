@@ -48,14 +48,17 @@ public record NotificationRequest(
 			.build();
 	}
 
-	public static NotificationRequest fromScheduleForFriend(MedicationScheduleAlarmDto schedule, Friend friend) {
-		User follower = friend.getUser();
+	public static NotificationRequest fromScheduleForFriend(
+		MedicationScheduleAlarmDto schedule,
+		Long receiverId,
+		String followingNickName
+	) {
 		return NotificationRequest.builder()
-			.receiverId(follower.getId())
+			.receiverId(receiverId)
 			.scheduleId(schedule.scheduleId())
-			.title(NotificationTitleUtils.createFriendNotTakenAlarmTitle(follower.getNickName(), friend.getRelationName()))
+			.title(NotificationTitleUtils.createFriendNotTakenAlarmTitle(followingNickName))
 			.body(NotificationBodyConstants.MEDICATION_NOT_TAKEN_BODY_FOR_FRIEND)
-			.type(NotificationType.FRIEND_NOT_TAKE)
+			.type(NotificationType.MEDICATION_NOT_TAKEN_FOR_FRIEND)
 			.build();
 	}
 
