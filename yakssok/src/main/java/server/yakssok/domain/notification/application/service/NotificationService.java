@@ -37,12 +37,6 @@ public class NotificationService {
 		notificationRepository.save(notification);
 	}
 
-	@Transactional
-	public void createNotification(Long userId, MedicationNotificationRequest createNotificationRequest) {
-		Notification notification = createNotificationRequest.toNotification(userId);
-		notificationRepository.save(notification);
-	}
-
 	@Transactional(readOnly = true)
 	public PageResponse<NotificationResponse> findMyNotifications(Long userId, Long lastId, int limit) {
 		Slice<Notification> notifications = notificationRepository.findMyNotifications(userId, lastId, limit);

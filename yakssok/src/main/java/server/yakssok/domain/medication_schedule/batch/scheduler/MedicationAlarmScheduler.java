@@ -12,7 +12,12 @@ public class MedicationAlarmScheduler {
 	private final MedicationAlarmJob medicationAlarmJob;
 
 	@Scheduled(cron = "0 * * * * *")
-	public void sendNotTakenAlarms() {
-		medicationAlarmJob.run();
+	public void sendNotTakenMedicationAlarms() {
+		medicationAlarmJob.sendNotTakenMedicationAlarms();
+	}
+
+	@Scheduled(cron = "0 * * * * *")
+	public void sendMedicationAlarms() {
+		medicationAlarmJob.sendMedicationAlarms();
 	}
 }

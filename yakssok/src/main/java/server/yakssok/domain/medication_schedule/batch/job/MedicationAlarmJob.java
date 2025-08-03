@@ -22,14 +22,14 @@ public class MedicationAlarmJob {
 	private final FriendRepository friendRepository;
 	private static final int NOT_TAKEN_MINUTES_LIMIT = 30;
 
-	public void run() {
+	public void sendNotTakenMedicationAlarms() {
 		LocalDateTime now = LocalDateTime.now();
 		LocalDateTime notTakenLimitTime = now.minusMinutes(NOT_TAKEN_MINUTES_LIMIT);
 		List<MedicationScheduleAlarmDto> notTakenSchedules = medicationScheduleRepository
 			.findNotTakenSchedules(notTakenLimitTime);
 		for (MedicationScheduleAlarmDto schedule : notTakenSchedules) {
-			pushService.sendNotification(
-				NotificationRequest.fromMedicationSchedule(schedule)
+			pushService.sendData(
+				NotificationRequest.fromNotTakenMedicationSchedule(schedule)
 			);
 
 			List<Friend> friends = friendRepository.findMyFollowers(schedule.userId());
@@ -37,9 +37,20 @@ public class MedicationAlarmJob {
 			for (Friend friend : friends) {
 				User receiver = friend.getUser();
 				NotificationRequest friendRequest =
-					NotificationRequest.fromScheduleForFriend(schedule, receiver.getId(), followingNickName);
+					NotificationRequest.fromMedicationScheduleForFriend(schedule, receiver.getId(), followingNickName);
 				pushService.sendNotification(friendRequest);
 			}
+		}
+	}
+
+	public void sendMedicationAlarms() {
+		LocalDateTime now = LocalDateTime.now();
+		List<MedicationScheduleAlarmDto> scheduledMedications
+			= medicationScheduleRepository.findSchedules(now);
+		for (MedicationScheduleAlarmDto schedule : scheduledMedications) {
+			pushService.sendData(
+				NotificationRequest.fromMedicationSchedule(schedule)
+			);
 		}
 	}
 }

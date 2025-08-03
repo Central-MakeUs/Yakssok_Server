@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FcmService {
 
-	public void sendMessage(String token, String title, String body) throws FirebaseMessagingException {
+	public void sendNotification(String token, String title, String body) throws FirebaseMessagingException {
 		Message message = Message.builder()
 			.setToken(token)
 			.setNotification(Notification.builder()
@@ -29,7 +29,7 @@ public class FcmService {
 		FirebaseMessaging.getInstance().send(message);
 	}
 
-	public BatchResponse sendMulticastMessages(List<String> tokens, String title, String body) throws
+	public BatchResponse sendMulticastNotifications(List<String> tokens, String title, String body) throws
 		FirebaseMessagingException {
 		MulticastMessage message = MulticastMessage.builder()
 			.setNotification(Notification.builder()
@@ -39,5 +39,15 @@ public class FcmService {
 			.addAllTokens(tokens)
 			.build();
 		return FirebaseMessaging.getInstance().sendMulticast(message);
+	}
+
+	public void sendData(String token, String title, String body, String soundType) throws FirebaseMessagingException {
+		Message message = Message.builder()
+			.setToken(token)
+			.putData("title", title)
+			.putData("body", body)
+			.putData("soundType", soundType)
+			.build();
+		FirebaseMessaging.getInstance().send(message);
 	}
 }

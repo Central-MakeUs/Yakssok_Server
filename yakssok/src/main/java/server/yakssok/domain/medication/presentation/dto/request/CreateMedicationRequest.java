@@ -6,11 +6,11 @@ import java.time.LocalTime;
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import server.yakssok.domain.medication.domain.entity.AlarmSound;
 import server.yakssok.domain.medication.domain.entity.Medication;
 import server.yakssok.domain.medication.domain.entity.MedicationIntakeDay;
 import server.yakssok.domain.medication.domain.entity.MedicationIntakeTime;
 import server.yakssok.domain.medication.domain.entity.MedicationType;
+import server.yakssok.domain.medication.domain.entity.SoundType;
 
 @Schema(description = "약 복용 등록 요청")
 public record CreateMedicationRequest(
@@ -51,7 +51,7 @@ public record CreateMedicationRequest(
 			name,
 			startDate,
 			endDate,
-			AlarmSound.from(alarmSound),
+			SoundType.from(alarmSound),
 			MedicationType.from(medicineType),
 			userId,
 			intakeCount
