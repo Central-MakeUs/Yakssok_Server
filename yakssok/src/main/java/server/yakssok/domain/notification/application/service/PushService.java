@@ -23,6 +23,32 @@ public class PushService {
 	private final FcmService fcmService;
 	private final NotificationService notificationService;
 
+	public void sendData(NotificationRequest notificationRequest) {
+		notificationService.saveNotification(notificationRequest);
+		Long userId = notificationRequest.receiverId();
+		List<UserDevice> devices = userDeviceRepository.findByUserIdAndAlertOnTrue(userId);
+		if (devices.isEmpty()) return;
+
+		String title = notificationRequest.title();
+		String body = notificationRequest.body();
+		String soundType = notificationRequest.soundType();
+		sendDataToDevice(devices, title, body, soundType);
+	}
+
+	private void sendDataToDevice(List<UserDevice> devices, String title, String body, String soundType) {
+		for (UserDevice device : devices) {
+			String fcmToken = device.getFcmToken();
+			if (fcmToken == null || fcmToken.isBlank()) {
+				continue;
+			}
+			try {
+				fcmService.sendData(fcmToken, title, body, soundType);
+			} catch (FirebaseMessagingException e) {
+				handleInvalidToken(e, device);
+			}
+		}
+	}
+
 	@Transactional
 	public void sendNotification(NotificationRequest notificationRequest) {
 		notificationService.saveNotification(notificationRequest);
@@ -32,29 +58,29 @@ public class PushService {
 
 		String title = notificationRequest.title();
 		String body = notificationRequest.body();
-		sendNotifications(devices, title, body, notificationRequest);
+		sendNotificationsToDevice(devices, title, body);
 	}
 
-	private void sendNotifications(List<UserDevice> devices, String title, String body, NotificationRequest request) {
+	private void sendNotificationsToDevice(List<UserDevice> devices, String title, String body) {
 		if (devices.size() == 1) {
-			sendToSingleDevice(devices.get(0), title, body, request);
+			sendToSingleDevice(devices.get(0), title, body);
 		} else {
-			sendToMultipleDevices(devices, title, body, request);
+			sendToMultipleDevices(devices, title, body);
 		}
 	}
 
-	private void sendToSingleDevice(UserDevice device, String title, String body, NotificationRequest request) {
+	private void sendToSingleDevice(UserDevice device, String title, String body) {
 		String token = device.getFcmToken();
 		if (token == null || token.isEmpty()) return;
 
 		try {
-			fcmService.sendMessage(token, title, body);
+			fcmService.sendNotification(token, title, body);
 		} catch (FirebaseMessagingException e) {
 			handleInvalidToken(e, device);
 		}
 	}
 
-	private void sendToMultipleDevices(List<UserDevice> devices, String title, String body, NotificationRequest request) {
+	private void sendToMultipleDevices(List<UserDevice> devices, String title, String body) {
 		List<String> tokens = devices.stream()
 			.map(UserDevice::getFcmToken)
 			.filter(t -> t != null && !t.isEmpty())
@@ -63,7 +89,7 @@ public class PushService {
 		if (tokens.isEmpty()) return;
 
 		try {
-			BatchResponse resp = fcmService.sendMulticastMessages(tokens, title, body);
+			BatchResponse resp = fcmService.sendMulticastNotifications(tokens, title, body);
 			handleMulticastFailures(devices, resp);
 		} catch (FirebaseMessagingException e) {
 			log.warn("Failed to send multicast notification: {}", e.getMessage());

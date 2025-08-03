@@ -7,7 +7,7 @@ public class NotificationTitleConstants {
 	public static final String FEEDBACK_PRAISE_FORMAT = "%s님의 %s님이 칭찬해요!";
 	public static final String FEEDBACK_NAG_FORMAT = "%s님의 %s님이 잔소리해요!";
 
-	public static final String MEDICATION_REMINDER_FORMAT = "%s님~ %s 안 먹었어요!";
-	public static final String FRIEND_NOT_TAKEN_FORMAT = "%s님의 %s%s 약을 안먹었어요";
-
+	public static final String MEDICATION_FORMAT = "%s 챙길 시간이에요!";
+	public static final String MEDICATION_REMINDER_FORMAT = "%s님~ %s 까먹었네요!";
+	public static final String FRIEND_NOT_TAKEN_FORMAT = "%s님이 약을 안먹었어요!";
 }

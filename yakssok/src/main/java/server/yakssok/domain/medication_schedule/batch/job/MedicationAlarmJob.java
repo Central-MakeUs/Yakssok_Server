@@ -3,7 +3,6 @@ package server.yakssok.domain.medication_schedule.batch.job;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
@@ -11,9 +10,9 @@ import server.yakssok.domain.friend.domain.entity.Friend;
 import server.yakssok.domain.friend.domain.repository.FriendRepository;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleAlarmDto;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleRepository;
-import server.yakssok.domain.notification.application.service.NotificationService;
 import server.yakssok.domain.notification.application.service.PushService;
 import server.yakssok.domain.notification.presentation.dto.request.NotificationRequest;
+import server.yakssok.domain.user.domain.entity.User;
 
 @Component
 @RequiredArgsConstructor
@@ -22,23 +21,36 @@ public class MedicationAlarmJob {
 	private final MedicationScheduleRepository medicationScheduleRepository;
 	private final FriendRepository friendRepository;
 	private static final int NOT_TAKEN_MINUTES_LIMIT = 30;
-	private final RabbitTemplate rabbitTemplate;
 
-	public void run() {
+	public void sendNotTakenMedicationAlarms() {
 		LocalDateTime now = LocalDateTime.now();
 		LocalDateTime notTakenLimitTime = now.minusMinutes(NOT_TAKEN_MINUTES_LIMIT);
 		List<MedicationScheduleAlarmDto> notTakenSchedules = medicationScheduleRepository
 			.findNotTakenSchedules(notTakenLimitTime);
 		for (MedicationScheduleAlarmDto schedule : notTakenSchedules) {
-			NotificationRequest notificationRequest = NotificationRequest.fromMedicationSchedule(schedule);
-			rabbitTemplate.convertAndSend("not-taken-exchange", "not-taken-key", notificationRequest);
+			pushService.sendData(
+				NotificationRequest.fromNotTakenMedicationSchedule(schedule)
+			);
 
 			List<Friend> friends = friendRepository.findMyFollowers(schedule.userId());
+			String followingNickName = schedule.userNickName();
 			for (Friend friend : friends) {
+				User receiver = friend.getUser();
 				NotificationRequest friendRequest =
-					NotificationRequest.fromScheduleForFriend(schedule, friend);
-				rabbitTemplate.convertAndSend("report-exchange", "report-key", friendRequest);
+					NotificationRequest.fromMedicationScheduleForFriend(schedule, receiver.getId(), followingNickName);
+				pushService.sendNotification(friendRequest);
 			}
+		}
+	}
+
+	public void sendMedicationAlarms() {
+		LocalDateTime now = LocalDateTime.now();
+		List<MedicationScheduleAlarmDto> scheduledMedications
+			= medicationScheduleRepository.findSchedules(now);
+		for (MedicationScheduleAlarmDto schedule : scheduledMedications) {
+			pushService.sendData(
+				NotificationRequest.fromMedicationSchedule(schedule)
+			);
 		}
 	}
 }

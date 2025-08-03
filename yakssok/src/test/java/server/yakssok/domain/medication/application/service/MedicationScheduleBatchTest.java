@@ -14,8 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import lombok.extern.slf4j.Slf4j;
+import server.yakssok.domain.medication.domain.entity.SoundType;
 import server.yakssok.domain.medication_schedule.batch.job.MedicationScheduleJob;
-import server.yakssok.domain.medication.domain.entity.AlarmSound;
 import server.yakssok.domain.medication.domain.entity.Medication;
 import server.yakssok.domain.medication.domain.entity.MedicationIntakeDay;
 import server.yakssok.domain.medication.domain.entity.MedicationIntakeTime;
@@ -74,7 +74,7 @@ public class MedicationScheduleBatchTest {
 					"약-" + i,
 					startDate,
 					endDate,
-					AlarmSound.FEEL_GOOD,
+					SoundType.FEEL_GOOD,
 					MedicationType.CHRONIC,
 					user.getId(),
 					1

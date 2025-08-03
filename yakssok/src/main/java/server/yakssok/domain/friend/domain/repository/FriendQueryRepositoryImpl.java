@@ -43,7 +43,6 @@ public class FriendQueryRepositoryImpl implements FriendQueryRepository {
 	public List<Friend> findMyFollowers(Long userId) {
 		return queryFactory
 			.selectFrom(friend)
-			.join(friend.user).fetchJoin()
 			.where(friend.following.id.eq(userId))
 			.orderBy(friend.id.desc())
 			.fetch();
