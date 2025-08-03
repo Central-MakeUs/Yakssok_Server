@@ -1,6 +1,8 @@
 package server.yakssok.domain.friend.applcation.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -67,35 +69,57 @@ public class FriendService {
 			.map(f -> f.getFollowing().getId())
 			.toList();
 
-		// 오늘 스케줄 있는 팔로잉 id 추출
-		List<Long> activeFollowingIds = medicationScheduleRepository
-			.findFollowingIdsWithTodaySchedule(followingIds, LocalDate.now());
+		Map<Long, Integer> notTakenMap = getNagUserRemainingMedications(followingIds);
+		List<Long> fullyTakenIds = getPraiseUser(followingIds);
 
-		// 남은 약 개수 map
-		Map<Long, Integer> remainingMap = medicationScheduleRepository
-			.countTodayRemainingMedications(activeFollowingIds, LocalDate.now());
+		List<FollowingMedicationStatusResponse> statusList = toMedicationStatusResponses(
+			friends, notTakenMap, fullyTakenIds);
 
-		List<FollowingMedicationStatusResponse> statusList = friends.stream()
-			.filter(f -> activeFollowingIds.contains(f.getFollowing().getId()))
-			.map(f -> toMedicationStatusResponse(f, remainingMap))
-			.sorted(Comparator.comparingInt(FollowingMedicationStatusResponse::notTakenCount).reversed())
-			.toList();
-
+		sortByNotTakenCount(statusList);
 		return FollowingMedicationStatusGroupResponse.of(statusList);
 	}
 
-	private FollowingMedicationStatusResponse toMedicationStatusResponse(Friend friend, Map<Long, Integer> remainingMap) {
-		Long id = friend.getFollowing().getId();
-		int cnt = remainingMap.getOrDefault(id, 0);
-		return FollowingMedicationStatusResponse.of(friend, cnt);
+	private List<Long> getPraiseUser(List<Long> followingIds) {
+		List<Long> fullyTakenIds = medicationScheduleRepository
+			.findUserIdsWithAllTakenToday(followingIds, LocalDate.now());
+		return fullyTakenIds;
 	}
 
+	private Map<Long, Integer> getNagUserRemainingMedications(List<Long> followingIds) {
+		Map<Long, Integer> notTakenMap = medicationScheduleRepository
+			.countTodayRemainingMedications(followingIds, LocalDateTime.now());
+		return notTakenMap;
+	}
+
+	private void sortByNotTakenCount(List<FollowingMedicationStatusResponse> statusList) {
+		statusList.sort(Comparator.comparingInt(FollowingMedicationStatusResponse::notTakenCount).reversed());
+	}
+
+	private List<FollowingMedicationStatusResponse> toMedicationStatusResponses(List<Friend> friends,
+		Map<Long, Integer> notTakenMap, List<Long> fullyTakenIds) {
+		List<FollowingMedicationStatusResponse> result = new ArrayList<>();
+		for (Friend friend : friends) {
+			Long followingId = friend.getFollowing().getId();
+			int notTakenCount = notTakenMap.getOrDefault(followingId, 0);
+
+			// 잔소리 대상 (미복용 1개 이상)
+			if (notTakenCount > 0) {
+				result.add(FollowingMedicationStatusResponse.of(friend, notTakenCount));
+				continue;
+			}
+			// 칭찬 대상 (모두 복용)
+			if (fullyTakenIds.contains(followingId)) {
+				result.add(FollowingMedicationStatusResponse.of(friend, 0));
+			}
+		}
+		return result;
+	}
 
 	@Transactional(readOnly = true)
-	public FollowingMedicationStatusDetailResponse getFollowingRemainingMedicationDetail(Long userId, Long friendId) {
-		Friend friend = findFriend(userId, friendId);
+	public FollowingMedicationStatusDetailResponse getFollowingRemainingMedicationDetail(Long userId, Long followingId) {
+		Friend friend = findFriend(userId, followingId);
 		List<MedicationScheduleDto> schedules = medicationScheduleRepository
-			.findRemainingMedicationDetail(friendId, LocalDate.now());
+			.findRemainingMedicationDetail(followingId, LocalDateTime.now());
 
 		return FollowingMedicationStatusDetailResponse.of(
 			friend.getFollowing().getNickName(),

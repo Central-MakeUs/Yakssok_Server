@@ -78,12 +78,12 @@ public class FriendController {
 	}
 
 	@Operation(summary = "오늘 지인 안먹은 약 상세 조회")
-	@GetMapping("/friends/{friendId}/medication-status")
+	@GetMapping("/{followingId}/medication-status")
 	public ApiResponse<FollowingMedicationStatusDetailResponse> getFollowingRemainingMedicationDetail(
 		@AuthenticationPrincipal YakssokUserDetails userDetails,
-		@PathVariable Long friendId
+		@PathVariable Long followingId
 	) {
 		Long userId = userDetails.getUserId();
-		return ApiResponse.success(friendService.getFollowingRemainingMedicationDetail(userId, friendId));
+		return ApiResponse.success(friendService.getFollowingRemainingMedicationDetail(userId, followingId));
 	}
 }
