@@ -17,7 +17,8 @@ public record NotificationRequest(
 	Long scheduleId,
 	String title,
 	String body,
-	NotificationType type
+	NotificationType type,
+	String soundType
 ) {
 
 	public static NotificationRequest fromNotTakenMedicationSchedule(MedicationScheduleAlarmDto schedule) {
@@ -27,6 +28,7 @@ public record NotificationRequest(
 			.title(NotificationTitleUtils.createMedicationReminderTitle(schedule.userNickName(), schedule.medicineName()))
 			.body(NotificationBodyConstants.MEDICATION_NOT_TAKEN_BODY)
 			.type(NotificationType.MEDICATION_NOT_TAKEN)
+			.soundType(schedule.soundType().name())
 			.build();
 	}
 
@@ -67,6 +69,7 @@ public record NotificationRequest(
 			.title(NotificationTitleUtils.createMedicationTitle(schedule.medicineName()))
 			.body(NotificationBodyConstants.MEDICATION_TAKE_BODY)
 			.type(NotificationType.MEDICATION_TAKE)
+			.soundType(schedule.soundType().name())
 			.build();
 	}
 

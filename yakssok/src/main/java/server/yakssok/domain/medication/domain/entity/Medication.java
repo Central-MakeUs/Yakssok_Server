@@ -35,7 +35,7 @@ public class Medication {
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	private AlarmSound alarmSound;
+	private SoundType soundType;
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
@@ -55,7 +55,7 @@ public class Medication {
 		String medicineName,
 		LocalDateTime startDateTime,
 		LocalDateTime endDateTime,
-		AlarmSound alarmSound,
+		SoundType soundType,
 		MedicationType medicationType,
 		Long userId,
 		int intakeCount
@@ -63,7 +63,7 @@ public class Medication {
 		this.medicineName = medicineName;
 		this.startDateTime = startDateTime;
 		this.endDateTime = endDateTime;
-		this.alarmSound = alarmSound;
+		this.soundType = soundType;
 		this.medicationType = medicationType;
 		this.userId = userId;
 		this.intakeCount = intakeCount;
@@ -81,7 +81,7 @@ public class Medication {
 		String medicineName,
 		LocalDate startDate,
 		LocalDate endDate,
-		AlarmSound alarmSound,
+		SoundType soundType,
 		MedicationType medicationType,
 		Long userId,
 		int intakeCount
@@ -90,7 +90,7 @@ public class Medication {
 			medicineName,
 			convertToStartDateTime(startDate),
 			convertToEndDateTime(endDate),
-			alarmSound,
+			soundType,
 			medicationType,
 			userId,
 			intakeCount

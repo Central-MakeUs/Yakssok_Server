@@ -137,7 +137,8 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 				medicationSchedule.id,
 				medication.medicineName,
 				user.id,
-				user.nickName
+				user.nickName,
+				medication.soundType
 			))
 			.from(medicationSchedule)
 			.innerJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
@@ -159,7 +160,8 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 				medicationSchedule.id,
 				medication.medicineName,
 				user.id,
-				user.nickName
+				user.nickName,
+				medication.soundType
 			))
 			.from(medicationSchedule)
 			.innerJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))

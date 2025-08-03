@@ -28,7 +28,7 @@ public class MedicationAlarmJob {
 		List<MedicationScheduleAlarmDto> notTakenSchedules = medicationScheduleRepository
 			.findNotTakenSchedules(notTakenLimitTime);
 		for (MedicationScheduleAlarmDto schedule : notTakenSchedules) {
-			pushService.sendNotification(
+			pushService.sendData(
 				NotificationRequest.fromNotTakenMedicationSchedule(schedule)
 			);
 
@@ -48,7 +48,7 @@ public class MedicationAlarmJob {
 		List<MedicationScheduleAlarmDto> scheduledMedications
 			= medicationScheduleRepository.findSchedules(now);
 		for (MedicationScheduleAlarmDto schedule : scheduledMedications) {
-			pushService.sendNotification(
+			pushService.sendData(
 				NotificationRequest.fromMedicationSchedule(schedule)
 			);
 		}
