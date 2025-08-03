@@ -32,13 +32,17 @@ public class PushService {
 		String title = notificationRequest.title();
 		String body = notificationRequest.body();
 		String soundType = notificationRequest.soundType();
-		sendDate(devices, title, body, soundType);
+		sendDataToDevice(devices, title, body, soundType);
 	}
 
-	private void sendDate(List<UserDevice> devices, String title, String body, String soundType) {
+	private void sendDataToDevice(List<UserDevice> devices, String title, String body, String soundType) {
 		for (UserDevice device : devices) {
+			String fcmToken = device.getFcmToken();
+			if (fcmToken == null || fcmToken.isBlank()) {
+				continue;
+			}
 			try {
-				fcmService.sendData(device.getFcmToken(), title, body, soundType);
+				fcmService.sendData(fcmToken, title, body, soundType);
 			} catch (FirebaseMessagingException e) {
 				handleInvalidToken(e, device);
 			}
@@ -54,10 +58,10 @@ public class PushService {
 
 		String title = notificationRequest.title();
 		String body = notificationRequest.body();
-		sendToDevice(devices, title, body);
+		sendNotificationsToDevice(devices, title, body);
 	}
 
-	private void sendToDevice(List<UserDevice> devices, String title, String body) {
+	private void sendNotificationsToDevice(List<UserDevice> devices, String title, String body) {
 		if (devices.size() == 1) {
 			sendToSingleDevice(devices.get(0), title, body);
 		} else {
