@@ -26,17 +26,6 @@ import server.yakssok.global.common.security.YakssokUserDetails;
 public class NotificationController {
 	private final NotificationService notificationService;
 
-	@Operation(summary = "알림 저장")
-	@PostMapping
-	public ApiResponse createNotification(
-		@AuthenticationPrincipal YakssokUserDetails userDetails,
-		@RequestBody MedicationNotificationRequest medicationNotificationRequest
-	) {
-		Long userId = userDetails.getUserId();
-		notificationService.createNotification(userId, medicationNotificationRequest);
-		return ApiResponse.success();
-	}
-
 	@Operation(summary = "알림 목록 조회")
 	@GetMapping
 	public ApiResponse<PageResponse<NotificationResponse>> findMyNotifications(
