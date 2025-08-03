@@ -20,4 +20,8 @@ public class NotificationTitleUtils {
 	public static String createFriendNotTakenAlarmTitle(String followingName) {
 		return String.format(FRIEND_NOT_TAKEN_FORMAT, followingName);
 	}
+
+	public static String createMedicationTitle(String medicineName) {
+		return String.format(MEDICATION_FORMAT, medicineName);
+	}
 }
