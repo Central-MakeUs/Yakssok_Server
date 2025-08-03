@@ -17,8 +17,8 @@ public class NotificationTitleUtils {
 		return String.format(MEDICATION_REMINDER_FORMAT, userName, medicineName);
 	}
 
-	public static String createFriendNotTakenAlarmTitle(String followingName) {
-		return String.format(FRIEND_NOT_TAKEN_FORMAT, followingName);
+	public static String createFriendNotTakenAlarmTitle(String followingNickName) {
+		return String.format(FRIEND_NOT_TAKEN_FORMAT, followingNickName);
 	}
 
 	public static String createMedicationTitle(String medicineName) {
