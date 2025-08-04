@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.friend.domain.entity.Friend;
@@ -22,6 +23,7 @@ public class MedicationAlarmJob {
 	private final FriendRepository friendRepository;
 	private static final int NOT_TAKEN_MINUTES_LIMIT = 30;
 
+	@Transactional
 	public void sendNotTakenMedicationAlarms() {
 		LocalDateTime now = LocalDateTime.now();
 		LocalDateTime notTakenLimitTime = now.minusMinutes(NOT_TAKEN_MINUTES_LIMIT);
@@ -43,6 +45,7 @@ public class MedicationAlarmJob {
 		}
 	}
 
+	@Transactional
 	public void sendMedicationAlarms() {
 		LocalDateTime now = LocalDateTime.now();
 		List<MedicationScheduleAlarmDto> scheduledMedications

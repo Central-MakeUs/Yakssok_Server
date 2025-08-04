@@ -8,8 +8,8 @@ public class NotificationTitleUtils {
 
 	public static String createFeedbackTitle(FeedbackType type, String senderName, String relationName) {
 		return switch (type) {
-			case PRAISE -> String.format(FEEDBACK_PRAISE_FORMAT, senderName, relationName);
-			case NAG -> String.format(FEEDBACK_NAG_FORMAT, senderName, relationName);
+			case FEEDBACK_PRAISE -> String.format(FEEDBACK_PRAISE_FORMAT, senderName, relationName);
+			case FEEDBACK_NAG -> String.format(FEEDBACK_NAG_FORMAT, senderName, relationName);
 		};
 	}
 
