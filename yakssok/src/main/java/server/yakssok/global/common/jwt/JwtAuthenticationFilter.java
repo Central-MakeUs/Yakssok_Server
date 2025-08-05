@@ -25,12 +25,14 @@ import server.yakssok.global.exception.ErrorCode;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final JwtAuthService jwtAuthService;
 	private static final String ENCODING_TYPE = "UTF-8";
+	private static final String AUTHORIZATION_HEADER = "Authorization";
+	private static final String BEARER_PREFIX = "Bearer ";
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 		try {
-			String bearerToken = request.getHeader("Authorization");
+			String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
 			if (bearerToken != null && !bearerToken.isBlank()) {
 				String token = resolveToken(bearerToken);
 				Authentication authentication = jwtAuthService.getAuthentication(token);
@@ -44,8 +46,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	}
 
 	private String resolveToken(String bearerToken) {
-		if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-			return bearerToken.substring(7);
+		if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
+			return bearerToken.substring(BEARER_PREFIX.length());
 		}
 		return null;
 	}
