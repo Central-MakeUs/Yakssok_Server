@@ -4,6 +4,7 @@ package server.yakssok.global.common.jwt;
 import java.io.IOException;
 
 import org.springframework.http.MediaType;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -16,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
+import server.yakssok.domain.auth.application.exception.AuthException;
 import server.yakssok.global.common.reponse.ApiResponse;
 import server.yakssok.global.exception.ErrorCode;
 
@@ -34,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				Authentication authentication = jwtAuthService.getAuthentication(token);
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 			}
-		} catch (Exception e) {
+		} catch (AuthException | AuthenticationException e) {
 			setErrorResponse(response, ErrorCode.INVALID_JWT);
 			return;
 		}
