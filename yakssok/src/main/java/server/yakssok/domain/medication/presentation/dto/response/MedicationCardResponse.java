@@ -8,6 +8,9 @@ import server.yakssok.domain.medication.domain.entity.Medication;
 
 @Schema(description = "복약 정보")
 public record MedicationCardResponse(
+	@Schema(description = "복약 id", example = "1")
+	Long medicationId,
+
 	@Schema(description = "약 종류", example = "CHRONIC")
 	String medicationType,
 
@@ -29,6 +32,7 @@ public record MedicationCardResponse(
 ) {
 	public static MedicationCardResponse from(Medication medication) {
 		return new MedicationCardResponse(
+			medication.getId(),
 			medication.getMedicationType().name(),
 			medication.getMedicineName(),
 			medication.getMedicationStatus().name(),
