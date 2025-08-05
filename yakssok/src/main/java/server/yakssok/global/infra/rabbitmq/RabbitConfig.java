@@ -12,8 +12,12 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import lombok.RequiredArgsConstructor;
+
 @Configuration
+@RequiredArgsConstructor
 public class RabbitConfig {
+
 
 	// 피드백 알림
 	@Bean
@@ -65,6 +69,24 @@ public class RabbitConfig {
 			.bind(reportQueue())
 			.to(reportExchange())
 			.with("report-key");
+	}
+
+
+	// 복약 안내(정시) 알림 (medication)
+	@Bean
+	public Queue medicationQueue() {
+		return QueueBuilder.durable("medication-queue").build();
+	}
+	@Bean
+	public DirectExchange medicationExchange() {
+		return new DirectExchange("medication-exchange");
+	}
+	@Bean
+	public Binding medicationBind() {
+		return BindingBuilder
+			.bind(medicationQueue())
+			.to(medicationExchange())
+			.with("medication-key");
 	}
 
 	@Bean

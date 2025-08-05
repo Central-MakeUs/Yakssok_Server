@@ -3,6 +3,7 @@ package server.yakssok.domain.medication_schedule.batch.job;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +13,7 @@ import server.yakssok.domain.friend.domain.repository.FriendRepository;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleAlarmDto;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleRepository;
 import server.yakssok.domain.notification.application.service.PushService;
+import server.yakssok.global.infra.rabbitmq.MedicationQueueProperties;
 import server.yakssok.domain.notification.presentation.dto.request.NotificationRequest;
 import server.yakssok.domain.user.domain.entity.User;
 
@@ -22,6 +24,8 @@ public class MedicationAlarmJob {
 	private final MedicationScheduleRepository medicationScheduleRepository;
 	private final FriendRepository friendRepository;
 	private static final int NOT_TAKEN_MINUTES_LIMIT = 30;
+	private final RabbitTemplate rabbitTemplate;
+	private final MedicationQueueProperties medicationQueueProperties;
 
 	@Transactional
 	public void sendNotTakenMedicationAlarms() {
@@ -51,9 +55,14 @@ public class MedicationAlarmJob {
 		List<MedicationScheduleAlarmDto> scheduledMedications
 			= medicationScheduleRepository.findSchedules(now);
 		for (MedicationScheduleAlarmDto schedule : scheduledMedications) {
-			pushService.sendData(
-				NotificationRequest.fromMedicationSchedule(schedule)
-			);
+			NotificationRequest request = NotificationRequest.fromMedicationSchedule(schedule);
+			sendToMedicationQueue(request);
 		}
+	}
+
+	private void sendToMedicationQueue(NotificationRequest request) {
+		String exchange = medicationQueueProperties.exchange();
+		String routingKey = medicationQueueProperties.routingKey();
+		rabbitTemplate.convertAndSend(exchange, routingKey, request);
 	}
 }

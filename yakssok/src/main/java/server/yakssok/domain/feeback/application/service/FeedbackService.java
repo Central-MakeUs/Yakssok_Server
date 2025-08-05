@@ -11,6 +11,7 @@ import server.yakssok.domain.feeback.domain.repository.FeedbackRepository;
 import server.yakssok.domain.feeback.presentation.dto.request.CreateFeedbackRequest;
 import server.yakssok.domain.friend.applcation.service.FriendService;
 import server.yakssok.domain.friend.domain.entity.Friend;
+import server.yakssok.global.infra.rabbitmq.FeedbackQueueProperties;
 import server.yakssok.domain.notification.presentation.dto.request.NotificationRequest;
 import server.yakssok.domain.user.application.service.UserService;
 import server.yakssok.domain.user.domain.entity.User;
@@ -22,6 +23,7 @@ public class FeedbackService {
 	private final FriendService friendService;
 	private final UserService userService;
 	private final RabbitTemplate rabbitTemplate;
+	private final FeedbackQueueProperties feedbackQueueProperties;
 
 	@Transactional
 	public void sendFeedback(Long userId, CreateFeedbackRequest request) {
@@ -42,6 +44,8 @@ public class FeedbackService {
 			friend.getRelationName(),
 			feedback
 		);
-		rabbitTemplate.convertAndSend("feedback-exchange", "feedback-key", notificationRequest);
+		String feedbackExchange = feedbackQueueProperties.exchange();
+		String feedbackRoutingKey = feedbackQueueProperties.routingKey();
+		rabbitTemplate.convertAndSend(feedbackExchange, feedbackRoutingKey, notificationRequest);
 	}
 }
