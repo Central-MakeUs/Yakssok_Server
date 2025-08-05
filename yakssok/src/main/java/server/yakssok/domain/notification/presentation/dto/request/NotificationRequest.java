@@ -32,21 +32,37 @@ public record NotificationRequest(
 			.build();
 	}
 
-	public static NotificationRequest fromFeedback(
+	public static NotificationRequest fromMutualFollowFeedback(
 		Long senderId,
-		String senderName,
 		Long receiverId,
+		String receiverName,
 		String relationName,
 		Feedback feedback
 	) {
 		return NotificationRequest.builder()
 			.senderId(senderId)
 			.receiverId(receiverId)
-			.title(NotificationTitleUtils.createFeedbackTitle(feedback.getFeedbackType(), senderName, relationName))
+			.title(NotificationTitleUtils.createFeedbackTitleMutual(feedback.getFeedbackType(), receiverName, relationName))
 			.body(feedback.getMessage())
 			.type(feedback.getFeedbackType().toNotificationType())
 			.build();
 	}
+
+	public static NotificationRequest fromOneWayFollowFeedback(
+		Long senderId,
+		String senderName,
+		Long receiverId,
+		Feedback feedback
+	) {
+		return NotificationRequest.builder()
+			.senderId(senderId)
+			.receiverId(receiverId)
+			.title(NotificationTitleUtils.createFeedbackTitleOneWay(feedback.getFeedbackType(), senderName))
+			.body(feedback.getMessage())
+			.type(feedback.getFeedbackType().toNotificationType())
+			.build();
+	}
+
 
 	public static NotificationRequest fromMedicationScheduleForFriend(
 		MedicationScheduleAlarmDto schedule,
