@@ -21,11 +21,19 @@ import org.springframework.web.multipart.MultipartFile;
 public class ImageController {
     private final ImageService imageService;
 
-    @Operation(summary = "이미지 업로드")
+    @Operation(
+        summary = "이미지 업로드",
+        description = """
+            [허용 확장자]: .jpg, .jpeg, .png, .gif, .bmp, .webp<br>
+            [최대 용량]: 1MB<br>
+            [제한]: 위 확장자가 아닌 파일, 또는 1MB 초과 파일 업로드 시 오류 반환<br>
+            """
+    )
     @ApiErrorResponses(
         value = {
             @ApiErrorResponse(ErrorCode.FAILED_FILE_UPLOAD),
-            @ApiErrorResponse(ErrorCode.UNSUPPORTED_FILE_TYPE)
+            @ApiErrorResponse(ErrorCode.UNSUPPORTED_FILE_TYPE),
+            @ApiErrorResponse(ErrorCode.INVALID_FILE_EXTENSION)
         }
     )
     @PostMapping(consumes = "multipart/form-data")
@@ -36,11 +44,19 @@ public class ImageController {
         return ApiResponse.success(imageService.upload(file, type));
     }
 
-    @Operation(summary = "이미지 수정 (기존 삭제 + 새 업로드)")
+    @Operation(
+        summary = "이미지 수정 (기존 삭제 + 새 업로드)",
+        description = """
+            [허용 확장자]: .jpg, .jpeg, .png, .gif, .bmp, .webp<br>
+            [최대 용량]: 1MB<br>
+            [제한]: 위 확장자가 아닌 파일, 또는 1MB 초과 파일 업로드 시 오류 반환<br>
+            """
+    )
     @ApiErrorResponses({
         @ApiErrorResponse(ErrorCode.FAILED_FILE_DELETE),
         @ApiErrorResponse(ErrorCode.FAILED_FILE_UPLOAD),
-        @ApiErrorResponse(ErrorCode.UNSUPPORTED_FILE_TYPE)
+        @ApiErrorResponse(ErrorCode.UNSUPPORTED_FILE_TYPE),
+        @ApiErrorResponse(ErrorCode.INVALID_FILE_EXTENSION)
     })
     @PutMapping(consumes = "multipart/form-data")
     public ApiResponse<UploadImageResponse> updateImage(
