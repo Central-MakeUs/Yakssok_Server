@@ -18,9 +18,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import server.yakssok.domain.notification.domain.entity.Notification;
 import server.yakssok.domain.notification.domain.repository.NotificationRepository;
+import server.yakssok.domain.notification.presentation.dto.NotificationDTO;
 import server.yakssok.domain.notification.presentation.dto.response.NotificationResponse;
-import server.yakssok.domain.notification.presentation.dto.request.MedicationNotificationRequest;
-import server.yakssok.domain.notification.presentation.dto.request.NotificationRequest;
 import server.yakssok.domain.user.domain.entity.User;
 import server.yakssok.domain.user.domain.repository.UserRepository;
 import server.yakssok.global.common.reponse.PageResponse;
@@ -32,7 +31,7 @@ public class NotificationService {
 	private final NotificationRepository notificationRepository;
 	private final UserRepository userRepository;
 
-	void saveNotification(NotificationRequest request) {
+	void saveNotification(NotificationDTO request) {
 		Notification notification = request.toNotification();
 		notificationRepository.save(notification);
 	}

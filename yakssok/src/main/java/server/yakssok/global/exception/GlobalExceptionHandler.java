@@ -7,6 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import lombok.extern.slf4j.Slf4j;
 import server.yakssok.global.common.reponse.ApiResponse;
@@ -32,7 +33,8 @@ public class GlobalExceptionHandler {
 		HttpRequestMethodNotSupportedException.class,
 		HttpMessageNotReadableException.class,
 		MissingServletRequestParameterException.class,
-		MethodArgumentNotValidException.class
+		MethodArgumentNotValidException.class,
+		MethodArgumentTypeMismatchException.class
 	})
 	protected ResponseEntity<ApiResponse> badRequestHandler(Exception e) {
 		log.warn("[{}] {} ({})", e.getClass().getSimpleName(), e.getMessage(), e.getStackTrace()[0]);

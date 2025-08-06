@@ -4,6 +4,7 @@ package server.yakssok.global.common.jwt;
 import java.io.IOException;
 
 import org.springframework.http.MediaType;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -16,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
+import server.yakssok.domain.auth.application.exception.AuthException;
 import server.yakssok.global.common.reponse.ApiResponse;
 import server.yakssok.global.exception.ErrorCode;
 
@@ -23,18 +25,20 @@ import server.yakssok.global.exception.ErrorCode;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final JwtAuthService jwtAuthService;
 	private static final String ENCODING_TYPE = "UTF-8";
+	private static final String AUTHORIZATION_HEADER = "Authorization";
+	private static final String BEARER_PREFIX = "Bearer ";
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 		try {
-			String bearerToken = request.getHeader("Authorization");
+			String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
 			if (bearerToken != null && !bearerToken.isBlank()) {
 				String token = resolveToken(bearerToken);
 				Authentication authentication = jwtAuthService.getAuthentication(token);
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 			}
-		} catch (Exception e) {
+		} catch (AuthException | AuthenticationException e) {
 			setErrorResponse(response, ErrorCode.INVALID_JWT);
 			return;
 		}
@@ -42,8 +46,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	}
 
 	private String resolveToken(String bearerToken) {
-		if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-			return bearerToken.substring(7);
+		if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
+			return bearerToken.substring(BEARER_PREFIX.length());
 		}
 		return null;
 	}

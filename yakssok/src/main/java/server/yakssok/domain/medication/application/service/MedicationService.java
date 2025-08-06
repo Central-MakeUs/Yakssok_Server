@@ -43,8 +43,8 @@ public class MedicationService {
 		return mapToGroupedResponse(medications);
 	}
 
-	private MedicationGroupedResponse mapToGroupedResponse(List<Medication> meds) {
-		List<MedicationCardResponse> medicationCardResponses = meds.stream()
+	private MedicationGroupedResponse mapToGroupedResponse(List<Medication> medications) {
+		List<MedicationCardResponse> medicationCardResponses = medications.stream()
 			.map(MedicationCardResponse::from)
 			.toList();
 		return MedicationGroupedResponse.of(medicationCardResponses);

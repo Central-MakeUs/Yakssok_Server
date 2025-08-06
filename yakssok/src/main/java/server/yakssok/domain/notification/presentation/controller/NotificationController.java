@@ -2,8 +2,6 @@ package server.yakssok.domain.notification.presentation.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,7 +11,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.notification.application.service.NotificationService;
-import server.yakssok.domain.notification.presentation.dto.request.MedicationNotificationRequest;
 import server.yakssok.domain.notification.presentation.dto.response.NotificationResponse;
 import server.yakssok.global.common.reponse.ApiResponse;
 import server.yakssok.global.common.reponse.PageResponse;
