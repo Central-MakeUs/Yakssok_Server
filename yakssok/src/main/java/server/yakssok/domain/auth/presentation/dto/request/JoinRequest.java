@@ -2,10 +2,11 @@ package server.yakssok.domain.auth.presentation.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import server.yakssok.domain.auth.presentation.dto.validator.ValidAppleJoinRequest;
 import server.yakssok.domain.user.domain.entity.OAuthType;
 import server.yakssok.domain.user.domain.entity.User;
-import server.yakssok.domain.user.domain.entity.UserDevice;
 
+@ValidAppleJoinRequest
 public record JoinRequest(
 	@Schema(description = "카카오 Access Token/ 애플 idToken", example = "1234567890abcdef")
 	@NotNull

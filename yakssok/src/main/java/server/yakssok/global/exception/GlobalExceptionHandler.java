@@ -16,19 +16,6 @@ import server.yakssok.global.common.reponse.ApiResponse;
 @Slf4j
 public class GlobalExceptionHandler {
 
-	@ExceptionHandler(GlobalException.class)
-	protected ResponseEntity<ApiResponse> yakssokExceptionHandler(GlobalException e) {
-		ResponseCode responseCode = e.getResponseCode();
-		log.warn("[{}] {} ({})", e.getClass().getSimpleName(), responseCode.getMessage(), e.getStackTrace()[0]);
-		ApiResponse apiResponse = ApiResponse.error(
-			responseCode.getCode(),
-			responseCode.getMessage()
-		);
-		return ResponseEntity
-			.status(responseCode.getHttpStatus())
-			.body(apiResponse);
-	}
-
 	@ExceptionHandler({
 		HttpRequestMethodNotSupportedException.class,
 		HttpMessageNotReadableException.class,
@@ -39,12 +26,25 @@ public class GlobalExceptionHandler {
 	protected ResponseEntity<ApiResponse> badRequestHandler(Exception e) {
 		log.warn("[{}] {} ({})", e.getClass().getSimpleName(), e.getMessage(), e.getStackTrace()[0]);
 		ResponseCode responseCode = ErrorCode.INVALID_INPUT_VALUE;
-
 		ApiResponse apiResponse = ApiResponse.error(
 			responseCode.getCode(),
 			responseCode.getMessage()
 		);
 
+		return ResponseEntity
+			.status(responseCode.getHttpStatus())
+			.body(apiResponse);
+	}
+
+
+	@ExceptionHandler(GlobalException.class)
+	protected ResponseEntity<ApiResponse> yakssokExceptionHandler(GlobalException e) {
+		ResponseCode responseCode = e.getResponseCode();
+		log.warn("[{}] {} ({})", e.getClass().getSimpleName(), responseCode.getMessage(), e.getStackTrace()[0]);
+		ApiResponse apiResponse = ApiResponse.error(
+			responseCode.getCode(),
+			responseCode.getMessage()
+		);
 		return ResponseEntity
 			.status(responseCode.getHttpStatus())
 			.body(apiResponse);
