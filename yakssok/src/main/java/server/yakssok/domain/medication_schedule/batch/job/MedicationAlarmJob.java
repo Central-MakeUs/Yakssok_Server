@@ -13,8 +13,8 @@ import server.yakssok.domain.friend.domain.repository.FriendRepository;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleAlarmDto;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleRepository;
 import server.yakssok.domain.notification.application.service.PushService;
+import server.yakssok.domain.notification.presentation.dto.NotificationDTO;
 import server.yakssok.global.infra.rabbitmq.MedicationQueueProperties;
-import server.yakssok.domain.notification.presentation.dto.request.NotificationRequest;
 import server.yakssok.domain.user.domain.entity.User;
 
 @Component
@@ -35,16 +35,16 @@ public class MedicationAlarmJob {
 			.findNotTakenSchedules(notTakenLimitTime);
 		for (MedicationScheduleAlarmDto schedule : notTakenSchedules) {
 			pushService.sendData(
-				NotificationRequest.fromNotTakenMedicationSchedule(schedule)
+				NotificationDTO.fromNotTakenMedicationSchedule(schedule)
 			);
 
 			List<Friend> friends = friendRepository.findMyFollowers(schedule.userId());
 			String followingNickName = schedule.userNickName();
 			for (Friend friend : friends) {
 				User receiver = friend.getUser();
-				NotificationRequest friendRequest =
-					NotificationRequest.fromMedicationScheduleForFriend(schedule, receiver.getId(), followingNickName);
-				pushService.sendNotification(friendRequest);
+				NotificationDTO friendNotificationDTO =
+					NotificationDTO.fromMedicationScheduleForFriend(schedule, receiver.getId(), followingNickName);
+				pushService.sendNotification(friendNotificationDTO);
 			}
 		}
 	}
@@ -55,14 +55,14 @@ public class MedicationAlarmJob {
 		List<MedicationScheduleAlarmDto> scheduledMedications
 			= medicationScheduleRepository.findSchedules(now);
 		for (MedicationScheduleAlarmDto schedule : scheduledMedications) {
-			NotificationRequest request = NotificationRequest.fromMedicationSchedule(schedule);
-			sendToMedicationQueue(request);
+			NotificationDTO notificationDTO = NotificationDTO.fromMedicationSchedule(schedule);
+			sendToMedicationQueue(notificationDTO);
 		}
 	}
 
-	private void sendToMedicationQueue(NotificationRequest request) {
+	private void sendToMedicationQueue(NotificationDTO notificationDTO) {
 		String exchange = medicationQueueProperties.exchange();
 		String routingKey = medicationQueueProperties.routingKey();
-		rabbitTemplate.convertAndSend(exchange, routingKey, request);
+		rabbitTemplate.convertAndSend(exchange, routingKey, notificationDTO);
 	}
 }

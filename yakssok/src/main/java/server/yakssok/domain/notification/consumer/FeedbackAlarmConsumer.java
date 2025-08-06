@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.notification.application.service.PushService;
-import server.yakssok.domain.notification.presentation.dto.request.NotificationRequest;
+import server.yakssok.domain.notification.presentation.dto.NotificationDTO;
 
 @Component
 @RequiredArgsConstructor
@@ -14,7 +14,7 @@ public class FeedbackAlarmConsumer {
 	private final PushService pushService;
 
 	@RabbitListener(queues = "feedback-queue")
-	public void receiveFeedback(NotificationRequest notificationRequest) {
-		pushService.sendNotification(notificationRequest);
+	public void receiveFeedback(NotificationDTO notificationDTO) {
+		pushService.sendNotification(notificationDTO);
 	}
 }

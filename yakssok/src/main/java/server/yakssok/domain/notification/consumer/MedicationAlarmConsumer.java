@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.notification.application.service.PushService;
-import server.yakssok.domain.notification.presentation.dto.request.NotificationRequest;
+import server.yakssok.domain.notification.presentation.dto.NotificationDTO;
 import server.yakssok.global.infra.rabbitmq.MedicationQueueProperties;
 
 @Component
@@ -15,7 +15,7 @@ public class MedicationAlarmConsumer {
 	private final MedicationQueueProperties medicationQueueProperties;
 
 	@RabbitListener(queues = "${rabbitmq.medication.queue}")
-	public void receiveMedicationAlarm(NotificationRequest notificationRequest) {
-		pushService.sendData(notificationRequest);
+	public void receiveMedicationAlarm(NotificationDTO notificationDTO) {
+		pushService.sendData(notificationDTO);
 	}
 }

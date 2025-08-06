@@ -8,15 +8,15 @@ public class NotificationTitleUtils {
 
 	public static String createFeedbackTitleMutual(FeedbackType type, String receiverName, String relationName) {
 		return switch (type) {
-			case PRAISE -> String.format(FEEDBACK_PRAISE_FORMAT_MUTUAL, receiverName, relationName);
-			case NAG -> String.format(FEEDBACK_NAG_FORMAT_MUTUAL, receiverName, relationName);
+			case FEEDBACK_PRAISE -> String.format(FEEDBACK_PRAISE_FORMAT_MUTUAL, receiverName, relationName);
+			case FEEDBACK_NAG -> String.format(FEEDBACK_NAG_FORMAT_MUTUAL, receiverName, relationName);
 		};
 	}
 
 	public static String createFeedbackTitleOneWay(FeedbackType type, String senderName) {
 		return switch (type) {
-			case PRAISE -> String.format(FEEDBACK_PRAISE_FORMAT_ONE_WAY, senderName);
-			case NAG -> String.format(FEEDBACK_NAG_FORMAT_ONE_WAY, senderName);
+			case FEEDBACK_PRAISE -> String.format(FEEDBACK_PRAISE_FORMAT_ONE_WAY, senderName);
+			case FEEDBACK_NAG -> String.format(FEEDBACK_NAG_FORMAT_ONE_WAY, senderName);
 		};
 	}
 
