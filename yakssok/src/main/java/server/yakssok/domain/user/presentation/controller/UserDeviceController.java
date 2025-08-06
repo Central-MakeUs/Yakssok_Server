@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.user.application.service.UserDeviceService;
 import server.yakssok.domain.user.presentation.dto.request.RegisterDeviceRequest;
@@ -24,7 +25,7 @@ public class UserDeviceController {
 	@Operation(summary = "디바이스 등록 및 FCM 토큰 저장")
 	@PostMapping("/devices")
 	public ApiResponse registerDevice(
-		@RequestBody RegisterDeviceRequest request,
+		@RequestBody @Valid RegisterDeviceRequest request,
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
 		Long userId = userDetails.getUserId();

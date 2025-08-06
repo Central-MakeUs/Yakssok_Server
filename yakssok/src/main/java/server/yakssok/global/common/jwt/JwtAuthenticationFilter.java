@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.auth.application.exception.AuthException;
+import server.yakssok.domain.user.application.exception.UserException;
 import server.yakssok.global.common.reponse.ApiResponse;
 import server.yakssok.global.exception.ErrorCode;
 
@@ -38,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				Authentication authentication = jwtAuthService.getAuthentication(token);
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 			}
-		} catch (AuthException | AuthenticationException e) {
+		} catch (UserException | AuthException | AuthenticationException e) {
 			setErrorResponse(response, ErrorCode.INVALID_JWT);
 			return;
 		}
