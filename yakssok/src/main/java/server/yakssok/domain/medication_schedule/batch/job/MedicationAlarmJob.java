@@ -11,7 +11,7 @@ import server.yakssok.domain.friend.domain.repository.FriendRepository;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleAlarmDto;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleRepository;
 import server.yakssok.domain.notification.application.service.PushService;
-import server.yakssok.domain.notification.presentation.dto.request.NotificationRequest;
+import server.yakssok.domain.notification.presentation.dto.NotificationDTO;
 import server.yakssok.domain.user.domain.entity.User;
 
 @Component
@@ -29,15 +29,15 @@ public class MedicationAlarmJob {
 			.findNotTakenSchedules(notTakenLimitTime);
 		for (MedicationScheduleAlarmDto schedule : notTakenSchedules) {
 			pushService.sendData(
-				NotificationRequest.fromNotTakenMedicationSchedule(schedule)
+				NotificationDTO.fromNotTakenMedicationSchedule(schedule)
 			);
 
 			List<Friend> friends = friendRepository.findMyFollowers(schedule.userId());
 			String followingNickName = schedule.userNickName();
 			for (Friend friend : friends) {
 				User receiver = friend.getUser();
-				NotificationRequest friendRequest =
-					NotificationRequest.fromMedicationScheduleForFriend(schedule, receiver.getId(), followingNickName);
+				NotificationDTO friendRequest =
+					NotificationDTO.fromMedicationScheduleForFriend(schedule, receiver.getId(), followingNickName);
 				pushService.sendNotification(friendRequest);
 			}
 		}
@@ -49,7 +49,7 @@ public class MedicationAlarmJob {
 			= medicationScheduleRepository.findSchedules(now);
 		for (MedicationScheduleAlarmDto schedule : scheduledMedications) {
 			pushService.sendData(
-				NotificationRequest.fromMedicationSchedule(schedule)
+				NotificationDTO.fromMedicationSchedule(schedule)
 			);
 		}
 	}

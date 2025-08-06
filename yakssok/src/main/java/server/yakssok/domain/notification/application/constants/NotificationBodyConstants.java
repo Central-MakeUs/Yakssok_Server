@@ -1,4 +1,4 @@
-package server.yakssok.domain.notification.application.service.constants;
+package server.yakssok.domain.notification.application.constants;
 
 public class NotificationBodyConstants {
 	public static final String MEDICATION_TAKE_BODY = "약 먹고, 뿌듯하게 섭취 완료 버튼 누르기!";
