@@ -10,7 +10,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import server.yakssok.domain.notification.presentation.dto.request.NotificationRequest;
+import server.yakssok.domain.notification.presentation.dto.NotificationDTO;
 import server.yakssok.domain.user.domain.entity.UserDevice;
 import server.yakssok.domain.user.domain.repository.UserDeviceRepository;
 import server.yakssok.global.infra.fcm.FcmService;
@@ -23,15 +23,15 @@ public class PushService {
 	private final FcmService fcmService;
 	private final NotificationService notificationService;
 
-	public void sendData(NotificationRequest notificationRequest) {
-		notificationService.saveNotification(notificationRequest);
-		Long userId = notificationRequest.receiverId();
+	public void sendData(NotificationDTO notificationDTO) {
+		notificationService.saveNotification(notificationDTO);
+		Long userId = notificationDTO.receiverId();
 		List<UserDevice> devices = userDeviceRepository.findByUserIdAndAlertOnTrue(userId);
 		if (devices.isEmpty()) return;
 
-		String title = notificationRequest.title();
-		String body = notificationRequest.body();
-		String soundType = notificationRequest.soundType();
+		String title = notificationDTO.title();
+		String body = notificationDTO.body();
+		String soundType = notificationDTO.soundType();
 		sendDataToDevice(devices, title, body, soundType);
 	}
 
@@ -50,14 +50,14 @@ public class PushService {
 	}
 
 	@Transactional
-	public void sendNotification(NotificationRequest notificationRequest) {
-		notificationService.saveNotification(notificationRequest);
-		Long userId = notificationRequest.receiverId();
+	public void sendNotification(NotificationDTO notificationDTO) {
+		notificationService.saveNotification(notificationDTO);
+		Long userId = notificationDTO.receiverId();
 		List<UserDevice> devices = userDeviceRepository.findByUserIdAndAlertOnTrue(userId);
 		if (devices.isEmpty()) return;
 
-		String title = notificationRequest.title();
-		String body = notificationRequest.body();
+		String title = notificationDTO.title();
+		String body = notificationDTO.body();
 		sendNotificationsToDevice(devices, title, body);
 	}
 

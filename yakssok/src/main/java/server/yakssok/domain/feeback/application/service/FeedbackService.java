@@ -13,7 +13,7 @@ import server.yakssok.domain.feeback.presentation.dto.request.CreateFeedbackRequ
 import server.yakssok.domain.friend.domain.entity.Friend;
 import server.yakssok.domain.friend.domain.repository.FriendRepository;
 import server.yakssok.domain.notification.application.service.PushService;
-import server.yakssok.domain.notification.presentation.dto.request.NotificationRequest;
+import server.yakssok.domain.notification.presentation.dto.NotificationDTO;
 import server.yakssok.domain.user.application.service.UserService;
 import server.yakssok.domain.user.domain.entity.User;
 
@@ -38,14 +38,14 @@ public class FeedbackService {
 	private void pushFeedBackNotification(User sender, User receiver, Feedback feedback) {
 		Optional<Friend> receiverFollowSender = friendRepository.findByUserIdAndFollowingId(receiver.getId(), sender.getId());
 
-		NotificationRequest notificationRequest = receiverFollowSender
-			.map(friend -> createMutualFeedbackNotificationRequest(sender, receiver, feedback, friend))
-			.orElseGet(() -> createOneWayFeedbackNotificationRequest(sender, receiver, feedback));
-		pushService.sendNotification(notificationRequest);
+		NotificationDTO notificationDTO = receiverFollowSender
+			.map(friend -> createMutualFeedbackNotificationDto(sender, receiver, feedback, friend))
+			.orElseGet(() -> createOneWayFeedbackNotificationDto(sender, receiver, feedback));
+		pushService.sendNotification(notificationDTO);
 	}
 
-	private static NotificationRequest createOneWayFeedbackNotificationRequest(User sender, User receiver, Feedback feedback) {
-		return NotificationRequest.fromOneWayFollowFeedback(
+	private static NotificationDTO createOneWayFeedbackNotificationDto(User sender, User receiver, Feedback feedback) {
+		return NotificationDTO.fromOneWayFollowFeedback(
 			sender.getId(),
 			sender.getNickName(),
 			receiver.getId(),
@@ -53,9 +53,9 @@ public class FeedbackService {
 		);
 	}
 
-	private static NotificationRequest createMutualFeedbackNotificationRequest(User sender, User receiver, Feedback feedback,
+	private static NotificationDTO createMutualFeedbackNotificationDto(User sender, User receiver, Feedback feedback,
 		Friend friend) {
-		return NotificationRequest.fromMutualFollowFeedback(
+		return NotificationDTO.fromMutualFollowFeedback(
 			sender.getId(),
 			receiver.getId(),
 			receiver.getNickName(),

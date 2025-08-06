@@ -1,4 +1,4 @@
-package server.yakssok.domain.notification.presentation.dto.request;
+package server.yakssok.domain.notification.presentation.dto;
 
 
 import lombok.AccessLevel;
@@ -11,7 +11,7 @@ import server.yakssok.domain.notification.domain.entity.Notification;
 import server.yakssok.domain.notification.domain.entity.NotificationType;
 
 @Builder(access = AccessLevel.PRIVATE)
-public record NotificationRequest(
+public record NotificationDTO(
 	Long senderId,
 	Long receiverId,
 	Long scheduleId,
@@ -21,8 +21,8 @@ public record NotificationRequest(
 	String soundType
 ) {
 
-	public static NotificationRequest fromNotTakenMedicationSchedule(MedicationScheduleAlarmDto schedule) {
-		return NotificationRequest.builder()
+	public static NotificationDTO fromNotTakenMedicationSchedule(MedicationScheduleAlarmDto schedule) {
+		return NotificationDTO.builder()
 			.receiverId(schedule.userId())
 			.scheduleId(schedule.scheduleId())
 			.title(NotificationTitleUtils.createMedicationReminderTitle(schedule.userNickName(), schedule.medicineName()))
@@ -32,14 +32,14 @@ public record NotificationRequest(
 			.build();
 	}
 
-	public static NotificationRequest fromMutualFollowFeedback(
+	public static NotificationDTO fromMutualFollowFeedback(
 		Long senderId,
 		Long receiverId,
 		String receiverName,
 		String relationName,
 		Feedback feedback
 	) {
-		return NotificationRequest.builder()
+		return NotificationDTO.builder()
 			.senderId(senderId)
 			.receiverId(receiverId)
 			.title(NotificationTitleUtils.createFeedbackTitleMutual(feedback.getFeedbackType(), receiverName, relationName))
@@ -48,13 +48,13 @@ public record NotificationRequest(
 			.build();
 	}
 
-	public static NotificationRequest fromOneWayFollowFeedback(
+	public static NotificationDTO fromOneWayFollowFeedback(
 		Long senderId,
 		String senderName,
 		Long receiverId,
 		Feedback feedback
 	) {
-		return NotificationRequest.builder()
+		return NotificationDTO.builder()
 			.senderId(senderId)
 			.receiverId(receiverId)
 			.title(NotificationTitleUtils.createFeedbackTitleOneWay(feedback.getFeedbackType(), senderName))
@@ -64,12 +64,12 @@ public record NotificationRequest(
 	}
 
 
-	public static NotificationRequest fromMedicationScheduleForFriend(
+	public static NotificationDTO fromMedicationScheduleForFriend(
 		MedicationScheduleAlarmDto schedule,
 		Long receiverId,
 		String followingNickName
 	) {
-		return NotificationRequest.builder()
+		return NotificationDTO.builder()
 			.receiverId(receiverId)
 			.scheduleId(schedule.scheduleId())
 			.title(NotificationTitleUtils.createFriendNotTakenAlarmTitle(followingNickName))
@@ -78,8 +78,8 @@ public record NotificationRequest(
 			.build();
 	}
 
-	public static NotificationRequest fromMedicationSchedule(MedicationScheduleAlarmDto schedule) {
-		return NotificationRequest.builder()
+	public static NotificationDTO fromMedicationSchedule(MedicationScheduleAlarmDto schedule) {
+		return NotificationDTO.builder()
 			.receiverId(schedule.userId())
 			.scheduleId(schedule.scheduleId())
 			.title(NotificationTitleUtils.createMedicationTitle(schedule.medicineName()))
