@@ -6,5 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record KakaoOAuthProperties(
 	String apiBaseUrl,
 	String userInfoPath,
-	String tokenTypeFormat
+	String tokenTypeFormat,
+	String unlinkPath,
+	String adminKey
 ) {}

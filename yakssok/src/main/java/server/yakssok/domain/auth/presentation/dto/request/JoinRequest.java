@@ -18,11 +18,14 @@ public record JoinRequest(
 	@Schema(description = "apple nonce", example = "1234567890abcdef")
 	String nonce,
 
+	@Schema(description = "애플 refreshToken (탈퇴 시 사용)", example = "1234567890abcdef")
+	String oAuthRefreshToken,
+
 	@Schema(description = "닉네임", example = "노을")
 	@NotNull
 	String nickName
 ) {
 	public User toUser(String providerId, String profileImageUrl) {
-		return User.create(nickName, profileImageUrl, OAuthType.from(oauthType), providerId);
+		return User.create(nickName, profileImageUrl, OAuthType.from(oauthType), providerId, oAuthRefreshToken);
 	}
 }
