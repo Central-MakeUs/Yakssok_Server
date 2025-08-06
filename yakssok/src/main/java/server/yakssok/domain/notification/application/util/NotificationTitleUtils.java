@@ -1,6 +1,6 @@
-package server.yakssok.domain.notification.application.service;
+package server.yakssok.domain.notification.application.util;
 
-import static server.yakssok.domain.notification.application.service.constants.NotificationTitleConstants.*;
+import static server.yakssok.domain.notification.application.constants.NotificationTitleConstants.*;
 
 import server.yakssok.domain.feeback.domain.entity.FeedbackType;
 

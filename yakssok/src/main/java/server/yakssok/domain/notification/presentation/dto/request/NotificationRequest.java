@@ -5,8 +5,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import server.yakssok.domain.feeback.domain.entity.Feedback;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleAlarmDto;
-import server.yakssok.domain.notification.application.service.constants.NotificationBodyConstants;
-import server.yakssok.domain.notification.application.service.NotificationTitleUtils;
+import server.yakssok.domain.notification.application.constants.NotificationBodyConstants;
+import server.yakssok.domain.notification.application.util.NotificationTitleUtils;
 import server.yakssok.domain.notification.domain.entity.Notification;
 import server.yakssok.domain.notification.domain.entity.NotificationType;
 
