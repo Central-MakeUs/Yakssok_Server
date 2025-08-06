@@ -1,8 +1,5 @@
 package server.yakssok.global.infra.oauth.apple;
 
-
-
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.interfaces.RSAPublicKey;
@@ -24,6 +21,7 @@ import server.yakssok.domain.user.domain.entity.OAuthType;
 import server.yakssok.global.exception.ErrorCode;
 import server.yakssok.global.exception.GlobalException;
 import server.yakssok.global.infra.oauth.OAuthStrategy;
+import server.yakssok.global.infra.oauth.OAuthUnlinkRequest;
 import server.yakssok.global.infra.oauth.exception.OAuthException;
 
 @Component
@@ -76,5 +74,10 @@ public class AppleLoginStrategy implements OAuthStrategy {
 	@Override
 	public OAuthType getOAuthType() {
 		return OAuthType.APPLE;
+	}
+
+	@Override
+	public void unlink(OAuthUnlinkRequest oAuthUnlinkRequest) {
+
 	}
 }
