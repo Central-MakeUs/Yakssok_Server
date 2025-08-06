@@ -10,6 +10,7 @@ import server.yakssok.domain.user.application.exception.UserException;
 import server.yakssok.global.exception.ErrorCode;
 import server.yakssok.global.infra.oauth.OAuthStrategy;
 import server.yakssok.global.infra.oauth.OAuthStrategyFactory;
+import server.yakssok.global.infra.oauth.OAuthUnlinkRequest;
 import server.yakssok.global.infra.oauth.OAuthUserResponse;
 import server.yakssok.domain.auth.application.exception.AuthException;
 import server.yakssok.domain.auth.domain.entity.RefreshToken;
@@ -94,5 +95,20 @@ public class AuthService {
 			.orElseThrow(() -> {throw new AuthException(ErrorCode.INVALID_JWT);
 		});
 		refreshTokenService.deleteRefreshToken(userId);
+	}
+
+	@Transactional
+	public void unlinkOAuth(User user) {
+		OAuthType oAuthType = user.getOAuthType();
+		String providerId = user.getProviderId();
+		String refreshToken = user.getOAuthRefreshToken();
+
+		OAuthUnlinkRequest unlinkRequest = new OAuthUnlinkRequest(
+			providerId,
+			refreshToken
+		);
+
+		OAuthStrategy strategy = strategyFactory.getStrategy(oAuthType.name());
+		strategy.unlink(unlinkRequest);
 	}
 }

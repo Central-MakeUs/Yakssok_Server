@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import server.yakssok.domain.auth.application.service.AuthService;
 import server.yakssok.domain.friend.domain.repository.FriendRepository;
 import server.yakssok.domain.medication.domain.repository.MedicationRepository;
 import server.yakssok.domain.user.application.exception.UserException;
@@ -23,6 +24,7 @@ public class UserService {
 	private final UserDeletionService userDeletionService;
 	private final MedicationRepository medicationRepository;
 	private final FriendRepository friendRepository;
+	private final AuthService authService;
 
 	@Transactional
 	public FindMyInfoResponse findMyInfo(Long userId) {
@@ -68,6 +70,7 @@ public class UserService {
 	@Transactional
 	public void deleteUser(Long userId) {
 		User user = getActiveUser(userId);
+		authService.unlinkOAuth(user);
 		userDeletionService.deleteUser(user);
 	}
 }
