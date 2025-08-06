@@ -13,7 +13,7 @@ public class FeedbackAlarmConsumer {
 
 	private final PushService pushService;
 
-	@RabbitListener(queues = "feedback-queue")
+	@RabbitListener(queues = "${rabbitmq.feedback.queue}")
 	public void receiveFeedback(NotificationDTO notificationDTO) {
 		pushService.sendNotification(notificationDTO);
 	}

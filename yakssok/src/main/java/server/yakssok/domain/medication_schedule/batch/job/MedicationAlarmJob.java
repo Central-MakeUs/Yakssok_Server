@@ -14,7 +14,7 @@ import server.yakssok.domain.medication_schedule.domain.repository.MedicationSch
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleRepository;
 import server.yakssok.domain.notification.application.service.PushService;
 import server.yakssok.domain.notification.presentation.dto.NotificationDTO;
-import server.yakssok.global.infra.rabbitmq.MedicationQueueProperties;
+import server.yakssok.global.infra.rabbitmq.properties.MedicationQueueProperties;
 import server.yakssok.domain.user.domain.entity.User;
 
 @Component

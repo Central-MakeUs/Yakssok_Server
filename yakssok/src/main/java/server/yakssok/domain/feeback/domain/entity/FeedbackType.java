@@ -6,8 +6,8 @@ import server.yakssok.domain.notification.domain.entity.NotificationType;
 
 public enum FeedbackType {
 
-	FEEDBACK_PRAISE,
-	FEEDBACK_NAG;
+	PRAISE,
+	NAG;
 
 	public static FeedbackType from(String name) {
 		try {
@@ -19,8 +19,8 @@ public enum FeedbackType {
 
 	public NotificationType toNotificationType() {
 		return switch(this) {
-			case FEEDBACK_PRAISE -> NotificationType.FEEDBACK_PRAISE;
-			case FEEDBACK_NAG -> NotificationType.FEEDBACK_NAG;
+			case PRAISE -> NotificationType.FEEDBACK_PRAISE;
+			case NAG -> NotificationType.FEEDBACK_NAG;
 		};
 	}
 }
