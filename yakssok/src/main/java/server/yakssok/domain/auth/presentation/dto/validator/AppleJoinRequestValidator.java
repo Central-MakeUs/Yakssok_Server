@@ -9,8 +9,7 @@ public class AppleJoinRequestValidator implements ConstraintValidator<ValidApple
 	public boolean isValid(JoinRequest value, ConstraintValidatorContext context) {
 		if ("apple".equalsIgnoreCase(value.oauthType())) {
 			boolean nonceValid = value.nonce() != null && !value.nonce().isBlank();
-			boolean refreshTokenValid = value.oAuthRefreshToken() != null && !value.oAuthRefreshToken().isBlank();
-			return nonceValid && refreshTokenValid;
+			return nonceValid;
 		}
 		return true;
 	}
