@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.friend.applcation.service.FriendService;
 import server.yakssok.domain.friend.presentation.dto.request.FollowFriendRequest;
@@ -40,7 +41,7 @@ public class FriendController {
 	})
 	@PostMapping
 	public ApiResponse followByInviteCode(
-		@RequestBody FollowFriendRequest followRequest,
+		@RequestBody @Valid FollowFriendRequest followRequest,
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
 		Long userId = userDetails.getUserId();
