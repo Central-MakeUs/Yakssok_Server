@@ -4,10 +4,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import server.yakssok.domain.user.domain.entity.OAuthType;
 import server.yakssok.domain.user.domain.entity.User;
-import server.yakssok.domain.user.domain.entity.UserDevice;
 
 public record JoinRequest(
-	@Schema(description = "카카오 Access Token/ 애플 idToken", example = "1234567890abcdef")
+	@Schema(description = "카카오 Access Token/ 애플 authorization code", example = "1234567890abcdef")
 	@NotNull
 	String oauthAuthorizationCode,
 
@@ -18,14 +17,11 @@ public record JoinRequest(
 	@Schema(description = "apple nonce", example = "1234567890abcdef")
 	String nonce,
 
-	@Schema(description = "애플 refreshToken (탈퇴 시 사용)", example = "1234567890abcdef")
-	String oAuthRefreshToken,
-
 	@Schema(description = "닉네임", example = "노을")
 	@NotNull
 	String nickName
 ) {
-	public User toUser(String providerId, String profileImageUrl) {
+	public User toUser(String providerId, String profileImageUrl, String oAuthRefreshToken) {
 		return User.create(nickName, profileImageUrl, OAuthType.from(oauthType), providerId, oAuthRefreshToken);
 	}
 }

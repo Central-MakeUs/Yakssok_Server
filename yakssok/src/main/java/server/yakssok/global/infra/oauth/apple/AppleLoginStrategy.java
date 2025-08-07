@@ -5,10 +5,10 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.user.domain.entity.OAuthType;
 import server.yakssok.global.exception.ErrorCode;
@@ -21,12 +21,10 @@ import server.yakssok.global.infra.oauth.exception.OAuthException;
 public class AppleLoginStrategy implements OAuthStrategy {
 	private final AppleOAuthProperties properties;
 
+	private static final String TOKEN_URI = "/auth/token";
 	private static final String REVOKE_URI = "/auth/revoke";
+	private static final String GRANT_TYPE_AUTH_CODE = "authorization_code";
 	private static final String TOKEN_TYPE_HINT = "refresh_token";
-	private static final String FIELD_CLIENT_ID = "client_id";
-	private static final String FIELD_CLIENT_SECRET = "client_secret";
-	private static final String FIELD_TOKEN = "token";
-	private static final String FIELD_TOKEN_TYPE_HINT = "token_type_hint";
 
 	@Override
 	public OAuthType getOAuthType() {
@@ -34,27 +32,56 @@ public class AppleLoginStrategy implements OAuthStrategy {
 	}
 
 	@Override
-	public AppleUserResponse fetchUserInfo(String idToken, String expectedNonce) {
+	public AppleUserResponse fetchUserInfo(String authorizationCode, String expectedNonce) {
+		AppleTokenResponse tokenResponse = requestTokenFromApple(authorizationCode);
 		DecodedJWT jwt = AppleJwtUtils.verifyIdToken(
-			idToken,
+			tokenResponse.id_token(),
 			properties.jwkUrl(),
 			properties.apiBaseUrl(),
 			properties.clientId(),
 			properties.nonceClaimKey(),
 			expectedNonce
 		);
-		return new AppleUserResponse(jwt.getSubject());
+		return new AppleUserResponse(jwt.getSubject(), tokenResponse.refresh_token());
+	}
+
+	private AppleTokenResponse requestTokenFromApple(String authorizationCode) {
+		try {
+			MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+			body.add("client_id", properties.clientId());
+			body.add("client_secret", createClientSecret());
+			body.add("code", authorizationCode);
+			body.add("grant_type", GRANT_TYPE_AUTH_CODE);
+
+			RestClient restClient = RestClient.builder()
+				.baseUrl(properties.apiBaseUrl())
+				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+				.build();
+
+			AppleTokenResponse tokenResponse = restClient.post()
+				.uri(TOKEN_URI)
+				.body(body)
+				.retrieve()
+				.body(AppleTokenResponse.class);
+
+			if (tokenResponse == null || tokenResponse.id_token() == null) {
+				throw new OAuthException(ErrorCode.INVALID_OAUTH_TOKEN);
+			}
+			return tokenResponse;
+		} catch (HttpClientErrorException e) {
+			throw new OAuthException(ErrorCode.INVALID_OAUTH_TOKEN);
+		}
+
 	}
 
 	@Override
-	public void unlink(OAuthUnlinkRequest oAuthUnlinkRequest) {
-		String refreshToken = oAuthUnlinkRequest.refreshToken();
+	public void unlink(OAuthUnlinkRequest request) {
+		String refreshToken = request.refreshToken();
 		if (isBlank(refreshToken)) {
 			throw new OAuthException(ErrorCode.OAUTH_UNLINK_FAILED);
 		}
 		try {
-			String clientSecret = createClientSecret();
-			MultiValueMap<String, String> body = buildRevokeRequestBody(clientSecret, refreshToken);
+			MultiValueMap<String, String> body = buildRevokeRequestBody(refreshToken);
 			sendRevokeRequest(body);
 		} catch (Exception e) {
 			throw new OAuthException(ErrorCode.OAUTH_UNLINK_FAILED);
@@ -71,12 +98,12 @@ public class AppleLoginStrategy implements OAuthStrategy {
 		);
 	}
 
-	private MultiValueMap<String, String> buildRevokeRequestBody(String clientSecret, String refreshToken) {
+	private MultiValueMap<String, String> buildRevokeRequestBody(String refreshToken) {
 		MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-		body.add(FIELD_CLIENT_ID, properties.clientId());
-		body.add(FIELD_CLIENT_SECRET, clientSecret);
-		body.add(FIELD_TOKEN, refreshToken);
-		body.add(FIELD_TOKEN_TYPE_HINT, TOKEN_TYPE_HINT);
+		body.add("client_id", properties.clientId());
+		body.add("client_secret", createClientSecret());
+		body.add("token", refreshToken);
+		body.add("token_type_hint", TOKEN_TYPE_HINT);
 		return body;
 	}
 
@@ -97,7 +124,7 @@ public class AppleLoginStrategy implements OAuthStrategy {
 		}
 	}
 
-	private boolean isBlank(String refreshToken) {
-		return refreshToken == null || refreshToken.trim().isEmpty();
+	private boolean isBlank(String value) {
+		return value == null || value.trim().isEmpty();
 	}
 }

@@ -37,9 +37,10 @@ public class AuthService {
 
 		String providerId = oAuthUserResponse.getId();
 		String profileImageUrl = oAuthUserResponse.getProfileImageUrl();
+		String oAuthRefreshToken = oAuthUserResponse.getRefreshToken();
 		checkDuplicateUser(oauthType, providerId);
 
-		User user = joinRequest.toUser(providerId, profileImageUrl);
+		User user = joinRequest.toUser(providerId, profileImageUrl, oAuthRefreshToken);
 		userRepository.save(user);
 	}
 
@@ -49,7 +50,6 @@ public class AuthService {
 			throw new AuthException(ErrorCode.DUPLICATE_USER);
 		}
 	}
-
 
 	@Transactional
 	public LoginResponse login(OAuthLoginRequest oAuthLoginRequest) {

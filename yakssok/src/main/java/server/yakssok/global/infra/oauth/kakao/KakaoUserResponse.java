@@ -18,4 +18,9 @@ public record KakaoUserResponse(
 	public String getProfileImageUrl() {
 		return kakaoAccount.profileImageUrl();
 	}
+
+	@Override
+	public String getRefreshToken() {
+		return null;
+	}
 }
