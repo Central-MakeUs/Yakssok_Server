@@ -1,10 +1,13 @@
 package server.yakssok.global.infra.oauth.apple;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record AppleTokenResponse(
-	String access_token,
-	String expires_in,
-	String id_token,
-	String refresh_token,
-	String token_type
+	@JsonProperty("id_token")
+	String idToken,
+	@JsonProperty("refresh_token")
+	String refreshToken
 ) {
 }

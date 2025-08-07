@@ -35,14 +35,14 @@ public class AppleLoginStrategy implements OAuthStrategy {
 	public AppleUserResponse fetchUserInfo(String authorizationCode, String expectedNonce) {
 		AppleTokenResponse tokenResponse = requestTokenFromApple(authorizationCode);
 		DecodedJWT jwt = AppleJwtUtils.verifyIdToken(
-			tokenResponse.id_token(),
+			tokenResponse.idToken(),
 			properties.jwkUrl(),
 			properties.apiBaseUrl(),
 			properties.clientId(),
 			properties.nonceClaimKey(),
 			expectedNonce
 		);
-		return new AppleUserResponse(jwt.getSubject(), tokenResponse.refresh_token());
+		return new AppleUserResponse(jwt.getSubject(), tokenResponse.refreshToken());
 	}
 
 	private AppleTokenResponse requestTokenFromApple(String authorizationCode) {
@@ -64,7 +64,7 @@ public class AppleLoginStrategy implements OAuthStrategy {
 				.retrieve()
 				.body(AppleTokenResponse.class);
 
-			if (tokenResponse == null || tokenResponse.id_token() == null) {
+			if (tokenResponse == null || tokenResponse.idToken() == null) {
 				throw new OAuthException(ErrorCode.INVALID_OAUTH_TOKEN);
 			}
 			return tokenResponse;
