@@ -15,6 +15,7 @@ import server.yakssok.domain.auth.application.service.AuthService;
 import server.yakssok.domain.auth.presentation.dto.request.JoinRequest;
 import server.yakssok.domain.auth.presentation.dto.request.OAuthLoginRequest;
 import server.yakssok.domain.auth.presentation.dto.request.ReissueRequest;
+import server.yakssok.domain.auth.presentation.dto.response.JoinResponse;
 import server.yakssok.domain.auth.presentation.dto.response.LoginResponse;
 import server.yakssok.domain.auth.presentation.dto.response.ReissueResponse;
 import server.yakssok.global.common.reponse.ApiResponse;
@@ -38,9 +39,8 @@ public class AuthController {
 		@ApiErrorResponse(ErrorCode.INVALID_INPUT_VALUE)
 	})
 	@PostMapping("/join")
-	public ApiResponse join(@Valid @RequestBody JoinRequest joinRequest) {
-		authService.join(joinRequest);
-		return ApiResponse.success();
+	public ApiResponse<JoinResponse> join(@Valid @RequestBody JoinRequest joinRequest) {
+		return ApiResponse.success(authService.join(joinRequest));
 	}
 
 	@Operation(summary = "로그인")
