@@ -71,6 +71,8 @@ public class User extends BaseEntity {
 		this.providerId = null;
 		this.inviteCode = null;
 		this.isDeleted = true;
+		this.isInitialized = false;
+		this.oAuthRefreshToken = null;
 	}
 
 	public void initializeUserInfo(String nickName) {

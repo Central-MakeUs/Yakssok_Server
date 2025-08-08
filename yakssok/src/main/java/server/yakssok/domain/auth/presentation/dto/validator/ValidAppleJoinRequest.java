@@ -12,7 +12,7 @@ import jakarta.validation.Payload;
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidAppleJoinRequest {
-	String message() default "애플 회원가입 시 nonce, oAuthRefreshToken은 필수입니다.";
+	String message() default "애플 로그인 시 nonce는 필수입니다.";
 	Class<?>[] groups() default {};
 	Class<? extends Payload>[] payload() default {};
 }

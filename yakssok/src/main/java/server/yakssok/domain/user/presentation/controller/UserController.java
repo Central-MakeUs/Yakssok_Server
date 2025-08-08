@@ -43,7 +43,6 @@ public class UserController {
 		return ApiResponse.success();
 	}
 
-
 	@Operation(summary = "내 정보 조회")
 	@ApiErrorResponse(ErrorCode.NOT_FOUND_USER)
 	@GetMapping("/me")
