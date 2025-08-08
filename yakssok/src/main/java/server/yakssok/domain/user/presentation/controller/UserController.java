@@ -33,7 +33,7 @@ public class UserController {
 
 	@Operation(summary = "유저 정보 초기 세팅")
 	@ApiErrorResponse(ErrorCode.NOT_FOUND_USER)
-	@PutMapping
+	@PutMapping("/init")
 	public ApiResponse initializeMyInfo(
 		@AuthenticationPrincipal YakssokUserDetails userDetails,
 		@RequestBody CompleteMyInfoRequest request
