@@ -39,6 +39,7 @@ public class User extends BaseEntity {
 	@AttributeOverride(name = "value", column = @Column(name = "invite_code", unique = true, length = 20))
 	private InviteCode inviteCode;
 	private boolean isDeleted;
+	private boolean isInitialized;
 
 	private User(String profileImageUrl, OAuthType oAuthType, String providerId, String oAuthRefreshToken, InviteCode inviteCode) {
 		this.profileImageUrl = profileImageUrl;
@@ -63,10 +64,6 @@ public class User extends BaseEntity {
 		this.profileImageUrl = profileImageUrl;
 	}
 
-	public boolean isInitialized() {
-		return this.nickName != null && !this.nickName.isBlank();
-	}
-
 	public void deactivate() {
 		this.nickName = null;
 		this.profileImageUrl = null;
@@ -74,5 +71,10 @@ public class User extends BaseEntity {
 		this.providerId = null;
 		this.inviteCode = null;
 		this.isDeleted = true;
+	}
+
+	public void initializeUserInfo(String nickName) {
+		this.nickName = nickName;
+		this.isInitialized = true;
 	}
 }

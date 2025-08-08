@@ -11,6 +11,7 @@ import server.yakssok.domain.medication.domain.repository.MedicationRepository;
 import server.yakssok.domain.user.application.exception.UserException;
 import server.yakssok.domain.user.domain.entity.User;
 import server.yakssok.domain.user.domain.repository.UserRepository;
+import server.yakssok.domain.user.presentation.controller.CompleteMyInfoRequest;
 import server.yakssok.domain.user.presentation.dto.request.UpdateUserInfoRequest;
 import server.yakssok.domain.user.presentation.dto.response.FindMyInfoResponse;
 import server.yakssok.domain.user.presentation.dto.response.FindUserInfoResponse;
@@ -72,5 +73,11 @@ public class UserService {
 		User user = getActiveUser(userId);
 		authService.unlinkOAuth(user);
 		userDeletionService.deleteUser(user);
+	}
+
+	@Transactional
+	public void initializeMyInfo(Long userId, CompleteMyInfoRequest request) {
+		User activeUser = getActiveUser(userId);
+		activeUser.initializeUserInfo(request.nickName());
 	}
 }
