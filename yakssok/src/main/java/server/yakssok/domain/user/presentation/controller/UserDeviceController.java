@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.user.application.service.UserDeviceService;
 import server.yakssok.domain.user.presentation.dto.request.RegisterDeviceRequest;
@@ -21,10 +22,13 @@ import server.yakssok.global.common.security.YakssokUserDetails;
 public class UserDeviceController {
 	private final UserDeviceService userDeviceService;
 
-	@Operation(summary = "디바이스 등록 및 FCM 토큰 저장")
+	@Operation(
+		summary = "디바이스 등록 및 FCM 토큰 저장",
+		description = "이전과 같은 디바이스 id를 보내면 덮어쓰기 됩니다. "
+	)
 	@PostMapping("/devices")
 	public ApiResponse registerDevice(
-		@RequestBody RegisterDeviceRequest request,
+		@RequestBody @Valid RegisterDeviceRequest request,
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
 		Long userId = userDetails.getUserId();

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.feeback.application.service.FeedbackService;
 import server.yakssok.domain.feeback.presentation.dto.request.CreateFeedbackRequest;
@@ -32,7 +33,7 @@ public class FeedbackController {
 	})
 	@PostMapping
 	public ApiResponse sendFeedback(
-		@RequestBody CreateFeedbackRequest request,
+		@RequestBody @Valid CreateFeedbackRequest request,
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
 		feedbackService.sendFeedback(userDetails.getUserId(), request);

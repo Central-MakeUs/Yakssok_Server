@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.friend.applcation.service.FriendService;
 import server.yakssok.domain.friend.presentation.dto.request.FollowFriendRequest;
@@ -40,7 +41,7 @@ public class FriendController {
 	})
 	@PostMapping
 	public ApiResponse followByInviteCode(
-		@RequestBody FollowFriendRequest followRequest,
+		@RequestBody @Valid FollowFriendRequest followRequest,
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
 		Long userId = userDetails.getUserId();
@@ -48,7 +49,10 @@ public class FriendController {
 		return ApiResponse.success();
 	}
 
-	@Operation(summary = "나의 팔로잉 목록 조회")
+	@Operation(
+		summary = "나의 팔로잉 목록 조회",
+		description = "내가 팔로우하는 사람들 목록을 조회합니다. "
+	)
 	@GetMapping("/followings")
 	public ApiResponse<FollowingInfoGroupResponse> findMyFollowings(
 		@AuthenticationPrincipal YakssokUserDetails userDetails
@@ -58,7 +62,10 @@ public class FriendController {
 		return ApiResponse.success(friends);
 	}
 
-	@Operation(summary = "나의 팔로워 목록 조회")
+	@Operation(
+		summary = "나의 팔로워 목록 조회",
+		description = "나를 팔로우하는 사람들 목록을 조회합니다. "
+	)
 	@GetMapping("/followers")
 	public ApiResponse<FollowerInfoGroupResponse> findMyFollowers(
 		@AuthenticationPrincipal YakssokUserDetails userDetails

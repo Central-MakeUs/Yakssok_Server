@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.medication.application.service.MedicationService;
 import server.yakssok.domain.medication.presentation.dto.request.CreateMedicationRequest;
 import server.yakssok.domain.medication.presentation.dto.response.MedicationGroupedResponse;
-import server.yakssok.domain.medication.presentation.dto.response.MedicationProgressResponse;
 import server.yakssok.global.common.reponse.ApiResponse;
 import server.yakssok.global.common.security.YakssokUserDetails;
 import server.yakssok.global.common.swagger.ApiErrorResponse;
@@ -37,7 +36,7 @@ public class MedicationController {
 	@ApiErrorResponse(value = ErrorCode.INVALID_INPUT_VALUE)
 	@PostMapping
 	public ApiResponse createMedication(
-		@Valid @RequestBody CreateMedicationRequest createMedicationRequest,
+		@RequestBody @Valid CreateMedicationRequest createMedicationRequest,
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
 		Long userId = userDetails.getUserId();
