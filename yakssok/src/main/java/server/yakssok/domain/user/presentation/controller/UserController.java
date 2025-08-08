@@ -31,6 +31,19 @@ import server.yakssok.global.exception.ErrorCode;
 public class UserController {
 	private final UserService userService;
 
+	@Operation(summary = "유저 정보 초기 세팅")
+	@ApiErrorResponse(ErrorCode.NOT_FOUND_USER)
+	@PutMapping
+	public ApiResponse initializeMyInfo(
+		@AuthenticationPrincipal YakssokUserDetails userDetails,
+		@RequestBody CompleteMyInfoRequest request
+	) {
+		Long userId = userDetails.getUserId();
+		userService.initializeMyInfo(userId, request);
+		return ApiResponse.success();
+	}
+
+
 	@Operation(summary = "내 정보 조회")
 	@ApiErrorResponse(ErrorCode.NOT_FOUND_USER)
 	@GetMapping("/me")

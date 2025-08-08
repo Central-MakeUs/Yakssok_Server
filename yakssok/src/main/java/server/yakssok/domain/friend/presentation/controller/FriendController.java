@@ -49,7 +49,10 @@ public class FriendController {
 		return ApiResponse.success();
 	}
 
-	@Operation(summary = "나의 팔로잉 목록 조회")
+	@Operation(
+		summary = "나의 팔로잉 목록 조회",
+		description = "내가 팔로우하는 사람들 목록을 조회합니다. "
+	)
 	@GetMapping("/followings")
 	public ApiResponse<FollowingInfoGroupResponse> findMyFollowings(
 		@AuthenticationPrincipal YakssokUserDetails userDetails
@@ -59,7 +62,10 @@ public class FriendController {
 		return ApiResponse.success(friends);
 	}
 
-	@Operation(summary = "나의 팔로워 목록 조회")
+	@Operation(
+		summary = "나의 팔로워 목록 조회",
+		description = "나를 팔로우하는 사람들 목록을 조회합니다. "
+	)
 	@GetMapping("/followers")
 	public ApiResponse<FollowerInfoGroupResponse> findMyFollowers(
 		@AuthenticationPrincipal YakssokUserDetails userDetails

@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.auth.application.service.AuthService;
-import server.yakssok.domain.auth.presentation.dto.request.JoinRequest;
 import server.yakssok.domain.auth.presentation.dto.request.OAuthLoginRequest;
 import server.yakssok.domain.auth.presentation.dto.request.ReissueRequest;
 import server.yakssok.domain.auth.presentation.dto.response.LoginResponse;
@@ -30,31 +29,24 @@ import server.yakssok.global.exception.ErrorCode;
 public class AuthController {
 	private final AuthService authService;
 
-	@Operation(summary = "회원가입")
+	@Operation(
+		summary = "회원가입/로그인",
+		description = "애플 로그인 시 nonce는 필수입니다. 응답 필드 isInitialized가 false면 온보딩을 진행해야 합니다."
+	)
 	@ApiErrorResponses(value = {
 		@ApiErrorResponse(ErrorCode.INVALID_OAUTH_TOKEN),
 		@ApiErrorResponse(ErrorCode.UNSUPPORTED_OAUTH_PROVIDER),
-		@ApiErrorResponse(ErrorCode.DUPLICATE_USER),
 		@ApiErrorResponse(ErrorCode.INVALID_INPUT_VALUE)
-	})
-	@PostMapping("/join")
-	public ApiResponse join(@Valid @RequestBody JoinRequest joinRequest) {
-		authService.join(joinRequest);
-		return ApiResponse.success();
-	}
-
-	@Operation(summary = "로그인")
-	@ApiErrorResponses(value = {
-		@ApiErrorResponse(ErrorCode.INVALID_OAUTH_TOKEN),
-		@ApiErrorResponse(ErrorCode.UNSUPPORTED_OAUTH_PROVIDER),
-		@ApiErrorResponse(ErrorCode.NOT_FOUND_USER)
 	})
 	@PostMapping("/login")
 	public ApiResponse<LoginResponse> login(@Valid @RequestBody OAuthLoginRequest oAuthLoginRequest) {
 		return ApiResponse.success(authService.login(oAuthLoginRequest));
 	}
 
-	@Operation(summary = "엑세스 토큰 재발급")
+	@Operation(
+		summary = "엑세스 토큰 재발급",
+		description = "리프레시 토큰으로 엑세스 토큰을 재발급합니다. "
+	)
 	@ApiErrorResponse(ErrorCode.INVALID_JWT)
 	@PostMapping("/reissue")
 	public ApiResponse<ReissueResponse> reissueToken(@Valid @RequestBody ReissueRequest reissueRequest) {

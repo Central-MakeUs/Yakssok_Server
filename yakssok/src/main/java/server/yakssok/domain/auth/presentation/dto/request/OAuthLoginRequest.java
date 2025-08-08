@@ -2,7 +2,10 @@ package server.yakssok.domain.auth.presentation.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
-
+import server.yakssok.domain.auth.presentation.dto.validator.ValidAppleJoinRequest;
+import server.yakssok.domain.user.domain.entity.OAuthType;
+import server.yakssok.domain.user.domain.entity.User;
+@ValidAppleJoinRequest
 public record OAuthLoginRequest(
 	@Schema(description = "카카오 Access Token/ 애플 authorization code", example = "1234567890abcdef")
 	@NotNull
@@ -15,4 +18,8 @@ public record OAuthLoginRequest(
 	@Schema(description = "apple nonce", example = "1234567890abcdef")
 	String nonce
 ) {
+
+	public User toUser(String providerId, String profileImageUrl, String oAuthRefreshToken) {
+		return User.create(profileImageUrl, OAuthType.from(oauthType), providerId, oAuthRefreshToken);
+	}
 }

@@ -22,7 +22,10 @@ import server.yakssok.global.common.security.YakssokUserDetails;
 public class UserDeviceController {
 	private final UserDeviceService userDeviceService;
 
-	@Operation(summary = "디바이스 등록 및 FCM 토큰 저장")
+	@Operation(
+		summary = "디바이스 등록 및 FCM 토큰 저장",
+		description = "이전과 같은 디바이스 id를 보내면 덮어쓰기 됩니다. "
+	)
 	@PostMapping("/devices")
 	public ApiResponse registerDevice(
 		@RequestBody @Valid RegisterDeviceRequest request,

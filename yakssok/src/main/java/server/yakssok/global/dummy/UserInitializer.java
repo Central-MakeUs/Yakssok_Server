@@ -42,7 +42,7 @@ public class UserInitializer implements ApplicationRunner {
 
 	private void createIfNotExists(String nickName, String providerId, OAuthType oauthType) {
 		if (!userRepository.existsUserByProviderId(oauthType, providerId)) {
-			User user = User.create(nickName, null, oauthType, providerId, null);
+			User user = User.create(null, oauthType, providerId, null);
 			UserDevice userDevice = UserDevice.createUserDevice(user, "default-device-id", null, false);
 
 			userRepository.save(user);

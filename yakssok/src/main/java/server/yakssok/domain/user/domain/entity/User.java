@@ -39,9 +39,9 @@ public class User extends BaseEntity {
 	@AttributeOverride(name = "value", column = @Column(name = "invite_code", unique = true, length = 20))
 	private InviteCode inviteCode;
 	private boolean isDeleted;
+	private boolean isInitialized;
 
-	private User(String nickName, String profileImageUrl, OAuthType oAuthType, String providerId, String oAuthRefreshToken, InviteCode inviteCode) {
-		this.nickName = nickName;
+	private User(String profileImageUrl, OAuthType oAuthType, String providerId, String oAuthRefreshToken, InviteCode inviteCode) {
 		this.profileImageUrl = profileImageUrl;
 		this.oAuthType = oAuthType;
 		this.providerId = providerId;
@@ -49,9 +49,8 @@ public class User extends BaseEntity {
 		this.inviteCode = inviteCode;
 	}
 
-	public static User create(String nickName, String profileImageUrl, OAuthType oauthType, String providerId, String oAuthRefreshToken) {
+	public static User create(String profileImageUrl, OAuthType oauthType, String providerId, String oAuthRefreshToken) {
 		return new User(
-			nickName,
 			profileImageUrl,
 			oauthType,
 			providerId,
@@ -72,5 +71,10 @@ public class User extends BaseEntity {
 		this.providerId = null;
 		this.inviteCode = null;
 		this.isDeleted = true;
+	}
+
+	public void initializeUserInfo(String nickName) {
+		this.nickName = nickName;
+		this.isInitialized = true;
 	}
 }

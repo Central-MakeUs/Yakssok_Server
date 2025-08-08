@@ -12,7 +12,10 @@ public record KakaoUserAccount(
 		if (profile.isDefaultImage()) {
 			return null;
 		}
-		return profile.profileImageUrl();
+		String url = profile.profileImageUrl();
+		return url.startsWith("http://")
+			? url.replaceFirst("http://", "https://")
+			: url;
 	}
 
 	@JsonIgnoreProperties(ignoreUnknown = true)

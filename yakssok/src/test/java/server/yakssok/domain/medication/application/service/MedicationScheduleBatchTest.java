@@ -62,9 +62,9 @@ public class MedicationScheduleBatchTest {
 	}
 
 	private User createTestUser() {
-		return userRepository.save(User.create(
-			"테스트 유저", null, OAuthType.KAKAO, "provider123", null
-		));
+		User user = User.create(null, OAuthType.KAKAO, "provider123", null);
+		user.initializeUserInfo("노을");
+		return userRepository.save(user);
 	}
 
 	private List<Medication> createMedicationList(User user, LocalDate startDate, LocalDate endDate, DayOfWeek dayOfWeek, int count) {
