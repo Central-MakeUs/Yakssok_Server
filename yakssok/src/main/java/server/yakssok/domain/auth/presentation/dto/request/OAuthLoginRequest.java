@@ -2,6 +2,8 @@ package server.yakssok.domain.auth.presentation.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import server.yakssok.domain.user.domain.entity.OAuthType;
+import server.yakssok.domain.user.domain.entity.User;
 
 public record OAuthLoginRequest(
 	@Schema(description = "카카오 Access Token/ 애플 authorization code", example = "1234567890abcdef")
@@ -13,6 +15,13 @@ public record OAuthLoginRequest(
 	String oauthType,
 
 	@Schema(description = "apple nonce", example = "1234567890abcdef")
-	String nonce
+	String nonce,
+
+	@Schema(description = "닉네임", example = "노을")
+	String nickName
 ) {
+
+	public User toUser(String providerId, String profileImageUrl, String oAuthRefreshToken) {
+		return User.create(nickName, profileImageUrl, OAuthType.from(oauthType), providerId, oAuthRefreshToken);
+	}
 }

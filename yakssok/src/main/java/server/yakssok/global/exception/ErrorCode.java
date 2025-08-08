@@ -12,7 +12,6 @@ public enum ErrorCode implements ResponseCode{
     UNSUPPORTED_OAUTH_PROVIDER(HttpStatus.BAD_REQUEST, 1001, "지원하지 않는 소셜 로그인 제공자입니다."),
 
     //auth
-    DUPLICATE_USER(HttpStatus.BAD_REQUEST, 2000, "이미 가입된 회원입니다."),
     INVALID_JWT(HttpStatus.UNAUTHORIZED, 2001, "유효하지 않은 JWT 토큰입니다."),
     OAUTH_UNLINK_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, 2002, "OAuth 연동을 해제할 수 없습니다. "),
 
@@ -42,7 +41,6 @@ public enum ErrorCode implements ResponseCode{
     INVALID_FILE_EXTENSION(HttpStatus.BAD_REQUEST, 9103, "지원하지 않는 파일 확장자입니다."),
 
     // fcm
-    FAILED_TO_SEND_NOTIFICATION(HttpStatus.INTERNAL_SERVER_ERROR, 9200, "FCM 알림 전송에 실패했습니다."),
 
     ;
 

@@ -31,23 +31,11 @@ import server.yakssok.global.exception.ErrorCode;
 public class AuthController {
 	private final AuthService authService;
 
-	@Operation(summary = "회원가입")
-	@ApiErrorResponses(value = {
-		@ApiErrorResponse(ErrorCode.INVALID_OAUTH_TOKEN),
-		@ApiErrorResponse(ErrorCode.UNSUPPORTED_OAUTH_PROVIDER),
-		@ApiErrorResponse(ErrorCode.DUPLICATE_USER),
-		@ApiErrorResponse(ErrorCode.INVALID_INPUT_VALUE)
-	})
-	@PostMapping("/join")
-	public ApiResponse<JoinResponse> join(@Valid @RequestBody JoinRequest joinRequest) {
-		return ApiResponse.success(authService.join(joinRequest));
-	}
-
 	@Operation(summary = "로그인")
 	@ApiErrorResponses(value = {
 		@ApiErrorResponse(ErrorCode.INVALID_OAUTH_TOKEN),
 		@ApiErrorResponse(ErrorCode.UNSUPPORTED_OAUTH_PROVIDER),
-		@ApiErrorResponse(ErrorCode.NOT_FOUND_USER)
+		@ApiErrorResponse(ErrorCode.INVALID_INPUT_VALUE)
 	})
 	@PostMapping("/login")
 	public ApiResponse<LoginResponse> login(@Valid @RequestBody OAuthLoginRequest oAuthLoginRequest) {
