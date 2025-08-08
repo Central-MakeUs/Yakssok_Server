@@ -28,7 +28,6 @@ public class AuthService {
 	private final RefreshTokenService refreshTokenService;
 	private final OAuthStrategyFactory strategyFactory;
 
-
 	@Transactional
 	public LoginResponse login(OAuthLoginRequest oAuthLoginRequest) {
 		OAuthUserResponse oAuthUser = getOAuthUserResponse(
@@ -91,7 +90,7 @@ public class AuthService {
 		String accessToken = jwtTokenUtils.generateAccessToken(user.getId());
 		String refreshToken = jwtTokenUtils.generateRefreshToken(user.getId());
 		refreshTokenService.registerRefreshToken(user, refreshToken);
-		return new LoginResponse(accessToken, refreshToken);
+		return new LoginResponse(accessToken, refreshToken, user.isInitialized());
 	}
 
 	private OAuthUserResponse getOAuthUserResponse(String oauthType, String oauthAuthorizationCode, String nonce) {

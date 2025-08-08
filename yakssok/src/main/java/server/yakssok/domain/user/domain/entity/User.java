@@ -40,8 +40,7 @@ public class User extends BaseEntity {
 	private InviteCode inviteCode;
 	private boolean isDeleted;
 
-	private User(String nickName, String profileImageUrl, OAuthType oAuthType, String providerId, String oAuthRefreshToken, InviteCode inviteCode) {
-		this.nickName = nickName;
+	private User(String profileImageUrl, OAuthType oAuthType, String providerId, String oAuthRefreshToken, InviteCode inviteCode) {
 		this.profileImageUrl = profileImageUrl;
 		this.oAuthType = oAuthType;
 		this.providerId = providerId;
@@ -49,9 +48,8 @@ public class User extends BaseEntity {
 		this.inviteCode = inviteCode;
 	}
 
-	public static User create(String nickName, String profileImageUrl, OAuthType oauthType, String providerId, String oAuthRefreshToken) {
+	public static User create(String profileImageUrl, OAuthType oauthType, String providerId, String oAuthRefreshToken) {
 		return new User(
-			nickName,
 			profileImageUrl,
 			oauthType,
 			providerId,
@@ -63,6 +61,10 @@ public class User extends BaseEntity {
 	public void updateInfo(String nickname, String profileImageUrl) {
 		this.nickName = nickname;
 		this.profileImageUrl = profileImageUrl;
+	}
+
+	public boolean isInitialized() {
+		return this.nickName != null && !this.nickName.isBlank();
 	}
 
 	public void deactivate() {
