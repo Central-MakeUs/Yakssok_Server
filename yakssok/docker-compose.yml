@@ -1,5 +1,7 @@
 services:
   app:
+    environment:
+      SPRING_AUTOCONFIGURE_EXCLUDE: "org.springframework.boot.actuate.autoconfigure.metrics.SystemMetricsAutoConfiguration"
     image: yakssok/yakssok:${TAG}
     container_name: yakssok-app
     ports:
