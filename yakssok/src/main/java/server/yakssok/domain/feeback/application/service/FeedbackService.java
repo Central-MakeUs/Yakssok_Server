@@ -3,6 +3,7 @@ package server.yakssok.domain.feeback.application.service;
 
 import java.util.Optional;
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,10 +13,10 @@ import server.yakssok.domain.feeback.domain.repository.FeedbackRepository;
 import server.yakssok.domain.feeback.presentation.dto.request.CreateFeedbackRequest;
 import server.yakssok.domain.friend.domain.entity.Friend;
 import server.yakssok.domain.friend.domain.repository.FriendRepository;
-import server.yakssok.domain.notification.application.service.PushService;
 import server.yakssok.domain.notification.presentation.dto.NotificationDTO;
 import server.yakssok.domain.user.application.service.UserService;
 import server.yakssok.domain.user.domain.entity.User;
+import server.yakssok.global.infra.rabbitmq.properties.FeedbackQueueProperties;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +24,9 @@ public class FeedbackService {
 	private final FeedbackRepository feedbackRepository;
 	private final FriendRepository friendRepository;
 	private final UserService userService;
-	private final PushService pushService;
+	private final RabbitTemplate rabbitTemplate;
+	private final FeedbackQueueProperties feedbackQueueProperties;
+
 
 	@Transactional
 	public void sendFeedback(Long userId, CreateFeedbackRequest request) {
@@ -41,7 +44,13 @@ public class FeedbackService {
 		NotificationDTO notificationDTO = receiverFollowSender
 			.map(friend -> createMutualFeedbackNotificationDto(sender, receiver, feedback, friend))
 			.orElseGet(() -> createOneWayFeedbackNotificationDto(sender, receiver, feedback));
-		pushService.sendNotification(notificationDTO);
+		pushFeedBackQoeue(notificationDTO);
+	}
+
+	private void pushFeedBackQoeue(NotificationDTO notificationDTO) {
+		String feedbackExchange = feedbackQueueProperties.exchange();
+		String feedbackRoutingKey = feedbackQueueProperties.routingKey();
+		rabbitTemplate.convertAndSend(feedbackExchange, feedbackRoutingKey, notificationDTO);
 	}
 
 	private static NotificationDTO createOneWayFeedbackNotificationDto(User sender, User receiver, Feedback feedback) {
