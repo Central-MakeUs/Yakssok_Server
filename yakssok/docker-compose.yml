@@ -1,7 +1,5 @@
 services:
   app:
-    environment:
-      SPRING_AUTOCONFIGURE_EXCLUDE: "org.springframework.boot.actuate.autoconfigure.metrics.SystemMetricsAutoConfiguration"
     image: yakssok/yakssok:${TAG}
     container_name: yakssok-app
     ports:
@@ -9,6 +7,11 @@ services:
     networks:
       - internal
     restart: unless-stopped
+    environment:
+      SPRING_AUTOCONFIGURE_EXCLUDE: "org.springframework.boot.actuate.autoconfigure.metrics.SystemMetricsAutoConfiguration"
+      MANAGEMENT_METRICS_ENABLE_SYSTEM: "false"
+      MANAGEMENT_METRICS_ENABLE_PROCESS: "false"
+      MANAGEMENT_METRICS_BINDERS_PROCESSOR_ENABLED: "false"
 
   nginx-proxy-manager:
     image: jc21/nginx-proxy-manager:latest
