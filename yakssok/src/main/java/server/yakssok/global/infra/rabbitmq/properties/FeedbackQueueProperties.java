@@ -7,5 +7,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record FeedbackQueueProperties(
 	String queue,
 	String exchange,
-	String routingKey)
+	String routingKey
+)
 { }
