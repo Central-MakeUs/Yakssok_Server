@@ -3,6 +3,7 @@ package server.yakssok.domain.user.application.service;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.user.domain.entity.User;
@@ -16,6 +17,7 @@ public class UserDeviceService {
 	private final UserDeviceRepository userDeviceRepository;
 	private final UserService userService;
 
+	@Transactional
 	public void registerOrUpdateDevice(Long userId, RegisterDeviceRequest request) {
 		User user = userService.getActiveUser(userId);
 		Optional<UserDevice> existing = userDeviceRepository.findByUserIdAndDeviceId(userId, request.deviceId());
