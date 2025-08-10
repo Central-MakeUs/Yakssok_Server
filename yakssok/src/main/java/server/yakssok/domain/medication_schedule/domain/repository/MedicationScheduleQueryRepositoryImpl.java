@@ -8,8 +8,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
@@ -81,27 +79,6 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 	}
 
 	@Override
-	public Map<Long, Integer> countTodayRemainingMedications(List<Long> followingIdsWithTodaySchedule, LocalDateTime now) {
-		return jpaQueryFactory
-			.select(medication.userId, medicationSchedule.count())
-			.from(medicationSchedule)
-			.innerJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
-			.where(
-				medication.userId.in(followingIdsWithTodaySchedule),
-				medicationSchedule.scheduledDate.eq(now.toLocalDate()),
-				medicationSchedule.scheduledTime.lt(now.toLocalTime()),
-				medicationSchedule.isTaken.isFalse()
-			)
-			.groupBy(medication.userId)
-			.fetch()
-			.stream()
-			.collect(Collectors.toMap(
-				tuple -> tuple.get(0, Long.class),
-				tuple -> tuple.get(1, Long.class).intValue()
-			));
-	}
-
-	@Override
 	public List<MedicationScheduleDto> findRemainingMedicationDetail(Long userId, LocalDateTime now) {
 		return jpaQueryFactory
 			.select(SCHEDULE_DTO_PROJECTION)
@@ -161,6 +138,30 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 				medicationSchedule.scheduledTime.hour().eq(intakeTime.getHour()),
 				medicationSchedule.scheduledTime.minute().eq(intakeTime.getMinute())
 			)
+			.fetch();
+	}
+
+	@Override
+	public List<RemainingMedicationDto> findTodayRemainingMedications(List<Long> followingIds, LocalDateTime now) {
+		LocalDate today = now.toLocalDate();
+		LocalTime cutoffTime = now.toLocalTime().minusMinutes(30);
+
+		return jpaQueryFactory
+			.select(Projections.constructor(
+				RemainingMedicationDto.class,
+				medication.userId,
+				medicationSchedule.scheduledDate,
+				medicationSchedule.scheduledTime
+			))
+			.from(medicationSchedule)
+			.innerJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
+			.where(
+				medication.userId.in(followingIds),
+				medicationSchedule.scheduledDate.eq(today),
+				medicationSchedule.scheduledTime.loe(cutoffTime),
+				medicationSchedule.isTaken.isFalse()
+			)
+			.orderBy(medication.userId.asc(), medicationSchedule.scheduledTime.asc())
 			.fetch();
 	}
 
