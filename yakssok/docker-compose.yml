@@ -7,11 +7,9 @@ services:
     networks:
       - internal
     restart: unless-stopped
-    environment:
-      SPRING_AUTOCONFIGURE_EXCLUDE: "org.springframework.boot.actuate.autoconfigure.metrics.SystemMetricsAutoConfiguration"
-      MANAGEMENT_METRICS_ENABLE_SYSTEM: "false"
-      MANAGEMENT_METRICS_ENABLE_PROCESS: "false"
-      MANAGEMENT_METRICS_BINDERS_PROCESSOR_ENABLED: "false"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
 
   nginx-proxy-manager:
     image: jc21/nginx-proxy-manager:latest
@@ -26,6 +24,26 @@ services:
     networks:
       - internal
     restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+    volumes:
+      - ./rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - internal
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
 networks:
   internal:
