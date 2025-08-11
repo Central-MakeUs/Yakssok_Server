@@ -19,7 +19,7 @@ public class FeedbackQueryRepositoryImpl implements FeedbackQueryRepository{
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public Map<Long, LocalDateTime> findTodayLastNagTime(Long userId, List<Long> followingIds, LocalDate today) {
+	public Map<Long, LocalDateTime> findTodayLastNagTimeToFollowings(Long userId, List<Long> followingIds, LocalDate today) {
 		LocalDateTime start = today.atStartOfDay();
 		LocalDateTime end   = start.plusDays(1);
 
@@ -40,5 +40,21 @@ public class FeedbackQueryRepositoryImpl implements FeedbackQueryRepository{
 			result.put(t.get(feedback.receiver.id), t.get(feedback.createdAt.max()));
 		}
 		return result;
+	}
+
+	@Override
+	public LocalDateTime findTodayLastNagTimeToFollowing(Long userId, Long followingId, LocalDate today) {
+		LocalDateTime start = today.atStartOfDay();
+		LocalDateTime end   = start.plusDays(1);
+		return queryFactory
+			.select(feedback.createdAt.max())
+			.from(feedback)
+			.where(
+				feedback.sender.id.eq(userId),
+				feedback.receiver.id.eq(followingId),
+				feedback.feedbackType.eq(FeedbackType.NAG),
+				feedback.createdAt.goe(start).and(feedback.createdAt.lt(end))
+			)
+			.fetchOne();
 	}
 }

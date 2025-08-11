@@ -81,7 +81,10 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 	}
 
 	@Override
-	public List<MedicationScheduleDto> findRemainingMedicationDetail(Long userId, LocalDateTime now) {
+	public List<MedicationScheduleDto> findRemainingMedicationDetail(
+		Long userId,
+		LocalDateTime now
+	) {
 		return jpaQueryFactory
 			.select(SCHEDULE_DTO_PROJECTION)
 			.from(medicationSchedule)
@@ -89,7 +92,7 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 			.where(
 				medication.userId.eq(userId),
 				medicationSchedule.scheduledDate.eq(now.toLocalDate()),
-				medicationSchedule.scheduledTime.lt(now.toLocalTime()),
+				medicationSchedule.scheduledTime.loe(now.toLocalTime()),
 				medicationSchedule.isTaken.isFalse()
 			)
 			.orderBy(
@@ -146,19 +149,10 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 	@Override
 	public List<RemainingMedicationDto> findTodayRemainingMedications(
 		List<Long> followingIds,
-		LocalDateTime now
+		LocalDateTime delayBoundaryTime
 	) {
-		LocalDate today = now.toLocalDate();
-		int graceMinutes = 30;
-		DateTimeExpression<LocalDateTime> dueDateTime =
-			Expressions.dateTimeTemplate(
-				LocalDateTime.class,
-				"timestampadd(MINUTE, {0}, timestamp({1}, {2}))",
-				Expressions.constant(graceMinutes),
-				medicationSchedule.scheduledDate,
-				medicationSchedule.scheduledTime
-			);
-
+		LocalTime localTime = delayBoundaryTime.toLocalTime();
+		LocalDate localDate = delayBoundaryTime.toLocalDate();
 		return jpaQueryFactory
 			.select(Projections.constructor(
 				RemainingMedicationDto.class,
@@ -169,8 +163,8 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 			.from(medicationSchedule)
 			.where(
 				medicationSchedule.userId.in(followingIds),
-				medicationSchedule.scheduledDate.eq(today),
-				dueDateTime.loe(now),
+				medicationSchedule.scheduledDate.eq(localDate),
+				medicationSchedule.scheduledTime.loe(localTime),
 				medicationSchedule.isTaken.isFalse()
 			)
 			.orderBy(medicationSchedule.userId.asc(), medicationSchedule.scheduledTime.asc())
