@@ -11,11 +11,13 @@ import java.util.List;
 
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.DateTimeExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.medication_schedule.domain.repository.dto.MedicationScheduleDto;
+import server.yakssok.domain.medication_schedule.domain.repository.dto.RemainingMedicationDto;
 
 @RequiredArgsConstructor
 public class MedicationScheduleQueryRepositoryImpl implements MedicationScheduleQueryRepository{
@@ -39,7 +41,7 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 			.from(medicationSchedule)
 			.innerJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
 			.where(
-				medication.userId.eq(userId),
+				medicationSchedule.userId.eq(userId),
 				medicationSchedule.scheduledDate.eq(date)
 			)
 			.orderBy(
@@ -54,9 +56,9 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 		return jpaQueryFactory
 			.select(SCHEDULE_DTO_PROJECTION)
 			.from(medicationSchedule)
-			.leftJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
+			.innerJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
 			.where(
-				medication.userId.eq(userId),
+				medicationSchedule.userId.eq(userId),
 				medicationSchedule.scheduledDate.between(startDate, endDate)
 			)
 			.orderBy(
@@ -142,48 +144,36 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 	}
 
 	@Override
-	public List<RemainingMedicationDto> findTodayRemainingMedications(List<Long> followingIds, LocalDateTime now) {
+	public List<RemainingMedicationDto> findTodayRemainingMedications(
+		List<Long> followingIds,
+		LocalDateTime now
+	) {
 		LocalDate today = now.toLocalDate();
-		LocalTime cutoffTime = now.toLocalTime().minusMinutes(30);
+		int graceMinutes = 30;
+		DateTimeExpression<LocalDateTime> dueDateTime =
+			Expressions.dateTimeTemplate(
+				LocalDateTime.class,
+				"timestampadd(MINUTE, {0}, timestamp({1}, {2}))",
+				Expressions.constant(graceMinutes),
+				medicationSchedule.scheduledDate,
+				medicationSchedule.scheduledTime
+			);
 
 		return jpaQueryFactory
 			.select(Projections.constructor(
 				RemainingMedicationDto.class,
-				medication.userId,
+				medicationSchedule.userId,
 				medicationSchedule.scheduledDate,
 				medicationSchedule.scheduledTime
 			))
 			.from(medicationSchedule)
-			.innerJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
 			.where(
-				medication.userId.in(followingIds),
+				medicationSchedule.userId.in(followingIds),
 				medicationSchedule.scheduledDate.eq(today),
-				medicationSchedule.scheduledTime.loe(cutoffTime),
+				dueDateTime.loe(now),
 				medicationSchedule.isTaken.isFalse()
 			)
-			.orderBy(medication.userId.asc(), medicationSchedule.scheduledTime.asc())
+			.orderBy(medicationSchedule.userId.asc(), medicationSchedule.scheduledTime.asc())
 			.fetch();
-	}
-
-	@Override
-	public List<Long> findUserIdsWithAllTakenToday(List<Long> followingIds, LocalDate now) {
-		return jpaQueryFactory
-				.select(medication.userId)
-				.from(medicationSchedule)
-				.innerJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
-				.where(
-					medication.userId.in(followingIds),
-					medicationSchedule.scheduledDate.eq(now)
-				)
-				.groupBy(medication.userId)
-				.having(
-					medicationSchedule.count().eq(
-						new CaseBuilder()
-							.when(medicationSchedule.isTaken.isTrue()).then(1L)
-							.otherwise(0L)
-							.sum()
-					)
-				)
-				.fetch();
 	}
 }

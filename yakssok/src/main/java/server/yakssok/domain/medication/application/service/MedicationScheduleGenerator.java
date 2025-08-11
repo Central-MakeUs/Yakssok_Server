@@ -66,15 +66,14 @@ public class MedicationScheduleGenerator {
 	public List<MedicationSchedule> generateAllTodaySchedules(LocalDateTime currentDateTime) {
 		List<MedicationDto> medicationDtos = medicationRepository.findMedicationsForScheduleGeneration(currentDateTime, currentDateTime.getDayOfWeek());
 		return medicationDtos.stream()
-			.map(dto -> MedicationSchedule.create(currentDateTime.toLocalDate(), dto.intakeTime(), dto.medicationId()))
+			.map(dto -> MedicationSchedule.create(currentDateTime.toLocalDate(), dto.intakeTime(), dto.medicationId(), dto.userId()))
 			.toList();
 	}
 
 	public List<MedicationSchedule> generateTodaySchedules(
 		Medication medication, List<LocalTime> intakeTimes) {
 		return intakeTimes.stream()
-				.map(intakeTime -> MedicationSchedule.create(LocalDate.now(), intakeTime, medication.getId()))
+				.map(intakeTime -> MedicationSchedule.create(LocalDate.now(), intakeTime, medication.getId(), medication.getUserId()))
 				.collect(Collectors.toList());
-
 	}
 }

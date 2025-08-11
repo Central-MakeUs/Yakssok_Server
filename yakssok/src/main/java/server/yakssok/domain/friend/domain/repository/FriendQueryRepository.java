@@ -1,5 +1,6 @@
 package server.yakssok.domain.friend.domain.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,4 +11,5 @@ public interface FriendQueryRepository {
 	List<Friend> findMyFollowings(Long userId);
 	List<Friend> findMyFollowers(Long userId);
 	Optional<Friend> findByUserIdAndFollowingId(Long userId, Long followingId);
+	List<Long> findPraiseCandidatesToday(Long userId, LocalDate today);
 }
