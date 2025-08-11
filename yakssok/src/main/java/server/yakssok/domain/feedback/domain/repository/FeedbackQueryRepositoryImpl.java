@@ -1,6 +1,6 @@
-package server.yakssok.domain.feeback.domain.repository;
+package server.yakssok.domain.feedback.domain.repository;
 
-import static server.yakssok.domain.feeback.domain.entity.QFeedback.*;
+import static server.yakssok.domain.feedback.domain.entity.QFeedback.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -10,7 +10,7 @@ import java.util.Map;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
-import server.yakssok.domain.feeback.domain.entity.FeedbackType;
+import server.yakssok.domain.feedback.domain.entity.FeedbackType;
 
 @RequiredArgsConstructor
 public class FeedbackQueryRepositoryImpl implements FeedbackQueryRepository{

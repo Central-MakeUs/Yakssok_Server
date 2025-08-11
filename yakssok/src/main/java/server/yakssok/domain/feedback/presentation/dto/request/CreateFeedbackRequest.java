@@ -1,9 +1,9 @@
-package server.yakssok.domain.feeback.presentation.dto.request;
+package server.yakssok.domain.feedback.presentation.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
-import server.yakssok.domain.feeback.domain.entity.Feedback;
-import server.yakssok.domain.feeback.domain.entity.FeedbackType;
+import server.yakssok.domain.feedback.domain.entity.Feedback;
+import server.yakssok.domain.feedback.domain.entity.FeedbackType;
 import server.yakssok.domain.user.domain.entity.User;
 @Schema(description = "잔소리/칭찬 보내기 요청 DTO")
 public record CreateFeedbackRequest(

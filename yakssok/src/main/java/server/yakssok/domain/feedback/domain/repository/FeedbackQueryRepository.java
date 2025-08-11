@@ -1,4 +1,4 @@
-package server.yakssok.domain.feeback.domain.repository;
+package server.yakssok.domain.feedback.domain.repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

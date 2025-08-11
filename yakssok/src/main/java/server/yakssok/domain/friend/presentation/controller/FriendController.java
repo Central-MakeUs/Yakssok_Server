@@ -13,7 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import server.yakssok.domain.friend.applcation.service.FriendService;
+import server.yakssok.domain.friend.application.service.FriendService;
 import server.yakssok.domain.friend.presentation.dto.request.FollowFriendRequest;
 import server.yakssok.domain.friend.presentation.dto.response.FollowerInfoGroupResponse;
 import server.yakssok.domain.friend.presentation.dto.response.FollowingInfoGroupResponse;

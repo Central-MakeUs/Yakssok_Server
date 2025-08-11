@@ -3,7 +3,7 @@ package server.yakssok.domain.notification.presentation.dto;
 
 import lombok.AccessLevel;
 import lombok.Builder;
-import server.yakssok.domain.feeback.domain.entity.Feedback;
+import server.yakssok.domain.feedback.domain.entity.Feedback;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleAlarmDto;
 import server.yakssok.domain.notification.application.constants.NotificationBodyConstants;
 import server.yakssok.domain.notification.application.util.NotificationTitleUtils;

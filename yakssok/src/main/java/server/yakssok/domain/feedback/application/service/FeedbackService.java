@@ -1,4 +1,4 @@
-package server.yakssok.domain.feeback.application.service;
+package server.yakssok.domain.feedback.application.service;
 
 
 import java.util.Optional;
@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import server.yakssok.domain.feeback.domain.entity.Feedback;
-import server.yakssok.domain.feeback.domain.repository.FeedbackRepository;
-import server.yakssok.domain.feeback.presentation.dto.request.CreateFeedbackRequest;
+import server.yakssok.domain.feedback.domain.entity.Feedback;
+import server.yakssok.domain.feedback.domain.repository.FeedbackRepository;
+import server.yakssok.domain.feedback.presentation.dto.request.CreateFeedbackRequest;
 import server.yakssok.domain.friend.domain.entity.Friend;
 import server.yakssok.domain.friend.domain.repository.FriendRepository;
 import server.yakssok.domain.notification.presentation.dto.NotificationDTO;

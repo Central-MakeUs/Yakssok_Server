@@ -1,4 +1,4 @@
-package server.yakssok.domain.friend.applcation.service;
+package server.yakssok.domain.friend.application.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import server.yakssok.domain.feeback.domain.repository.FeedbackRepository;
-import server.yakssok.domain.friend.applcation.exception.FriendException;
+import server.yakssok.domain.feedback.domain.repository.FeedbackRepository;
+import server.yakssok.domain.friend.application.exception.FriendException;
 import server.yakssok.domain.friend.domain.entity.Friend;
 import server.yakssok.domain.friend.domain.repository.FriendRepository;
 import server.yakssok.domain.friend.presentation.dto.request.FollowFriendRequest;
@@ -79,7 +79,6 @@ public class FriendService {
 		Map<Long, Integer> notTakenMap = buildAdjustedNotTakenMap(notTakenMedications, lastNagDateTime, LocalDate.now());
 
 		// --- 칭찬: 오늘 전부 복용
-		// TODO : (내가 오늘 그 사람에게 칭찬 안 보냈을 때만 노출) ---
 		List<Long> praisedToday = feedbackRepository.findPraisedToday(userId, followingIds, LocalDate.now());
 		List<Long> fullyTakenIds = getPraiseUser(followingIds);
 
@@ -110,9 +109,8 @@ public class FriendService {
 	}
 
 	private List<RemainingMedicationDto> getNagUserRemainingMedications(List<Long> followingIds) {
-		List<RemainingMedicationDto> notTakenMap = medicationScheduleRepository
+		return medicationScheduleRepository
 			.findTodayRemainingMedications(followingIds, LocalDateTime.now());
-		return notTakenMap;
 	}
 
 	private void sortByNotTakenCount(List<FollowingMedicationStatusResponse> statusList) {
