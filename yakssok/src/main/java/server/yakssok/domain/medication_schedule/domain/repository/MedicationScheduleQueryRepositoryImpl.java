@@ -11,13 +11,11 @@ import java.util.List;
 
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.DateTimeExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
+import server.yakssok.domain.medication_schedule.domain.entity.MedicationSchedule;
 import server.yakssok.domain.medication_schedule.domain.repository.dto.MedicationScheduleDto;
-import server.yakssok.domain.medication_schedule.domain.repository.dto.RemainingMedicationDto;
 
 @RequiredArgsConstructor
 public class MedicationScheduleQueryRepositoryImpl implements MedicationScheduleQueryRepository{
@@ -147,19 +145,14 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 	}
 
 	@Override
-	public List<RemainingMedicationDto> findTodayRemainingMedications(
+	public List<MedicationSchedule> findTodayRemainingMedications(
 		List<Long> followingIds,
 		LocalDateTime delayBoundaryTime
 	) {
 		LocalTime localTime = delayBoundaryTime.toLocalTime();
 		LocalDate localDate = delayBoundaryTime.toLocalDate();
 		return jpaQueryFactory
-			.select(Projections.constructor(
-				RemainingMedicationDto.class,
-				medicationSchedule.userId,
-				medicationSchedule.scheduledDate,
-				medicationSchedule.scheduledTime
-			))
+			.select(medicationSchedule)
 			.from(medicationSchedule)
 			.where(
 				medicationSchedule.userId.in(followingIds),

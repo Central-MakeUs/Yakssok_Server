@@ -1,9 +1,8 @@
 package server.yakssok.domain.friend.application.service;
 
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -15,106 +14,104 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.feedback.domain.repository.FeedbackRepository;
 import server.yakssok.domain.friend.application.exception.FriendException;
+import server.yakssok.domain.friend.application.service.mapper.MedicationStatusMapper;
 import server.yakssok.domain.friend.domain.entity.Friend;
 import server.yakssok.domain.friend.domain.repository.FriendRepository;
 import server.yakssok.domain.friend.presentation.dto.response.FollowingMedicationStatusDetailResponse;
 import server.yakssok.domain.friend.presentation.dto.response.FollowingMedicationStatusGroupResponse;
 import server.yakssok.domain.friend.presentation.dto.response.FollowingMedicationStatusResponse;
-import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleRepository;
+import server.yakssok.domain.medication_schedule.application.service.MissedMedicationCalculator;
+import server.yakssok.domain.medication_schedule.application.service.MedicationScheduleFinder;
+import server.yakssok.domain.medication_schedule.domain.entity.MedicationSchedule;
+import server.yakssok.domain.medication_schedule.domain.policy.OverduePolicy;
 import server.yakssok.domain.medication_schedule.domain.repository.dto.MedicationScheduleDto;
-import server.yakssok.domain.medication_schedule.domain.repository.dto.RemainingMedicationDto;
 import server.yakssok.global.exception.ErrorCode;
 
 @Service
 @RequiredArgsConstructor
 public class FollowingMedicationStatusService {
-	private static final long OVERDUE_GRACE_MINUTES = 30L;
 
 	private final FriendRepository friendRepository;
 	private final FeedbackRepository feedbackRepository;
-	private final MedicationScheduleRepository medicationScheduleRepository;
 	private final MedicationStatusMapper medicationStatusMapper;
+	private final MedicationScheduleFinder medicationScheduleFinder;
+	private final OverduePolicy overduePolicy;
+	private final MissedMedicationCalculator missedMedicationCalculator;
 
+	/**
+	 * [나의 팔로잉 중 잔소리/칭찬 대상 목록 조회]
+	 *
+	 * 규칙
+	 * - 잔소리 대상: 오늘 복용해야 할 약 중 ‘(예: 30분) 이상 지연’된 약이 1개 이상
+	 *   단, "오늘 00:30 이전"에는 오늘 기준 지연이 존재하지 않는 것으로 간주 (자정 경계).
+	 * - 칭찬 대상: 오늘 복용해야 할 약을 "모두 복용"한 경우
+	 *
+	 * 주의
+	 * - ‘잔소리’는 "오늘 내 잔소리 이후에 발생한 지연만" 카운트해 중복 잔소리를 줄임.
+	 * - ‘칭찬’은 오늘 내가 칭찬했다면 제외
+	 */
 	@Transactional(readOnly = true)
 	public FollowingMedicationStatusGroupResponse list(Long userId) {
-		final LocalDateTime now = LocalDateTime.now();
-		final LocalDate today = now.toLocalDate();
-		final LocalDateTime delayBoundaryTime = now.minusMinutes(OVERDUE_GRACE_MINUTES);
+		LocalDateTime now = LocalDateTime.now();
+		LocalDate today = now.toLocalDate();
+		LocalDateTime delayBoundary = overduePolicy.delayBoundary(now);
 
 		List<Friend> friends = friendRepository.findMyFollowings(userId);
 		List<Long> followingIds = extractFollowingIds(friends);
-		if (followingIds.isEmpty()) {
-			return FollowingMedicationStatusGroupResponse.of(List.of());
-		}
-
+		if (followingIds.isEmpty()) return FollowingMedicationStatusGroupResponse.of(List.of());
 		// [자정 경계] 00:30 이전엔 오늘 기준 ‘30분 이상 지연’이 없음
-		if (delayBoundaryTime.toLocalDate().isBefore(today)) {
-			Set<Long> praiseCandidates = fetchPraiseCandidates(userId, today);
-			List<FollowingMedicationStatusResponse> statusList =
-				medicationStatusMapper.toMedicationStatusResponses(friends, Map.of(), praiseCandidates);
-			medicationStatusMapper.sortByNotTakenCount(statusList);
-			return FollowingMedicationStatusGroupResponse.of(statusList);
+		if (overduePolicy.isBeforeDailyGraceWindow(now)) {
+			var praise = new HashSet<>(friendRepository.findPraiseCandidatesToday(userId, today));
+			return assemble(friends, Map.of(), praise);
 		}
 
-		Map<Long, LocalDateTime> lastNagTime = fetchLastNagByFollowing(userId, followingIds, today);
-		List<RemainingMedicationDto> missedToday = fetchTodayMissedMedications(followingIds, delayBoundaryTime);
-		Map<Long, Integer> notTakenMap = countMissedAfterLastNag(missedToday, lastNagTime, today);
-		Set<Long> praiseCandidates = fetchPraiseCandidates(userId, today);
-
-		List<FollowingMedicationStatusResponse> statusList =
-			medicationStatusMapper.toMedicationStatusResponses(friends, notTakenMap, praiseCandidates);
-		medicationStatusMapper.sortByNotTakenCount(statusList);
-		return FollowingMedicationStatusGroupResponse.of(statusList);
+		// 잔소리 대상 조회
+		List<MedicationSchedule> missedToday =
+			medicationScheduleFinder.fetchTodayMissedMedications(followingIds, delayBoundary);
+		Map<Long, LocalDateTime> lastNag =
+			feedbackRepository.findTodayLastNagTimeToFollowings(userId, followingIds, today);
+		Map<Long, Integer> notTaken =
+			missedMedicationCalculator.countMissedAfterLastNag(missedToday, lastNag, today, overduePolicy);
+		// 칭찬 대상 조회
+		var praise = new HashSet<>(friendRepository.findPraiseCandidatesToday(userId, today));
+		return assemble(friends, notTaken, praise);
 	}
 
+	/**
+	 * [잔소리 대상 팔로잉의 안먹은 약 상세 조회]
+	 *
+	 * - 팔로잉의 오늘 복용해야 할 약 중 ‘30분 이상 지연’된 약
+	 * - "내가 오늘 마지막으로 잔소리한 시각" 이후의 지연만 보여줌
+	 */
 	@Transactional(readOnly = true)
 	public FollowingMedicationStatusDetailResponse detail(Long userId, Long followingId) {
-		final LocalDateTime now = LocalDateTime.now();
-		final LocalDate today = now.toLocalDate();
-		final LocalDateTime delayBoundaryTime = now.minusMinutes(OVERDUE_GRACE_MINUTES);
+		LocalDateTime now = LocalDateTime.now();
+		LocalDate today = now.toLocalDate();
 		Friend friend = findFriend(userId, followingId);
 
 		// [자정 경계] 00:30 이전엔 오늘 기준 ‘30분 이상 지연’이 없음
-		if (delayBoundaryTime.toLocalDate().isBefore(today)) {
-			return FollowingMedicationStatusDetailResponse.of(
-				friend.getFollowing().getNickName(),
-				friend.getRelationName(),
-				List.of()
-			);
+		if (overduePolicy.isBeforeDailyGraceWindow(now)) {
+			return FollowingMedicationStatusDetailResponse.of(friend.getFollowing().getNickName(), friend.getRelationName(), List.of());
 		}
-		LocalDateTime lastNagTime = getTodayLastNagTimeToFollowing(userId, followingId, today);
-		LocalDateTime nagBoundary = (lastNagTime != null) ? lastNagTime : today.atStartOfDay();
-		List<MedicationScheduleDto> schedules = medicationScheduleRepository
-			.findRemainingMedicationDetail(followingId, delayBoundaryTime)
-			.stream()
-			.filter(ms -> {
-				LocalTime graceEndTime =
-					ms.intakeTime().plusMinutes(OVERDUE_GRACE_MINUTES);
-				return graceEndTime.isAfter(nagBoundary.toLocalTime());
-			})
-			.toList();
+		LocalDateTime delayBoundary = overduePolicy.delayBoundary(now);
+		LocalDateTime lastNag = feedbackRepository.findTodayLastNagTimeToFollowing(userId, followingId, today);
+		LocalDateTime nagBoundary = (lastNag != null) ? lastNag : today.atStartOfDay();
 
-		return FollowingMedicationStatusDetailResponse.of(
-			friend.getFollowing().getNickName(),
-			friend.getRelationName(),
-			schedules
-		);
+
+		List<MedicationScheduleDto> raw =
+			medicationScheduleFinder.findRemainingMedicationDetail(followingId, delayBoundary);
+		List<MedicationScheduleDto> filtered =
+			missedMedicationCalculator.filterOverdueAfterNag(raw, nagBoundary, overduePolicy);
+
+		return FollowingMedicationStatusDetailResponse.of(friend.getFollowing().getNickName(), friend.getRelationName(), filtered);
 	}
 
-	private LocalDateTime getTodayLastNagTimeToFollowing(Long userId, Long followingId, LocalDate today) {
-		return feedbackRepository.findTodayLastNagTimeToFollowing(userId, followingId, today);
-	}
-
-	private Set<Long> fetchPraiseCandidates(Long userId, LocalDate today) {
-		return new HashSet<>(friendRepository.findPraiseCandidatesToday(userId, today));
-	}
-
-	private List<RemainingMedicationDto> fetchTodayMissedMedications(List<Long> followingIds, LocalDateTime delayBoundaryTime) {
-		return medicationScheduleRepository.findTodayRemainingMedications(followingIds, delayBoundaryTime);
-	}
-
-	private Map<Long, LocalDateTime> fetchLastNagByFollowing(Long userId, List<Long> followingIds, LocalDate today) {
-		return feedbackRepository.findTodayLastNagTimeToFollowings(userId, followingIds, today);
+	private FollowingMedicationStatusGroupResponse assemble(
+		List<Friend> friends, Map<Long,Integer> notTaken, Set<Long> praise) {
+		List<FollowingMedicationStatusResponse> list =
+			medicationStatusMapper.toMedicationStatusResponses(friends, notTaken, praise);
+		medicationStatusMapper.sortByNotTakenCount(list);
+		return FollowingMedicationStatusGroupResponse.of(list);
 	}
 
 	private static List<Long> extractFollowingIds(List<Friend> friends) {
@@ -123,28 +120,8 @@ public class FollowingMedicationStatusService {
 			.toList();
 	}
 
-	private Map<Long, Integer> countMissedAfterLastNag(
-		List<RemainingMedicationDto> notTakenMedications,
-		Map<Long, LocalDateTime> lastNagDateTime, LocalDate today
-	) {
-
-		Map<Long, Integer> map = new HashMap<>();
-		LocalDateTime startOfDay = today.atStartOfDay();
-
-		for (RemainingMedicationDto ms : notTakenMedications) {
-			Long userId = ms.userId();
-			LocalDateTime scheduledDateTime = LocalDateTime.of(ms.scheduledDate(), ms.scheduledTime());
-			LocalDateTime cutoff = lastNagDateTime.getOrDefault(userId, startOfDay);
-			if (scheduledDateTime.plusMinutes(OVERDUE_GRACE_MINUTES).isAfter(cutoff)) {
-				map.merge(userId, 1, Integer::sum);
-			}
-		}
-		return map;
-	}
-
 	public Friend findFriend(Long userId, Long followingId) {
 		return friendRepository.findByUserIdAndFollowingId(userId, followingId)
 			.orElseThrow(()-> new FriendException(ErrorCode.NOT_FRIEND));
 	}
-
 }

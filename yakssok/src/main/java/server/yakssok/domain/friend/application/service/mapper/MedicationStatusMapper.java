@@ -1,4 +1,4 @@
-package server.yakssok.domain.friend.application.service;
+package server.yakssok.domain.friend.application.service.mapper;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -12,7 +12,7 @@ import server.yakssok.domain.friend.domain.entity.Friend;
 import server.yakssok.domain.friend.presentation.dto.response.FollowingMedicationStatusResponse;
 @Component
 public class MedicationStatusMapper {
-	List<FollowingMedicationStatusResponse> toMedicationStatusResponses(
+	public List<FollowingMedicationStatusResponse> toMedicationStatusResponses(
 		List<Friend> friends,
 		Map<Long, Integer> notTakenMap,
 		Set<Long> praisedToday
@@ -31,7 +31,7 @@ public class MedicationStatusMapper {
 		return result;
 	}
 
-	void sortByNotTakenCount(List<FollowingMedicationStatusResponse> statusList) {
+	public void sortByNotTakenCount(List<FollowingMedicationStatusResponse> statusList) {
 		statusList.sort(Comparator.comparingInt(FollowingMedicationStatusResponse::notTakenCount).reversed());
 	}
 
