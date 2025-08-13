@@ -1,4 +1,4 @@
-package server.yakssok.domain.feeback.domain.entity;
+package server.yakssok.domain.feedback.domain.entity;
 
 import static server.yakssok.global.exception.ErrorCode.*;
 

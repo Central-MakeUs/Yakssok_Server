@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import server.yakssok.domain.friend.applcation.service.RelationshipService;
+import server.yakssok.domain.friend.application.service.RelationshipService;
 import server.yakssok.domain.medication.application.service.MedicationScheduleGenerator;
 import server.yakssok.domain.medication.domain.entity.Medication;
 import server.yakssok.domain.medication_schedule.domain.entity.MedicationSchedule;

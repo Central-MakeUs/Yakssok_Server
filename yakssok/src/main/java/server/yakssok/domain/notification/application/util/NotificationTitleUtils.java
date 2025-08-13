@@ -2,7 +2,7 @@ package server.yakssok.domain.notification.application.util;
 
 import static server.yakssok.domain.notification.application.constants.NotificationTitleConstants.*;
 
-import server.yakssok.domain.feeback.domain.entity.FeedbackType;
+import server.yakssok.domain.feedback.domain.entity.FeedbackType;
 
 public class NotificationTitleUtils {
 

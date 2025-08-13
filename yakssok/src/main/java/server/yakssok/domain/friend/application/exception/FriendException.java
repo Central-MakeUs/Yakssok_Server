@@ -1,4 +1,4 @@
-package server.yakssok.domain.friend.applcation.exception;
+package server.yakssok.domain.friend.application.exception;
 
 import server.yakssok.global.exception.ErrorCode;
 import server.yakssok.global.exception.GlobalException;

@@ -1,4 +1,4 @@
-package server.yakssok.domain.feeback.presentation.controller;
+package server.yakssok.domain.feedback.presentation.controller;
 
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -11,8 +11,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import server.yakssok.domain.feeback.application.service.FeedbackService;
-import server.yakssok.domain.feeback.presentation.dto.request.CreateFeedbackRequest;
+import server.yakssok.domain.feedback.application.service.FeedbackService;
+import server.yakssok.domain.feedback.presentation.dto.request.CreateFeedbackRequest;
 import server.yakssok.global.common.reponse.ApiResponse;
 import server.yakssok.global.common.security.YakssokUserDetails;
 import server.yakssok.global.common.swagger.ApiErrorResponse;

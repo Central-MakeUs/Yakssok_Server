@@ -1,11 +1,11 @@
-package server.yakssok.domain.friend.applcation.service;
+package server.yakssok.domain.friend.application.service;
 
 import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import server.yakssok.domain.friend.applcation.exception.FriendException;
+import server.yakssok.domain.friend.application.exception.FriendException;
 import server.yakssok.domain.friend.domain.repository.FriendRepository;
 import server.yakssok.global.exception.ErrorCode;
 

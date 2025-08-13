@@ -1,6 +1,7 @@
 package server.yakssok.domain.medication_schedule.application.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -11,6 +12,7 @@ import server.yakssok.domain.medication.application.service.MedicationScheduleGe
 import server.yakssok.domain.medication_schedule.application.exception.MedicationScheduleException;
 import server.yakssok.domain.medication_schedule.domain.entity.MedicationSchedule;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleRepository;
+import server.yakssok.domain.medication_schedule.domain.repository.dto.MedicationScheduleDto;
 import server.yakssok.domain.medication_schedule.presentation.dto.response.MedicationScheduleResponse;
 import server.yakssok.global.exception.ErrorCode;
 
@@ -91,6 +93,14 @@ public class MedicationScheduleFinder {
 		return medicationScheduleGenerator.generateUserFutureScheduleDtos(userId, start, end).stream()
 			.map(MedicationScheduleResponse::from)
 			.toList();
+	}
+
+	public List<MedicationSchedule> fetchTodayMissedMedications(List<Long> followingIds, LocalDateTime delayBoundaryTime) {
+		return medicationScheduleRepository.findTodayRemainingMedications(followingIds, delayBoundaryTime);
+	}
+
+	public List<MedicationScheduleDto> findRemainingMedicationDetail(Long followingId, LocalDateTime delayBoundaryTime) {
+		return medicationScheduleRepository.findRemainingMedicationDetail(followingId, delayBoundaryTime);
 	}
 
 }

@@ -2,11 +2,16 @@ package server.yakssok.global.common.jwt;
 
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -25,9 +30,23 @@ import server.yakssok.global.exception.ErrorCode;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final JwtAuthService jwtAuthService;
+	private final List<RequestMatcher> permitMatchers;
 	private static final String ENCODING_TYPE = "UTF-8";
 	private static final String AUTHORIZATION_HEADER = "Authorization";
 	private static final String BEARER_PREFIX = "Bearer ";
+
+	public JwtAuthenticationFilter(JwtAuthService jwtAuthService, String... permitUrls) {
+		this.jwtAuthService = jwtAuthService;
+		this.permitMatchers = Arrays.stream(permitUrls)
+			.map(p -> (RequestMatcher) new AntPathRequestMatcher(p))
+			.collect(Collectors.toList());
+	}
+
+	@Override
+	protected boolean shouldNotFilter(HttpServletRequest request) {
+		return permitMatchers.stream().anyMatch(m -> m.matches(request))
+			|| "OPTIONS".equalsIgnoreCase(request.getMethod());
+	}
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,

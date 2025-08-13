@@ -16,6 +16,7 @@ public record FollowingMedicationStatusDetailResponse(
 	@Schema(description = "미복용 약 정보 리스트")
 	List<MedicationInfo> notTakenMedications
 ) {
+
 	public record MedicationInfo(
 		@Schema(description = "약 종류", example = "CHRONIC")
 		String type,

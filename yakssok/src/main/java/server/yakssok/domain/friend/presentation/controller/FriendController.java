@@ -13,7 +13,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import server.yakssok.domain.friend.applcation.service.FriendService;
+import server.yakssok.domain.friend.application.service.FollowingMedicationStatusService;
+import server.yakssok.domain.friend.application.service.FriendService;
 import server.yakssok.domain.friend.presentation.dto.request.FollowFriendRequest;
 import server.yakssok.domain.friend.presentation.dto.response.FollowerInfoGroupResponse;
 import server.yakssok.domain.friend.presentation.dto.response.FollowingInfoGroupResponse;
@@ -32,6 +33,7 @@ import server.yakssok.global.exception.ErrorCode;
 public class FriendController {
 
 	private final FriendService friendService;
+	private final FollowingMedicationStatusService followingMedicationStatusService;
 
 
 	@Operation(summary = "지인 팔로우")
@@ -81,7 +83,7 @@ public class FriendController {
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
 		Long userId = userDetails.getUserId();
-		return ApiResponse.success(friendService.getFollowingRemainingMedication(userId));
+		return ApiResponse.success(followingMedicationStatusService.getFollowingMedicationStatusGroup(userId));
 	}
 
 	@Operation(summary = "오늘 지인 안먹은 약 상세 조회")
@@ -91,6 +93,6 @@ public class FriendController {
 		@PathVariable Long followingId
 	) {
 		Long userId = userDetails.getUserId();
-		return ApiResponse.success(friendService.getFollowingRemainingMedicationDetail(userId, followingId));
+		return ApiResponse.success(followingMedicationStatusService.getFollowingMedicationStatusDetail(userId, followingId));
 	}
 }

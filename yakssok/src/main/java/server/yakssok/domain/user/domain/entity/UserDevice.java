@@ -35,7 +35,7 @@ public class UserDevice {
 	@JoinColumn(name = "user_id")
 	private User user;
 
-	@Column(length = 255, nullable = false)
+	@Column(length = 255, unique = true)
 	private String deviceId;
 
 	private UserDevice(User user, String deviceId, String fcmToken, boolean alertOn) {
