@@ -32,14 +32,19 @@ public class SecurityConfig {
 	};
 
 	@Bean
+	public JwtAuthenticationFilter jwtAuthenticationFilter() {
+		return new JwtAuthenticationFilter(jwtAuthService, PERMIT_URLS);
+	}
+
+	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 			.csrf(csrf -> csrf.disable())
 			.sessionManagement(session -> session
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용 X
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
 			.exceptionHandling(exception -> exception
-				.authenticationEntryPoint(jwtAuthenticationEntryPoint) // 여기 추가
+				.authenticationEntryPoint(jwtAuthenticationEntryPoint)
 			)
 
 			.authorizeHttpRequests(auth -> auth
@@ -47,8 +52,7 @@ public class SecurityConfig {
 				.anyRequest().authenticated()
 			)
 
-			.addFilterBefore(new JwtAuthenticationFilter(jwtAuthService),
-				UsernamePasswordAuthenticationFilter.class);
+			.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}

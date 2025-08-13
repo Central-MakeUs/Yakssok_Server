@@ -83,7 +83,7 @@ public class FriendController {
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
 		Long userId = userDetails.getUserId();
-		return ApiResponse.success(followingMedicationStatusService.list(userId));
+		return ApiResponse.success(followingMedicationStatusService.getFollowingMedicationStatusGroup(userId));
 	}
 
 	@Operation(summary = "오늘 지인 안먹은 약 상세 조회")
@@ -93,6 +93,6 @@ public class FriendController {
 		@PathVariable Long followingId
 	) {
 		Long userId = userDetails.getUserId();
-		return ApiResponse.success(followingMedicationStatusService.detail(userId, followingId));
+		return ApiResponse.success(followingMedicationStatusService.getFollowingMedicationStatusDetail(userId, followingId));
 	}
 }

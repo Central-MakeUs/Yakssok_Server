@@ -36,18 +36,22 @@ public class MedicationAlarmJob {
 			medicationScheduleRepository.findNotTakenSchedules(delayBoundary);
 
 		for (MedicationScheduleAlarmDto schedule : notTakenSchedules) {
-			pushService.sendData(
-				NotificationDTO.fromNotTakenMedicationSchedule(schedule)
-			);
-
+			pushService.sendData(NotificationDTO.fromNotTakenMedicationSchedule(schedule));
+			if (overduePolicy.isBeforeDailyGraceWindow(now)) {
+				continue;
+			}
 			List<Friend> friends = friendRepository.findMyFollowers(schedule.userId());
 			String followingNickName = schedule.userNickName();
-			for (Friend friend : friends) {
-				User receiver = friend.getUser();
-				NotificationDTO friendNotificationDTO =
-					NotificationDTO.fromMedicationScheduleForFriend(schedule, receiver.getId(), followingNickName);
-				pushService.sendNotification(friendNotificationDTO);
-			}
+			sendMedicationReportAlarms(schedule, friends, followingNickName);
+		}
+	}
+
+	private void sendMedicationReportAlarms(MedicationScheduleAlarmDto schedule, List<Friend> friends, String followingNickName) {
+		for (Friend friend : friends) {
+			User receiver = friend.getUser();
+			NotificationDTO friendNotificationDTO =
+				NotificationDTO.fromMedicationScheduleForFriend(schedule, receiver.getId(), followingNickName);
+			pushService.sendNotification(friendNotificationDTO);
 		}
 	}
 
