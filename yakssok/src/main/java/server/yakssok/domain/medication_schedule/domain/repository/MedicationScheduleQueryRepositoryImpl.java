@@ -81,7 +81,7 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 	@Override
 	public List<MedicationScheduleDto> findRemainingMedicationDetail(
 		Long userId,
-		LocalDateTime now
+		LocalDateTime boundaryTime
 	) {
 		return jpaQueryFactory
 			.select(SCHEDULE_DTO_PROJECTION)
@@ -89,8 +89,8 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 			.innerJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
 			.where(
 				medication.userId.eq(userId),
-				medicationSchedule.scheduledDate.eq(now.toLocalDate()),
-				medicationSchedule.scheduledTime.loe(now.toLocalTime()),
+				medicationSchedule.scheduledDate.eq(boundaryTime.toLocalDate()),
+				medicationSchedule.scheduledTime.loe(boundaryTime.toLocalTime()),
 				medicationSchedule.isTaken.isFalse()
 			)
 			.orderBy(

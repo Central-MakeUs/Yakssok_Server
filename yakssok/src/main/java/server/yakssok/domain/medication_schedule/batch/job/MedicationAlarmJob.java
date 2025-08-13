@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.friend.domain.entity.Friend;
 import server.yakssok.domain.friend.domain.repository.FriendRepository;
+import server.yakssok.domain.medication_schedule.domain.policy.OverduePolicy;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleAlarmDto;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleRepository;
 import server.yakssok.domain.notification.application.service.PushService;
@@ -23,16 +24,17 @@ public class MedicationAlarmJob {
 	private final PushService pushService;
 	private final MedicationScheduleRepository medicationScheduleRepository;
 	private final FriendRepository friendRepository;
-	private static final int NOT_TAKEN_MINUTES_LIMIT = 30;
 	private final RabbitTemplate rabbitTemplate;
 	private final MedicationQueueProperties medicationQueueProperties;
+	private final OverduePolicy overduePolicy;
 
 	@Transactional
 	public void sendNotTakenMedicationAlarms() {
 		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime notTakenLimitTime = now.minusMinutes(NOT_TAKEN_MINUTES_LIMIT);
-		List<MedicationScheduleAlarmDto> notTakenSchedules = medicationScheduleRepository
-			.findNotTakenSchedules(notTakenLimitTime);
+		LocalDateTime delayBoundary = overduePolicy.delayBoundary(now);
+		List<MedicationScheduleAlarmDto> notTakenSchedules =
+			medicationScheduleRepository.findNotTakenSchedules(delayBoundary);
+
 		for (MedicationScheduleAlarmDto schedule : notTakenSchedules) {
 			pushService.sendData(
 				NotificationDTO.fromNotTakenMedicationSchedule(schedule)
