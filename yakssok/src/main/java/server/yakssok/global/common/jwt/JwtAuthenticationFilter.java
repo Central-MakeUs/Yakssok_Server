@@ -4,8 +4,10 @@ package server.yakssok.global.common.jwt;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -45,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) {
 		return permitMatchers.stream().anyMatch(m -> m.matches(request))
-			|| "OPTIONS".equalsIgnoreCase(request.getMethod());
+			|| HttpMethod.OPTIONS.matches(request.getMethod());
 	}
 
 	@Override
@@ -53,23 +55,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		FilterChain filterChain) throws ServletException, IOException {
 		try {
 			String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-			if (bearerToken != null && !bearerToken.isBlank()) {
-				String token = resolveToken(bearerToken);
-				Authentication authentication = jwtAuthService.getAuthentication(token);
-				SecurityContextHolder.getContext().setAuthentication(authentication);
+			String token = resolveToken(bearerToken)
+				.orElseThrow(() -> new AuthException(ErrorCode.INVALID_JWT));
+			if (token.isBlank()) {
+				throw new AuthException(ErrorCode.INVALID_JWT);
 			}
+			Authentication authentication = jwtAuthService.getAuthentication(token);
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			filterChain.doFilter(request, response);
 		} catch (UserException | AuthException | AuthenticationException e) {
+			SecurityContextHolder.clearContext();
 			setErrorResponse(response, ErrorCode.INVALID_JWT);
-			return;
 		}
-		filterChain.doFilter(request, response);
 	}
 
-	private String resolveToken(String bearerToken) {
-		if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
-			return bearerToken.substring(BEARER_PREFIX.length());
-		}
-		return null;
+	private Optional<String> resolveToken(String bearerToken) {
+		final int prefixLen = BEARER_PREFIX.length();
+		return Optional.ofNullable(bearerToken)
+			.map(String::trim)
+			.filter(h -> h.regionMatches(true, 0, BEARER_PREFIX, 0, prefixLen))
+			.map(h -> h.substring(prefixLen).trim())
+			.filter(t -> !t.isEmpty());
 	}
 
 	private void setErrorResponse(HttpServletResponse response, ErrorCode errorCode) {
@@ -83,6 +89,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		}catch (IOException e){
 			e.printStackTrace();
 		}
-
 	}
 }
