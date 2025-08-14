@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -57,13 +58,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
 			String token = resolveToken(bearerToken)
 				.orElseThrow(() -> new AuthException(ErrorCode.INVALID_JWT));
-			if (token.isBlank()) {
-				throw new AuthException(ErrorCode.INVALID_JWT);
-			}
 			Authentication authentication = jwtAuthService.getAuthentication(token);
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 			filterChain.doFilter(request, response);
-		} catch (UserException | AuthException | AuthenticationException e) {
+		} catch (UserException | AuthException | AuthenticationException | IllegalArgumentException e) {
 			SecurityContextHolder.clearContext();
 			setErrorResponse(response, ErrorCode.INVALID_JWT);
 		}
@@ -72,10 +70,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private Optional<String> resolveToken(String bearerToken) {
 		final int prefixLen = BEARER_PREFIX.length();
 		return Optional.ofNullable(bearerToken)
-			.map(String::trim)
+			.map(String::strip)
 			.filter(h -> h.regionMatches(true, 0, BEARER_PREFIX, 0, prefixLen))
-			.map(h -> h.substring(prefixLen).trim())
-			.filter(t -> !t.isEmpty());
+			.map(h -> h.substring(prefixLen).strip())
+			.filter(StringUtils::hasText);
 	}
 
 	private void setErrorResponse(HttpServletResponse response, ErrorCode errorCode) {

@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import server.yakssok.domain.auth.presentation.controller.LogoutRequest;
 import server.yakssok.domain.auth.presentation.dto.request.OAuthLoginRequest;
 import server.yakssok.domain.user.domain.entity.OAuthType;
+import server.yakssok.domain.user.domain.repository.UserDeviceRepository;
 import server.yakssok.global.exception.ErrorCode;
 import server.yakssok.global.infra.oauth.OAuthStrategy;
 import server.yakssok.global.infra.oauth.OAuthStrategyFactory;
@@ -27,6 +29,7 @@ public class AuthService {
 	private final JwtTokenUtils jwtTokenUtils;
 	private final RefreshTokenService refreshTokenService;
 	private final OAuthStrategyFactory strategyFactory;
+	private final UserDeviceRepository userDeviceRepository;
 
 	@Transactional
 	public LoginResponse login(OAuthLoginRequest oAuthLoginRequest) {
@@ -55,12 +58,19 @@ public class AuthService {
 		return new ReissueResponse(accessToken);
 	}
 
+
 	@Transactional
-	public void logOut(Long userId) {
+	public void logOut(Long userId, LogoutRequest logoutRequest) {
 		refreshTokenService.findRefreshToken(userId)
 			.orElseThrow(() -> {throw new AuthException(ErrorCode.INVALID_JWT);
 		});
 		refreshTokenService.deleteRefreshToken(userId);
+
+		// TODO(LEGACY): deviceId 없는 로그아웃 허용(하위호환). 클라이언트 콛, 수정 이후 제거하고 400 응답으로 변경.
+		if(logoutRequest == null || logoutRequest.deviceId() == null) {
+			return;
+		}
+		userDeviceRepository.deleteByUserIdAndDeviceId(userId, logoutRequest.deviceId());
 	}
 
 	@Transactional
