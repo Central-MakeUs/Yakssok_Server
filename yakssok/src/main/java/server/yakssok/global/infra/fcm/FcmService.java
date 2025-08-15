@@ -48,7 +48,14 @@ public class FcmService {
 			.putData("title", title)
 			.putData("body", body)
 			.putData("soundType", soundType)
+			.setApnsConfig(buildApnsConfig())
 			.build();
 		FirebaseMessaging.getInstance().send(message);
+	}
+
+	private ApnsConfig buildApnsConfig() {
+		return ApnsConfig.builder()
+			.putHeader("content-available", "true")
+			.build();
 	}
 }
