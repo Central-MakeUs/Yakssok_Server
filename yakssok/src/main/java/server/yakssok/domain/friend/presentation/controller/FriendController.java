@@ -77,7 +77,10 @@ public class FriendController {
 		return ApiResponse.success(friends);
 	}
 
-	@Operation(summary = "오늘 칭찬/잔소리 대상 지인 목록 조회")
+	@Operation(
+		summary = "오늘 칭찬/잔소리 대상 지인 목록 조회",
+		description = "안먹은 약 개수가 많은 순서대로 정렬됩니다. 잔소리/칭찬을 보내면 해당 약은 제외됩니다."
+	)
 	@GetMapping("/medication-status")
 	public ApiResponse<FollowingMedicationStatusGroupResponse> getFollowingRemainingMedication(
 		@AuthenticationPrincipal YakssokUserDetails userDetails
