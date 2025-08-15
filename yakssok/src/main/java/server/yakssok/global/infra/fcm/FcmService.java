@@ -39,7 +39,7 @@ public class FcmService {
 				.build())
 			.addAllTokens(tokens)
 			.build();
-		return FirebaseMessaging.getInstance().sendMulticast(message);
+		return FirebaseMessaging.getInstance().sendEachForMulticast(message);
 	}
 
 	public void sendData(String token, String title, String body, String soundType) throws FirebaseMessagingException {
