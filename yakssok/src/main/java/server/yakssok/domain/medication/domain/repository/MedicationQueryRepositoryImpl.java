@@ -22,6 +22,22 @@ public class MedicationQueryRepositoryImpl implements MedicationQueryRepository{
 	private final JPAQueryFactory queryFactory;
 
 	@Override
+	public int countUserTakingMedication(Long userId) {
+		LocalDateTime now = LocalDateTime.now();
+		Long cnt = queryFactory
+			.select(medication.id.count())
+			.from(medication)
+			.where(
+				medication.userId.eq(userId),
+				medication.startDateTime.loe(now),
+				medication.endDateTime.isNull()
+					.or(medication.endDateTime.goe(now))
+			)
+			.fetchOne();
+		return Math.toIntExact(cnt == null ? 0 : cnt);
+	}
+
+	@Override
 	public List<Medication> findAllUserMedications(Long userId) {
 		return queryFactory
 			.selectFrom(medication)
