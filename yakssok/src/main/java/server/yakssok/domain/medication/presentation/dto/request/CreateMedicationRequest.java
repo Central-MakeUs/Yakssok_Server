@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import server.yakssok.domain.medication.domain.entity.Medication;
@@ -26,6 +27,7 @@ public record CreateMedicationRequest(
 
 	@Schema(description = "복용 시작일 (yyyy-MM-dd)", example = "2025-07-06")
 	@NotNull
+	@FutureOrPresent(message = "복용 시작일은 오늘 또는 이후여야 합니다.")
 	LocalDate startDate,
 
 	@Schema(description = "복용 종료일 (yyyy-MM-dd)", example = "2025-07-13")

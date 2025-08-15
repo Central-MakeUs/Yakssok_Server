@@ -30,7 +30,7 @@ public class UserService {
 	@Transactional
 	public FindMyInfoResponse findMyInfo(Long userId) {
 		User user = getActiveUser(userId);
-		int medicationCount = medicationRepository.countByUserId(userId);
+		int medicationCount = medicationRepository.countUserTakingMedication(userId);
 		int followingCount = friendRepository.countByUserId(userId);
 		return FindMyInfoResponse.of(user, medicationCount, followingCount);
 	}
