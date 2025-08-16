@@ -19,7 +19,10 @@ public class TestFcmController {
 
 	private final PushService pushService;
 
-	@Operation(summary = "fcm 테스트용 알림 푸시 (data only)")
+	@Operation(
+		summary = "fcm 테스트용 알림 푸시 (data only)",
+		description = "테스트용으로 FCM 알림을 전송합니다. soundType은 FEEL_GOOD, PILL_SHAKE, SCOLD, CALL, VIBRATION 중 하나만 선택할 수 있습니다."
+	)
 	@PostMapping
 	public ApiResponse testSendData(
 		@RequestBody TestSendDataRequest request
