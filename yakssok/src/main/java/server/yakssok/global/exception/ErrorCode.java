@@ -41,7 +41,7 @@ public enum ErrorCode implements ResponseCode{
     INVALID_FILE_EXTENSION(HttpStatus.BAD_REQUEST, 9103, "지원하지 않는 파일 확장자입니다."),
 
     // fcm
-
+    INVALID_FCM_TOKEN(HttpStatus.BAD_REQUEST, 9200, "유효하지 않은 FCM 토큰입니다. 테스트 알림 보내기에 실패했습니다."),
     ;
 
 

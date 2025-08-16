@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.google.firebase.messaging.AndroidConfig;
 import com.google.firebase.messaging.ApnsConfig;
 import com.google.firebase.messaging.BatchResponse;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -48,14 +49,27 @@ public class FcmService {
 			.putData("title", title)
 			.putData("body", body)
 			.putData("soundType", soundType)
-			.setApnsConfig(buildApnsConfig())
+			.setAndroidConfig(getAndroidConfig())
+			.setApnsConfig(getApnsConfig())
 			.build();
 		FirebaseMessaging.getInstance().send(message);
 	}
 
-	private ApnsConfig buildApnsConfig() {
+	private AndroidConfig getAndroidConfig() {
+		return AndroidConfig.builder()
+			.setPriority(AndroidConfig.Priority.HIGH)
+			.build();
+	}
+
+	private ApnsConfig getApnsConfig() {
 		return ApnsConfig.builder()
-			.putHeader("content-available", "true")
+			.putHeader("apns-push-type", "background")
+			.putHeader("apns-priority", "5")
+			.setAps(
+				com.google.firebase.messaging.Aps.builder()
+					.setContentAvailable(true)
+					.build()
+			)
 			.build();
 	}
 }
