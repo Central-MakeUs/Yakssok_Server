@@ -10,9 +10,12 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import server.yakssok.domain.notification.presentation.controller.TestSendDataRequest;
 import server.yakssok.domain.notification.presentation.dto.NotificationDTO;
 import server.yakssok.domain.user.domain.entity.UserDevice;
 import server.yakssok.domain.user.domain.repository.UserDeviceRepository;
+import server.yakssok.global.exception.ErrorCode;
+import server.yakssok.global.exception.GlobalException;
 import server.yakssok.global.infra.fcm.FcmService;
 
 @Service
@@ -118,5 +121,18 @@ public class PushService {
 	private boolean isInvalidTokenError(FirebaseMessagingException e) {
 		String errorCode = e.getMessagingErrorCode() != null ? e.getMessagingErrorCode().name() : "";
 		return "UNREGISTERED".equals(errorCode) || "INVALID_ARGUMENT".equals(errorCode);
+	}
+
+	@Transactional
+	public void sendSendData(TestSendDataRequest request) {
+		try {
+			String fcmToken = request.fcmToken();
+			String title = request.title();
+			String body = request.body();
+			String soundType = request.soundType();
+			fcmService.sendData(fcmToken, title, body, soundType);
+		} catch (FirebaseMessagingException e) {
+			throw new GlobalException(ErrorCode.INVALID_FCM_TOKEN);
+		}
 	}
 }
