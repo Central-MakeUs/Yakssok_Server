@@ -3,6 +3,7 @@ package server.yakssok.domain.medication_schedule.application.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import org.springframework.stereotype.Component;
@@ -99,8 +100,7 @@ public class MedicationScheduleFinder {
 		return medicationScheduleRepository.findTodayRemainingMedications(followingIds, delayBoundaryTime);
 	}
 
-	public List<MedicationScheduleDto> findRemainingMedicationDetail(Long followingId, LocalDateTime delayBoundaryTime) {
-		return medicationScheduleRepository.findRemainingMedicationDetail(followingId, delayBoundaryTime);
+	public List<MedicationSchedule> findTodayAllTakenSchedules(List<Long> followingIds, LocalDate today) {
+		return medicationScheduleRepository.findTodayAllTakenSchedules(followingIds, today);
 	}
-
 }

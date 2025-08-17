@@ -18,7 +18,6 @@ import server.yakssok.domain.friend.application.service.FriendService;
 import server.yakssok.domain.friend.presentation.dto.request.FollowFriendRequest;
 import server.yakssok.domain.friend.presentation.dto.response.FollowerInfoGroupResponse;
 import server.yakssok.domain.friend.presentation.dto.response.FollowingInfoGroupResponse;
-import server.yakssok.domain.friend.presentation.dto.response.FollowingMedicationStatusDetailResponse;
 import server.yakssok.domain.friend.presentation.dto.response.FollowingMedicationStatusGroupResponse;
 import server.yakssok.global.common.reponse.ApiResponse;
 import server.yakssok.global.common.security.YakssokUserDetails;
@@ -78,7 +77,7 @@ public class FriendController {
 	}
 
 	@Operation(
-		summary = "오늘 칭찬/잔소리 대상 지인 목록 조회",
+		summary = "오늘 칭찬/잔소리 대상 지인 조회",
 		description = "안먹은 약 개수가 많은 순서대로 정렬됩니다. 잔소리/칭찬을 보내면 해당 약은 제외됩니다."
 	)
 	@GetMapping("/medication-status")
@@ -87,15 +86,5 @@ public class FriendController {
 	) {
 		Long userId = userDetails.getUserId();
 		return ApiResponse.success(followingMedicationStatusService.getFollowingMedicationStatusGroup(userId));
-	}
-
-	@Operation(summary = "오늘 지인 안먹은 약 상세 조회")
-	@GetMapping("/{followingId}/medication-status")
-	public ApiResponse<FollowingMedicationStatusDetailResponse> getFollowingRemainingMedicationDetail(
-		@AuthenticationPrincipal YakssokUserDetails userDetails,
-		@PathVariable Long followingId
-	) {
-		Long userId = userDetails.getUserId();
-		return ApiResponse.success(followingMedicationStatusService.getFollowingMedicationStatusDetail(userId, followingId));
 	}
 }
