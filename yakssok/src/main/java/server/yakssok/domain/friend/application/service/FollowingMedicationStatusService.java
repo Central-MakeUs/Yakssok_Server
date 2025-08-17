@@ -62,7 +62,7 @@ public class FollowingMedicationStatusService {
 		if (followingIds.isEmpty()) return FollowingMedicationStatusGroupResponse.of(List.of());
 
 		if (isBeforeDailyGraceWindow(now)) {
-			Map<Long, List<MedicationScheduleDto>> praise = findPraiseFollowing(followingIds, today);
+			Map<Long, List<MedicationSchedule>> praise = findPraiseFollowing(followingIds, today);
 			return buildGroupResponse(friends, Map.of(), praise);
 		}
 
