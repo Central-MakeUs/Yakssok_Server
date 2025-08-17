@@ -36,6 +36,7 @@ public class ImageServiceImpl implements ImageService {
 		return u.contains("kakaocdn.net") || u.contains("kakaocdn.com");
 	}
 
+
 	@Override
 	@Transactional
 	public UploadImageResponse update(MultipartFile file, String type, String oldImageUrl) {
