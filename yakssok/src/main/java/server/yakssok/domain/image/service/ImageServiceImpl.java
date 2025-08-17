@@ -26,9 +26,15 @@ public class ImageServiceImpl implements ImageService {
 	@Override
 	@Transactional
 	public void delete(String imageUrl) {
-		s3FileApi.delete(imageUrl);
+		if (!isKakaoUrl(imageUrl)) {
+			s3FileApi.delete(imageUrl);
+		}
 	}
 
+	private boolean isKakaoUrl(String url) {
+		String u = url.toLowerCase();
+		return u.contains("kakaocdn.net") || u.contains("kakaocdn.com");
+	}
 
 	@Override
 	@Transactional
