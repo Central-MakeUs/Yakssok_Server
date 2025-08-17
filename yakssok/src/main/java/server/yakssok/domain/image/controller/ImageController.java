@@ -33,7 +33,8 @@ public class ImageController {
         value = {
             @ApiErrorResponse(ErrorCode.FAILED_FILE_UPLOAD),
             @ApiErrorResponse(ErrorCode.UNSUPPORTED_FILE_TYPE),
-            @ApiErrorResponse(ErrorCode.INVALID_FILE_EXTENSION)
+            @ApiErrorResponse(ErrorCode.INVALID_FILE_EXTENSION),
+            @ApiErrorResponse(ErrorCode.FILE_SIZE_EXCEEDED)
         }
     )
     @PostMapping(consumes = "multipart/form-data")
@@ -56,7 +57,8 @@ public class ImageController {
         @ApiErrorResponse(ErrorCode.FAILED_FILE_DELETE),
         @ApiErrorResponse(ErrorCode.FAILED_FILE_UPLOAD),
         @ApiErrorResponse(ErrorCode.UNSUPPORTED_FILE_TYPE),
-        @ApiErrorResponse(ErrorCode.INVALID_FILE_EXTENSION)
+        @ApiErrorResponse(ErrorCode.INVALID_FILE_EXTENSION),
+        @ApiErrorResponse(ErrorCode.FILE_SIZE_EXCEEDED)
     })
     @PutMapping(consumes = "multipart/form-data")
     public ApiResponse<UploadImageResponse> updateImage(
