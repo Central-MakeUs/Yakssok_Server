@@ -20,18 +20,17 @@ public record FollowingMedicationStatusResponse(
 
 	@Schema(description = "피드백 타입", example = "NAG, PRAISE")
 	String feedbackType,
-
 	@Schema(description = "잔소리 대상의 안먹은 약 / 칭찬 대상의 먹은 약 개수", example = "1")
 	Integer medicationCount,
 
 	@Schema(description = "잔소리 대상의 안먹은 약 / 칭찬 대상의 먹은 약 상세 정보")
-	List<FollowingMedicationStatusDetailResponse> medicationDetailResponses
+	List<MedicationInfo> medicationDetails
 ) {
 	/* ===== 공통 생성기 ===== */
 	private static FollowingMedicationStatusResponse ofCommon(
 		Friend friend,
 		FeedbackType type,
-		List<FollowingMedicationStatusDetailResponse> details
+		List<MedicationInfo> details
 	) {
 		User following = friend.getFollowing();
 		return new FollowingMedicationStatusResponse(
@@ -46,31 +45,34 @@ public record FollowingMedicationStatusResponse(
 	}
 
 	/* ===== NAG (미복용) ===== */
-	/** 미복용: 상세 리스트 포함 (총 개수는 details의 notTakenCount 합) */
 	public static FollowingMedicationStatusResponse ofNag(
 		Friend friend,
 		List<MedicationScheduleDto> notTakenDtos
 	) {
-		var following = friend.getFollowing();
-		var detail = FollowingMedicationStatusDetailResponse.of(
-			following.getNickName(),
-			friend.getRelationName(),
-			notTakenDtos
-		);
-		return ofCommon(friend, FeedbackType.NAG, List.of(detail));
+		return ofCommon(friend, FeedbackType.NAG, toMedicationInfos(notTakenDtos));
 	}
 
-	/** 칭찬: 상세 포함(원한다면), 개수는 파라미터로 명시 */
+	/* ===== PRAISE (복용) ===== */
 	public static FollowingMedicationStatusResponse ofPraise(
 		Friend friend,
 		List<MedicationScheduleDto> takenDtos
 	) {
-		var following = friend.getFollowing();
-		var detail = FollowingMedicationStatusDetailResponse.of(
-			following.getNickName(),
-			friend.getRelationName(),
-			takenDtos
+		return ofCommon(friend, FeedbackType.PRAISE, toMedicationInfos(takenDtos));
+	}
+
+
+	private static List<MedicationInfo> toMedicationInfos(List<MedicationScheduleDto> dtos) {
+		if (dtos == null || dtos.isEmpty()) return List.of();
+		return dtos.stream()
+			.map(FollowingMedicationStatusResponse::toMedicationInfo)
+			.toList();
+	}
+
+	private static MedicationInfo toMedicationInfo(MedicationScheduleDto dto) {
+		return new MedicationInfo(
+			dto.medicationType().name(),
+			dto.medicationName(),
+			dto.intakeTime()
 		);
-		return ofCommon(friend, FeedbackType.PRAISE, List.of(detail));
 	}
 }

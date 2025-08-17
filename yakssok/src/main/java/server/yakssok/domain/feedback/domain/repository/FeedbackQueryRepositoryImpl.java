@@ -41,20 +41,4 @@ public class FeedbackQueryRepositoryImpl implements FeedbackQueryRepository{
 		}
 		return result;
 	}
-
-	@Override
-	public LocalDateTime findTodayLastNagTimeToFollowing(Long userId, Long followingId, LocalDate today) {
-		LocalDateTime start = today.atStartOfDay();
-		LocalDateTime end   = start.plusDays(1);
-		return queryFactory
-			.select(feedback.createdAt.max())
-			.from(feedback)
-			.where(
-				feedback.sender.id.eq(userId),
-				feedback.receiver.id.eq(followingId),
-				feedback.feedbackType.eq(FeedbackType.NAG),
-				feedback.createdAt.goe(start).and(feedback.createdAt.lt(end))
-			)
-			.fetchOne();
-	}
 }

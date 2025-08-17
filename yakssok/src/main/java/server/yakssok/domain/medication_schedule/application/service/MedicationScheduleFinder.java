@@ -96,11 +96,11 @@ public class MedicationScheduleFinder {
 			.toList();
 	}
 
-	public List<MedicationSchedule> fetchTodayMissedMedications(List<Long> followingIds, LocalDateTime delayBoundaryTime) {
+	public List<MedicationScheduleDto> fetchTodayMissedMedications(List<Long> followingIds, LocalDateTime delayBoundaryTime) {
 		return medicationScheduleRepository.findTodayRemainingMedications(followingIds, delayBoundaryTime);
 	}
 
-	public List<MedicationSchedule> findTodayAllTakenSchedules(List<Long> followingIds, LocalDate today) {
+	public List<MedicationScheduleDto> findTodayAllTakenSchedules(List<Long> followingIds, LocalDate today) {
 		return medicationScheduleRepository.findTodayAllTakenSchedules(followingIds, today);
 	}
 }

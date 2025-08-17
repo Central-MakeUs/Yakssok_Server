@@ -9,25 +9,28 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import server.yakssok.domain.medication_schedule.domain.entity.MedicationSchedule;
 import server.yakssok.domain.medication_schedule.domain.policy.OverduePolicy;
+import server.yakssok.domain.medication_schedule.domain.repository.dto.MedicationScheduleDto;
 
 @Service
 public class MissedMedicationCalculator {
 
-	public Map<Long, List<MedicationSchedule>> missedAfterLastNagSchedules(
-		List<MedicationSchedule> notTakenSchedules,
+	public Map<Long, List<MedicationScheduleDto>> missedAfterLastNagSchedules(
+		List<MedicationScheduleDto> notTakenSchedules,
 		Map<Long, LocalDateTime> lastNagByUser,
 		LocalDate today,
 		OverduePolicy policy
 	) {
-		Map<Long, List<MedicationSchedule>> map = new HashMap<>();
+		Map<Long, List<MedicationScheduleDto>> map = new HashMap<>();
 		LocalDateTime startOfDay = today.atStartOfDay();
 
-		for (MedicationSchedule ms : notTakenSchedules) {
-			Long userId = ms.getUserId();
+		for (MedicationScheduleDto ms : notTakenSchedules) {
+			Long userId = ms.userId();
 			LocalDateTime nagBoundary = lastNagByUser.getOrDefault(userId, startOfDay);
-			if (ms.isOverdueAfterNag(nagBoundary, policy)) {
+			LocalDateTime scheduleAt = LocalDateTime.of(ms.date(), ms.intakeTime());
+			LocalDateTime effectiveBoundary = policy.delayBoundary(nagBoundary);
+			boolean afterBoundary = scheduleAt.isAfter(effectiveBoundary);
+			if (afterBoundary) {
 				map.computeIfAbsent(userId, k -> new ArrayList<>()).add(ms);
 			}
 		}

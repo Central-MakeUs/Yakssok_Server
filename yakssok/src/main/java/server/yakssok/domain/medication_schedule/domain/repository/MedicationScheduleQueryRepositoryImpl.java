@@ -8,17 +8,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Map;
 
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.CaseBuilder;
-import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
-import server.yakssok.domain.medication_schedule.domain.entity.MedicationSchedule;
 import server.yakssok.domain.medication_schedule.domain.entity.QMedicationSchedule;
 import server.yakssok.domain.medication_schedule.domain.repository.dto.MedicationScheduleDto;
 
@@ -34,7 +30,8 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 			medication.medicationType,
 			medication.medicineName,
 			medicationSchedule.scheduledTime,
-			medicationSchedule.isTaken
+			medicationSchedule.isTaken,
+			medication.userId
 		);
 
 	@Override
@@ -129,33 +126,35 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 	}
 
 	@Override
-	public List<MedicationSchedule> findTodayRemainingMedications(
+	public List<MedicationScheduleDto> findTodayRemainingMedications(
 		List<Long> followingIds,
 		LocalDateTime delayBoundaryTime
 	) {
 		LocalTime localTime = delayBoundaryTime.toLocalTime();
 		LocalDate localDate = delayBoundaryTime.toLocalDate();
 		return jpaQueryFactory
-			.select(medicationSchedule)
+			.select(SCHEDULE_DTO_PROJECTION)
+			.from(medicationSchedule)
+			.innerJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
 			.from(medicationSchedule)
 			.where(
-				medicationSchedule.userId.in(followingIds),
+				medication.userId.in(followingIds),
 				medicationSchedule.scheduledDate.eq(localDate),
 				medicationSchedule.scheduledTime.loe(localTime),
 				medicationSchedule.isTaken.isFalse()
 			)
-			.orderBy(medicationSchedule.userId.asc(), medicationSchedule.scheduledTime.asc())
 			.fetch();
 	}
 
 	@Override
-	public List<MedicationSchedule> findTodayAllTakenSchedules(List<Long> followingIds, LocalDate today) {
-
+	public List<MedicationScheduleDto> findTodayAllTakenSchedules(List<Long> followingIds, LocalDate today) {
 		QMedicationSchedule msNotTaken = new QMedicationSchedule("ms_not_taken");
 		QMedicationSchedule msAnyToday = new QMedicationSchedule("ms_any_today");
 
 		return jpaQueryFactory
-			.selectFrom(medicationSchedule)
+			.select(SCHEDULE_DTO_PROJECTION)
+			.from(medicationSchedule)
+			.innerJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
 			.where(
 				medicationSchedule.userId.in(followingIds),
 				medicationSchedule.scheduledDate.eq(today),
