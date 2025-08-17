@@ -19,7 +19,7 @@ public record FollowingMedicationStatusResponse(
 	@Schema(description = "프로필 이미지 URL", example = "https://example.com/suzi.jpg")
 	String profileImageUrl,
 
-	@Schema(description = "피드백 타입", example = "NAG, PRAISE")
+	@Schema(description = "피드백 타입", example = "NAG", allowableValues = "NAG, PRAISE")
 	String feedbackType,
 	@Schema(description = "잔소리 대상의 안먹은 약 / 칭찬 대상의 먹은 약 개수", example = "1")
 	Integer medicationCount,
@@ -70,7 +70,6 @@ public record FollowingMedicationStatusResponse(
 	) {
 		return ofCommon(friend, FeedbackType.PRAISE, toMedicationInfos(takenDtos));
 	}
-
 
 	private static List<MedicationInfo> toMedicationInfos(List<MedicationScheduleDto> dtos) {
 		if (dtos == null || dtos.isEmpty()) return List.of();

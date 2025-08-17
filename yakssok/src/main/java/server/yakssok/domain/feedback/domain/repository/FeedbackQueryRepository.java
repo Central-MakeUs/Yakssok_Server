@@ -7,4 +7,5 @@ import java.util.Map;
 
 public interface FeedbackQueryRepository {
 	Map<Long, LocalDateTime> findTodayLastNagTimeToFollowings(Long userId, List<Long> followingIds, LocalDate today);
+	List<Long> findPraisedUserIdsOnDate(Long userId, List<Long> followingIds, LocalDate today);
 }

@@ -56,12 +56,12 @@ public class FollowingMedicationStatusService {
 		if (followingIds.isEmpty()) return FollowingMedicationStatusGroupResponse.of(List.of());
 
 		if (isBeforeDailyGraceWindow(now)) {
-			Map<Long, List<MedicationScheduleDto>> praise = findPraiseFollowing(followingIds, today);
+			Map<Long, List<MedicationScheduleDto>> praise = findPraiseFollowing(userId, followingIds, today);
 			return buildGroupResponse(friends, Map.of(), praise);
 		}
 
 		Map<Long, List<MedicationScheduleDto>> nag = findReportFollowing(userId, followingIds, delayBoundary, today);
-		Map<Long, List<MedicationScheduleDto>> praise = findPraiseFollowing(followingIds, today);
+		Map<Long, List<MedicationScheduleDto>> praise = findPraiseFollowing(userId, followingIds, today);
 		return buildGroupResponse(friends, nag, praise);
 	}
 
@@ -76,11 +76,17 @@ public class FollowingMedicationStatusService {
 	}
 
 	private Map<Long, List<MedicationScheduleDto>> findPraiseFollowing(
+		Long userId,
 		List<Long> followingIds,
 		LocalDate today
 	) {
+		List<Long> alreadyPraisedFollowingIds = feedbackRepository.findPraisedUserIdsOnDate(userId, followingIds, today);
+		List<Long> toPraiseFollowingIds = followingIds.stream()
+			.filter(id -> !alreadyPraisedFollowingIds.contains(id))
+			.toList();
+
 		List<MedicationScheduleDto> allTakenToday = medicationScheduleFinder.findTodayAllTakenSchedules(
-			followingIds, today);
+			toPraiseFollowingIds, today);
 		return allTakenToday.stream()
 			.collect(Collectors.groupingBy(
 				MedicationScheduleDto::userId,

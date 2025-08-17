@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.querydsl.core.Tuple;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -40,5 +41,19 @@ public class FeedbackQueryRepositoryImpl implements FeedbackQueryRepository{
 			result.put(t.get(feedback.receiver.id), t.get(feedback.createdAt.max()));
 		}
 		return result;
+	}
+
+	@Override
+	public List<Long> findPraisedUserIdsOnDate(Long userId, List<Long> followingIds, LocalDate today) {
+		return queryFactory
+			.select(feedback.receiver.id)
+			.from(feedback)
+			.where(
+				feedback.sender.id.eq(userId),
+				feedback.receiver.id.in(followingIds),
+				feedback.createdAt.goe(today.atStartOfDay())
+			)
+			.distinct()
+			.fetch();
 	}
 }
