@@ -11,11 +11,10 @@ import java.util.List;
 
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
-import server.yakssok.domain.medication_schedule.domain.entity.QMedicationSchedule;
+import server.yakssok.domain.medication_schedule.domain.entity.MedicationSchedule;
 import server.yakssok.domain.medication_schedule.domain.repository.dto.MedicationScheduleDto;
 
 @RequiredArgsConstructor
@@ -30,8 +29,7 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 			medication.medicationType,
 			medication.medicineName,
 			medicationSchedule.scheduledTime,
-			medicationSchedule.isTaken,
-			medication.userId
+			medicationSchedule.isTaken
 		);
 
 	@Override
@@ -81,6 +79,27 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 	}
 
 	@Override
+	public List<MedicationScheduleDto> findRemainingMedicationDetail(
+		Long userId,
+		LocalDateTime boundaryTime
+	) {
+		return jpaQueryFactory
+			.select(SCHEDULE_DTO_PROJECTION)
+			.from(medicationSchedule)
+			.innerJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
+			.where(
+				medication.userId.eq(userId),
+				medicationSchedule.scheduledDate.eq(boundaryTime.toLocalDate()),
+				medicationSchedule.scheduledTime.loe(boundaryTime.toLocalTime()),
+				medicationSchedule.isTaken.isFalse()
+			)
+			.orderBy(
+				medicationSchedule.scheduledTime.asc()
+			)
+			.fetch();
+	}
+
+	@Override
 	public List<MedicationScheduleAlarmDto> findNotTakenSchedules(LocalDateTime notTakenLimitTime) {
 		return jpaQueryFactory
 			.select(Projections.constructor(
@@ -126,58 +145,22 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 	}
 
 	@Override
-	public List<MedicationScheduleDto> findTodayRemainingMedications(
+	public List<MedicationSchedule> findTodayRemainingMedications(
 		List<Long> followingIds,
 		LocalDateTime delayBoundaryTime
 	) {
 		LocalTime localTime = delayBoundaryTime.toLocalTime();
 		LocalDate localDate = delayBoundaryTime.toLocalDate();
 		return jpaQueryFactory
-			.select(SCHEDULE_DTO_PROJECTION)
-			.from(medicationSchedule)
-			.innerJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
+			.select(medicationSchedule)
 			.from(medicationSchedule)
 			.where(
-				medication.userId.in(followingIds),
+				medicationSchedule.userId.in(followingIds),
 				medicationSchedule.scheduledDate.eq(localDate),
 				medicationSchedule.scheduledTime.loe(localTime),
 				medicationSchedule.isTaken.isFalse()
 			)
-			.fetch();
-	}
-
-	@Override
-	public List<MedicationScheduleDto> findTodayAllTakenSchedules(List<Long> followingIds, LocalDate today) {
-		QMedicationSchedule msNotTaken = new QMedicationSchedule("ms_not_taken");
-		QMedicationSchedule msAnyToday = new QMedicationSchedule("ms_any_today");
-
-		return jpaQueryFactory
-			.select(SCHEDULE_DTO_PROJECTION)
-			.from(medicationSchedule)
-			.innerJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
-			.where(
-				medicationSchedule.userId.in(followingIds),
-				medicationSchedule.scheduledDate.eq(today),
-
-				// 오늘 미복용 스케줄이 하나도 없어야 함
-				JPAExpressions.selectOne()
-					.from(msNotTaken)
-					.where(
-						msNotTaken.userId.eq(medicationSchedule.userId),
-						msNotTaken.scheduledDate.eq(today),
-						msNotTaken.isTaken.isFalse()
-					)
-					.notExists(),
-
-				// 오늘 스케줄이 최소 1개는 있어야 함 (빈 유저 제외)
-				JPAExpressions.selectOne()
-					.from(msAnyToday)
-					.where(
-						msAnyToday.userId.eq(medicationSchedule.userId),
-						msAnyToday.scheduledDate.eq(today)
-					)
-					.exists()
-			)
+			.orderBy(medicationSchedule.userId.asc(), medicationSchedule.scheduledTime.asc())
 			.fetch();
 	}
 }
