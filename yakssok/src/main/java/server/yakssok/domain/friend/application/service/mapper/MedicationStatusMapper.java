@@ -1,47 +1,38 @@
 package server.yakssok.domain.friend.application.service.mapper;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
 import server.yakssok.domain.friend.domain.entity.Friend;
 import server.yakssok.domain.friend.presentation.dto.response.FollowingMedicationStatusResponse;
-import server.yakssok.domain.medication_schedule.domain.repository.dto.MedicationScheduleDto;
-
 @Component
 public class MedicationStatusMapper {
 	public List<FollowingMedicationStatusResponse> toMedicationStatusResponses(
 		List<Friend> friends,
-		Map<Long, List<MedicationScheduleDto>> nag,
-		Map<Long, List<MedicationScheduleDto>> praise
+		Map<Long, Integer> notTakenMap,
+		Set<Long> praisedToday
 	) {
-		List<FollowingMedicationStatusResponse> result = new ArrayList<>(friends.size());
+		List<FollowingMedicationStatusResponse> result = new ArrayList<>();
 		for (Friend friend : friends) {
-			var following = friend.getFollowing();
-			Long uid = following.getId();
+			Long followingId = friend.getFollowing().getId();
+			int notTaken = notTakenMap.getOrDefault(followingId, 0);
 
-			// 1) 미복용이 있으면 NAG 우선
-			List<MedicationScheduleDto> nagList = nag.get(uid);
-			if (nagList != null && !nagList.isEmpty()) {
-				result.add(FollowingMedicationStatusResponse.ofNag(
-					friend,
-					nagList
-				));
-				continue;
-			}
-
-			// 2) NAG가 없고, 칭찬 대상이면 PRAISE
-			List<MedicationScheduleDto> praiseList = praise.get(uid);
-			if (praiseList != null && !praiseList.isEmpty()) {
-				result.add(FollowingMedicationStatusResponse.ofPraise(
-					friend, praiseList)
-				);
+			if (notTaken > 0) {
+				result.add(FollowingMedicationStatusResponse.of(friend, notTaken));
+			} else if (praisedToday.contains(followingId)) {
+				result.add(FollowingMedicationStatusResponse.of(friend, 0));
 			}
 		}
 		return result;
 	}
+
 	public void sortByNotTakenCount(List<FollowingMedicationStatusResponse> statusList) {
+		statusList.sort(Comparator.comparingInt(FollowingMedicationStatusResponse::notTakenCount).reversed());
 	}
+
 }
