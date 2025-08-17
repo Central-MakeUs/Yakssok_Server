@@ -48,7 +48,6 @@ public class S3FileApi {
 
 	public void delete(String fileUrl) {
 		if (fileUrl == null) return;
-		if (isKakaoUrl(fileUrl)) return;
 		String key = extractKeyFromUrl(fileUrl);
 		deleteByKey(key);
 	}
@@ -64,7 +63,6 @@ public class S3FileApi {
 		}
 	}
 
-
 	private String extractKeyFromUrl(String url) {
 		String bucket = aws.getS3().getBucket();
 		String region = aws.getRegion().getStaticRegion();
@@ -74,10 +72,5 @@ public class S3FileApi {
 			return url.substring(base.length());
 		}
 		throw new S3FileException(ErrorCode.FAILED_FILE_DELETE);
-	}
-
-	private boolean isKakaoUrl(String url) {
-		String u = url.toLowerCase();
-		return u.contains("kakaocdn.net") || u.contains("kakaocdn.com");
 	}
 }

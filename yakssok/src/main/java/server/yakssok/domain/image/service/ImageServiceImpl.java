@@ -26,14 +26,21 @@ public class ImageServiceImpl implements ImageService {
 	@Override
 	@Transactional
 	public void delete(String imageUrl) {
-		s3FileApi.delete(imageUrl);
+		if (!isKakaoUrl(imageUrl)) {
+			s3FileApi.delete(imageUrl);
+		}
+	}
+
+	private boolean isKakaoUrl(String url) {
+		String u = url.toLowerCase();
+		return u.contains("kakaocdn.net") || u.contains("kakaocdn.com");
 	}
 
 
 	@Override
 	@Transactional
 	public UploadImageResponse update(MultipartFile file, String type, String oldImageUrl) {
-		s3FileApi.delete(oldImageUrl);
+		delete(oldImageUrl);
 		FileDirectory directory = FileDirectory.from(type);
 		String newImageUrl = s3FileApi.upload(file, directory);
 		return new UploadImageResponse(newImageUrl);
