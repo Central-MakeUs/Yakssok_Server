@@ -47,5 +47,4 @@ public class Feedback extends BaseEntity {
 		feedback.receiver = receiver;
 		return feedback;
 	}
-
 }
