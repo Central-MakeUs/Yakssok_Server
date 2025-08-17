@@ -29,6 +29,7 @@ public class ImageServiceImpl implements ImageService {
 		s3FileApi.delete(imageUrl);
 	}
 
+
 	@Override
 	@Transactional
 	public UploadImageResponse update(MultipartFile file, String type, String oldImageUrl) {
