@@ -40,7 +40,7 @@ public class ImageServiceImpl implements ImageService {
 	@Override
 	@Transactional
 	public UploadImageResponse update(MultipartFile file, String type, String oldImageUrl) {
-		s3FileApi.delete(oldImageUrl);
+		delete(oldImageUrl);
 		FileDirectory directory = FileDirectory.from(type);
 		String newImageUrl = s3FileApi.upload(file, directory);
 		return new UploadImageResponse(newImageUrl);
