@@ -1,0 +1,31 @@
+name: yakssok-pr-check
+
+on:
+  pull_request:
+    branches: [ "main", "dev" ]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔽 Checkout code
+        uses: actions/checkout@v4
+
+      - name: ☕ Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: 🔧 Make gradlew executable
+        working-directory: ./yakssok
+        run: chmod +x gradlew
+
+      - name: 🛠 Build (without retesting)
+        working-directory: ./yakssok
+        run: ./gradlew build -x test

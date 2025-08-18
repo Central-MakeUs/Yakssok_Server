@@ -1,0 +1,101 @@
+package server.yakssok.domain.friend.presentation.controller;
+
+
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import server.yakssok.domain.friend.application.service.FollowingMedicationStatusService;
+import server.yakssok.domain.friend.application.service.FriendService;
+import server.yakssok.domain.friend.presentation.dto.request.FollowFriendRequest;
+import server.yakssok.domain.friend.presentation.dto.response.FollowerInfoGroupResponse;
+import server.yakssok.domain.friend.presentation.dto.response.FollowingInfoGroupResponse;
+import server.yakssok.domain.friend.presentation.dto.response.FollowingMedicationStatusDetailResponse;
+import server.yakssok.domain.friend.presentation.dto.response.FollowingMedicationStatusGroupResponse;
+import server.yakssok.global.common.reponse.ApiResponse;
+import server.yakssok.global.common.security.YakssokUserDetails;
+import server.yakssok.global.common.swagger.ApiErrorResponse;
+import server.yakssok.global.common.swagger.ApiErrorResponses;
+import server.yakssok.global.exception.ErrorCode;
+
+@Tag(name = "Friend", description = "지인 API")
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/friends")
+public class FriendController {
+
+	private final FriendService friendService;
+	private final FollowingMedicationStatusService followingMedicationStatusService;
+
+
+	@Operation(summary = "지인 팔로우")
+	@ApiErrorResponses(value = {
+		@ApiErrorResponse(ErrorCode.ALREADY_FRIEND),
+		@ApiErrorResponse(ErrorCode.INVALID_INVITE_CODE),
+	})
+	@PostMapping
+	public ApiResponse followByInviteCode(
+		@RequestBody @Valid FollowFriendRequest followRequest,
+		@AuthenticationPrincipal YakssokUserDetails userDetails
+	) {
+		Long userId = userDetails.getUserId();
+		friendService.followFriendByInviteCode(userId, followRequest);
+		return ApiResponse.success();
+	}
+
+	@Operation(
+		summary = "나의 팔로잉 목록 조회",
+		description = "내가 팔로우하는 사람들 목록을 조회합니다. "
+	)
+	@GetMapping("/followings")
+	public ApiResponse<FollowingInfoGroupResponse> findMyFollowings(
+		@AuthenticationPrincipal YakssokUserDetails userDetails
+	) {
+		Long userId = userDetails.getUserId();
+		FollowingInfoGroupResponse friends = friendService.findMyFollowings(userId);
+		return ApiResponse.success(friends);
+	}
+
+	@Operation(
+		summary = "나의 팔로워 목록 조회",
+		description = "나를 팔로우하는 사람들 목록을 조회합니다. "
+	)
+	@GetMapping("/followers")
+	public ApiResponse<FollowerInfoGroupResponse> findMyFollowers(
+		@AuthenticationPrincipal YakssokUserDetails userDetails
+	) {
+		Long userId = userDetails.getUserId();
+		FollowerInfoGroupResponse friends = friendService.findMyFollowers(userId);
+		return ApiResponse.success(friends);
+	}
+
+	@Operation(
+		summary = "오늘 칭찬/잔소리 대상 지인 목록 조회",
+		description = "안먹은 약 개수가 많은 순서대로 정렬됩니다. 잔소리/칭찬을 보내면 해당 약은 제외됩니다."
+	)
+	@GetMapping("/medication-status")
+	public ApiResponse<FollowingMedicationStatusGroupResponse> getFollowingRemainingMedication(
+		@AuthenticationPrincipal YakssokUserDetails userDetails
+	) {
+		Long userId = userDetails.getUserId();
+		return ApiResponse.success(followingMedicationStatusService.getFollowingMedicationStatusGroup(userId));
+	}
+
+	@Operation(summary = "오늘 지인 안먹은 약 상세 조회")
+	@GetMapping("/{followingId}/medication-status")
+	public ApiResponse<FollowingMedicationStatusDetailResponse> getFollowingRemainingMedicationDetail(
+		@AuthenticationPrincipal YakssokUserDetails userDetails,
+		@PathVariable Long followingId
+	) {
+		Long userId = userDetails.getUserId();
+		return ApiResponse.success(followingMedicationStatusService.getFollowingMedicationStatusDetail(userId, followingId));
+	}
+}

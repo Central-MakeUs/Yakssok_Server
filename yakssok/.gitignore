@@ -36,3 +36,9 @@ out/
 ### VS Code ###
 .vscode/
 application.yml
+application-local.yml
+application-dev.yml
+application-test.yml
+firebase-service-account.json
+.env
+src/main/generated
