@@ -10,6 +10,22 @@
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/1ef00060-ffe4-4282-be29-452936cf18a2" />
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/83ceed50-63cb-47ca-b121-d25c5b2fd334" />
 
+<br><br>
+
+## 🖥️ Tech Stack
+
+| Category       | Tools & Technologies |
+|----------------|-----------------------|
+| **Frameworks** | ![Spring](https://img.shields.io/badge/Spring-6DB33F?style=flat&logo=spring&logoColor=white) ![Spring Security](https://img.shields.io/badge/Spring%20Security-6DB33F?style=flat&logo=springsecurity&logoColor=white) |
+| **Language**   | ![Java](https://img.shields.io/badge/Java%2017-007396?style=flat&logo=openjdk&logoColor=white) |
+| **ORM**        | ![JPA](https://img.shields.io/badge/Spring%20Data%20JPA-007396?style=flat&logo=hibernate&logoColor=white) ![QueryDSL](https://img.shields.io/badge/QueryDSL-59666C?style=flat) |
+| **Database**   | ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=mysql&logoColor=white) |
+| **Cloud (AWS)**| ![EC2](https://img.shields.io/badge/EC2-FF9900?style=flat&logo=amazon-ec2&logoColor=white) ![S3](https://img.shields.io/badge/S3-569A31?style=flat&logo=amazon-s3&logoColor=white) ![RDS](https://img.shields.io/badge/RDS-527FFF?style=flat&logo=amazon-rds&logoColor=white) ![CloudWatch](https://img.shields.io/badge/CloudWatch-FF4F8B?style=flat&logo=amazon-cloudwatch&logoColor=white) ![Lambda](https://img.shields.io/badge/Lambda-FF9900?style=flat&logo=aws-lambda&logoColor=white) |
+| **Monitoring** | ![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?style=flat&logo=prometheus&logoColor=white) ![Grafana](https://img.shields.io/badge/Grafana-F46800?style=flat&logo=grafana&logoColor=white) |
+| **Documentation** | ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=flat&logo=swagger&logoColor=black) |
+| **Other**      | ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white) ![FCM](https://img.shields.io/badge/FCM-4285F4?style=flat&logo=google&logoColor=white) ![RabbitMQ](https://img.shields.io/badge/RabbitMQ-FF6600?style=flat&logo=rabbitmq&logoColor=white) |
+
+
 
 <br><br>
 
