@@ -65,11 +65,6 @@ public class AuthService {
 			.orElseThrow(() -> {throw new AuthException(ErrorCode.INVALID_JWT);
 		});
 		refreshTokenService.deleteRefreshToken(userId);
-
-		// TODO(LEGACY): deviceId 없는 로그아웃 허용(하위호환). 클라이언트 콛, 수정 이후 제거하고 400 응답으로 변경.
-		if(logoutRequest == null || logoutRequest.deviceId() == null) {
-			return;
-		}
 		userDeviceRepository.deleteByUserIdAndDeviceId(userId, logoutRequest.deviceId());
 	}
 
