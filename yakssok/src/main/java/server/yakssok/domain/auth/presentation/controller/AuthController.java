@@ -58,7 +58,7 @@ public class AuthController {
 	@PutMapping("/logout")
 	public ApiResponse logout(
 		@AuthenticationPrincipal YakssokUserDetails userDetails,
-		@RequestBody(required = false) LogoutRequest logoutRequest
+		@RequestBody LogoutRequest logoutRequest
 	) {
 		Long userId = userDetails.getUserId();
 		authService.logOut(userId, logoutRequest);

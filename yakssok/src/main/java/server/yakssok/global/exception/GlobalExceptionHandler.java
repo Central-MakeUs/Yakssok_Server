@@ -1,5 +1,10 @@
 package server.yakssok.global.exception;
 
+import static server.yakssok.global.exception.ErrorCode.*;
+
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -8,6 +13,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import lombok.extern.slf4j.Slf4j;
 import server.yakssok.global.common.reponse.ApiResponse;
@@ -47,6 +53,17 @@ public class GlobalExceptionHandler {
 		);
 		return ResponseEntity
 			.status(responseCode.getHttpStatus())
+			.body(apiResponse);
+	}
+
+	@ExceptionHandler(MaxUploadSizeExceededException.class)
+	public ResponseEntity<ApiResponse> handleMaxUpload(MaxUploadSizeExceededException e) {
+		ApiResponse apiResponse = ApiResponse.error(
+			FILE_SIZE_EXCEEDED.getCode(),
+			FILE_SIZE_EXCEEDED.getMessage()
+		);
+		return ResponseEntity
+			.status(HttpStatus.PAYLOAD_TOO_LARGE)
 			.body(apiResponse);
 	}
 

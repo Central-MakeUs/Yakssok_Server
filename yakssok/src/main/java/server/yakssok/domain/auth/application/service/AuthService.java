@@ -48,6 +48,7 @@ public class AuthService {
 
 	@Transactional
 	public ReissueResponse reissue(String refreshToken) {
+		validateToken(refreshToken);
 		Long userId = jwtTokenUtils.getIdFromJwt(refreshToken);
 		RefreshToken savedRefreshToken = refreshTokenService.findRefreshToken(userId)
 			.orElseThrow(() -> new AuthException(ErrorCode.INVALID_JWT));
@@ -58,6 +59,11 @@ public class AuthService {
 		return new ReissueResponse(accessToken);
 	}
 
+	private void validateToken(String refreshToken) {
+		if (!jwtTokenUtils.isValidateToken(refreshToken)) {
+			throw new AuthException(ErrorCode.INVALID_JWT);
+		}
+	}
 
 	@Transactional
 	public void logOut(Long userId, LogoutRequest logoutRequest) {
@@ -65,11 +71,6 @@ public class AuthService {
 			.orElseThrow(() -> {throw new AuthException(ErrorCode.INVALID_JWT);
 		});
 		refreshTokenService.deleteRefreshToken(userId);
-
-		// TODO(LEGACY): deviceId 없는 로그아웃 허용(하위호환). 클라이언트 콛, 수정 이후 제거하고 400 응답으로 변경.
-		if(logoutRequest == null || logoutRequest.deviceId() == null) {
-			return;
-		}
 		userDeviceRepository.deleteByUserIdAndDeviceId(userId, logoutRequest.deviceId());
 	}
 

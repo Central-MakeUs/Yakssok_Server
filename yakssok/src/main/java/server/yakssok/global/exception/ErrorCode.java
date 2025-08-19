@@ -36,12 +36,13 @@ public enum ErrorCode implements ResponseCode{
 
     // image
     FAILED_FILE_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, 9100, "이미지 업로드에 실패했습니다."),
-    FAILED_FILE_DELETE(HttpStatus.INTERNAL_SERVER_ERROR, 9101, "이미지 삭제에 실패했습니다."),
+    FAILED_FILE_DELETE(HttpStatus.BAD_REQUEST, 9101, "이미지 삭제에 실패했습니다. 해당 url을 확인해주세요."),
     UNSUPPORTED_FILE_TYPE(HttpStatus.BAD_REQUEST, 9102, "지원하지 않는 파일 타입입니다."),
     INVALID_FILE_EXTENSION(HttpStatus.BAD_REQUEST, 9103, "지원하지 않는 파일 확장자입니다."),
+    FILE_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, 9104, "파일 크기가 너무 큽니다. 최대 1MB까지 지원합니다."),
 
     // fcm
-
+    INVALID_FCM_TOKEN(HttpStatus.BAD_REQUEST, 9200, "유효하지 않은 FCM 토큰입니다. 테스트 알림 보내기에 실패했습니다."),
     ;
 
 

@@ -2,7 +2,7 @@ name: yakssok-deploy
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "main" ]
     paths:
       - "yakssok/**"
       - "docker-compose.yml"
