@@ -48,6 +48,7 @@ public class AuthService {
 
 	@Transactional
 	public ReissueResponse reissue(String refreshToken) {
+		validateToken(refreshToken);
 		Long userId = jwtTokenUtils.getIdFromJwt(refreshToken);
 		RefreshToken savedRefreshToken = refreshTokenService.findRefreshToken(userId)
 			.orElseThrow(() -> new AuthException(ErrorCode.INVALID_JWT));
@@ -58,6 +59,11 @@ public class AuthService {
 		return new ReissueResponse(accessToken);
 	}
 
+	private void validateToken(String refreshToken) {
+		if (!jwtTokenUtils.isValidateToken(refreshToken)) {
+			throw new AuthException(ErrorCode.INVALID_JWT);
+		}
+	}
 
 	@Transactional
 	public void logOut(Long userId, LogoutRequest logoutRequest) {
