@@ -11,7 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
-class MedicationUnitTest {
+class MedicationDomainTest {
 
 	@Test
 	@DisplayName("create: startDate는 자정, endDate는 입력 LocalDate 그대로(getter 기준) 보존된다")
