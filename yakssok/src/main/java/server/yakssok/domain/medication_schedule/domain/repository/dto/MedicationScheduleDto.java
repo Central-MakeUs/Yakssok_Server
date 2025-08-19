@@ -13,7 +13,8 @@ public record MedicationScheduleDto(
 	MedicationType medicationType,
 	String medicationName,
 	LocalTime intakeTime,
-	boolean isTaken
+	boolean isTaken,
+	Long userId
 ) {
 	public static MedicationScheduleDto forFutureSchedule(
 		LocalDate date,
@@ -26,7 +27,8 @@ public record MedicationScheduleDto(
 			medication.getMedicationType(),
 			medication.getMedicineName(),
 			intakeTime.getTime(),
-			false
+			false,
+			medication.getUserId()
 		);
 	}
 }
