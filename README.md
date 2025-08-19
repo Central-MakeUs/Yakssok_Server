@@ -25,6 +25,13 @@
 | **Documentation** | ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=flat&logo=swagger&logoColor=black) |
 | **Other**      | ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white) ![FCM](https://img.shields.io/badge/FCM-4285F4?style=flat&logo=google&logoColor=white) ![RabbitMQ](https://img.shields.io/badge/RabbitMQ-FF6600?style=flat&logo=rabbitmq&logoColor=white) |
 
+<br><br>
+
+## **💁‍♀️ Documents**
+
+- Git 브랜치 전략, 커밋 컨벤션, PR 컨벤션  [>>Link](https://github.com/Central-MakeUs/Yakssok_Server/wiki/Git-%EB%B8%8C%EB%9E%9C%EC%B9%98,-%EC%BB%A4%EB%B0%8B,-PR-%EC%BB%A8%EB%B2%A4%EC%85%98)
+- 약쏙의 무한스크롤 구현 방법 (커서 기반 페이지네이션)[>>Link](https://velog.io/@0sunset0/%EC%95%BD%EC%8F%99%EC%9D%98-%EB%AC%B4%ED%95%9C%EC%8A%A4%ED%81%AC%EB%A1%A4-%EA%B5%AC%ED%98%84-%EB%B0%A9%EB%B2%95-%EC%BB%A4%EC%84%9C-%EA%B8%B0%EB%B0%98-%ED%8E%98%EC%9D%B4%EC%A7%80%EB%84%A4%EC%9D%B4%EC%85%98)
+- 약쏙의 알림 스케줄 생성 전략과 batch insert [>>Link](https://velog.io/@0sunset0/%EC%95%8C%EB%A6%BC-%EC%8A%A4%EC%BC%80%EC%A4%84-%EC%83%9D%EC%84%B1-%EC%A0%84%EB%9E%B5%EA%B3%BC-batch-insert)
 
 
 <br><br>
