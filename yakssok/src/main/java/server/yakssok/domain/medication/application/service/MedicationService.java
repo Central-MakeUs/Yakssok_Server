@@ -21,7 +21,6 @@ import server.yakssok.domain.medication.domain.repository.MedicationRepository;
 import server.yakssok.domain.medication.presentation.dto.request.CreateMedicationRequest;
 import server.yakssok.domain.medication.presentation.dto.response.MedicationCardResponse;
 import server.yakssok.domain.medication.presentation.dto.response.MedicationGroupedResponse;
-import server.yakssok.domain.medication.presentation.dto.response.MedicationProgressResponse;
 import server.yakssok.domain.medication_schedule.application.service.MedicationScheduleService;
 import server.yakssok.global.exception.ErrorCode;
 
