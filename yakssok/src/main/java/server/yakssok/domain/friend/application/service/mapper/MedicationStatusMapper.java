@@ -43,5 +43,13 @@ public class MedicationStatusMapper {
 		return result;
 	}
 	public void sortByNotTakenCount(List<FollowingMedicationStatusResponse> statusList) {
+		statusList.sort((a, b) -> {
+			// 잔소리 우선
+			if (a.feedbackType().equals("NAG") && b.feedbackType().equals("PRAISE")) return -1;
+			if (a.feedbackType().equals("PRAISE") && b.feedbackType().equals("NAG")) return 1;
+
+			// 잔소리의 경우 안먹은 약 개수 내림 차순
+			return Integer.compare(b.medicationCount(), a.medicationCount());
+		});
 	}
 }

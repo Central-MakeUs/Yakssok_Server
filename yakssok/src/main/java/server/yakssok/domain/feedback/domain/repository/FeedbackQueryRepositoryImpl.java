@@ -51,6 +51,7 @@ public class FeedbackQueryRepositoryImpl implements FeedbackQueryRepository{
 			.where(
 				feedback.sender.id.eq(userId),
 				feedback.receiver.id.in(followingIds),
+				feedback.feedbackType.eq(FeedbackType.PRAISE),
 				feedback.createdAt.goe(today.atStartOfDay())
 			)
 			.distinct()
