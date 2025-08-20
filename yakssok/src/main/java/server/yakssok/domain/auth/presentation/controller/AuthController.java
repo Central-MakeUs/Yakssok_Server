@@ -49,7 +49,9 @@ public class AuthController {
 	)
 	@ApiErrorResponse(ErrorCode.INVALID_JWT)
 	@PostMapping("/reissue")
-	public ApiResponse<ReissueResponse> reissueToken(@Valid @RequestBody ReissueRequest reissueRequest) {
+	public ApiResponse<ReissueResponse> reissueToken(
+		@Valid @RequestBody ReissueRequest reissueRequest
+	) {
 		return ApiResponse.success(authService.reissue(reissueRequest.refreshToken()));
 	}
 
