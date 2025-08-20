@@ -30,6 +30,11 @@
 
 
 <br><br>
+## 🚎 Architecture
+<img width="1424" height="928" alt="image" src="https://github.com/user-attachments/assets/eed46aa0-aa15-4ab9-8416-cdc759604dc7" />
+
+
+<br><br>
 
 ## **💁‍♀️ Documents**
 
