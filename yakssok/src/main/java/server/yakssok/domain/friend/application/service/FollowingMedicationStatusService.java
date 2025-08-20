@@ -112,7 +112,6 @@ public class FollowingMedicationStatusService {
 		List<Friend> friends,
 		Map<Long, List<MedicationScheduleDto>> nag,
 		Map<Long, List<MedicationScheduleDto>> praise) {
-
 		List<FollowingMedicationStatusResponse> list = medicationStatusMapper.toMedicationStatusResponses(friends, nag, praise);
 		medicationStatusMapper.sortByNotTakenCount(list);
 		return FollowingMedicationStatusGroupResponse.of(list);

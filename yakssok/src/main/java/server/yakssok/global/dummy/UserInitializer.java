@@ -24,10 +24,13 @@ public class UserInitializer implements ApplicationRunner {
 	static final String NICKNAME_RIA = "리아";
 	static final String PROVIDER_ID_RIA = "lea1234";
 	static final OAuthType OAUTH_TYPE_RIA = OAuthType.APPLE;
+	static final String DEVICE_ID_RIA = "1";
+
 
 	static final String NICKNAME_INWOO = "인우";
 	static final String PROVIDER_ID_INWOO = "inwoo1234";
 	static final OAuthType OAUTH_TYPE_INWOO = OAuthType.KAKAO;
+	static final String DEVICE_ID_INWOO = "2";
 
 	private final UserRepository userRepository;
 	private final JwtTokenUtils jwtTokenUtils;
@@ -36,14 +39,14 @@ public class UserInitializer implements ApplicationRunner {
 
 	@Override
 	public void run(ApplicationArguments args) {
-		createIfNotExists(NICKNAME_RIA, PROVIDER_ID_RIA, OAUTH_TYPE_RIA);
-		createIfNotExists(NICKNAME_INWOO, PROVIDER_ID_INWOO, OAUTH_TYPE_INWOO);
+		createIfNotExists(NICKNAME_RIA, PROVIDER_ID_RIA, OAUTH_TYPE_RIA, DEVICE_ID_RIA);
+		createIfNotExists(NICKNAME_INWOO, PROVIDER_ID_INWOO, OAUTH_TYPE_INWOO, DEVICE_ID_INWOO);
 	}
 
-	private void createIfNotExists(String nickName, String providerId, OAuthType oauthType) {
+	private void createIfNotExists(String nickName, String providerId, OAuthType oauthType, String deviceId) {
 		if (!userRepository.existsUserByProviderId(oauthType, providerId)) {
 			User user = User.create(null, oauthType, providerId, null);
-			UserDevice userDevice = UserDevice.createUserDevice(user, "default-device-id", null, false);
+			UserDevice userDevice = UserDevice.createUserDevice(user, deviceId, null, false);
 
 			userRepository.save(user);
 			userDeviceRepository.save(userDevice);
