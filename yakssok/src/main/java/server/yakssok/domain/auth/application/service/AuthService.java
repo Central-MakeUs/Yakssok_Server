@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import server.yakssok.domain.auth.presentation.controller.LogoutRequest;
 import server.yakssok.domain.auth.presentation.dto.request.OAuthLoginRequest;
 import server.yakssok.domain.user.domain.entity.OAuthType;
@@ -21,7 +22,7 @@ import server.yakssok.domain.auth.presentation.dto.response.ReissueResponse;
 import server.yakssok.domain.user.domain.repository.UserRepository;
 import server.yakssok.domain.user.domain.entity.User;
 import server.yakssok.global.common.jwt.JwtTokenUtils;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -48,7 +49,7 @@ public class AuthService {
 
 	@Transactional
 	public ReissueResponse reissue(String refreshToken) {
-		validateToken(refreshToken);
+		validateRefreshToken(refreshToken);
 		Long userId = jwtTokenUtils.getIdFromJwt(refreshToken);
 		RefreshToken savedRefreshToken = refreshTokenService.findRefreshToken(userId)
 			.orElseThrow(() -> new AuthException(ErrorCode.INVALID_JWT));
@@ -59,8 +60,9 @@ public class AuthService {
 		return new ReissueResponse(accessToken);
 	}
 
-	private void validateToken(String refreshToken) {
+	private void validateRefreshToken(String refreshToken) {
 		if (!jwtTokenUtils.isValidateToken(refreshToken)) {
+			log.warn("Invalid Refresh Token: {}", refreshToken);
 			throw new AuthException(ErrorCode.INVALID_JWT);
 		}
 	}
