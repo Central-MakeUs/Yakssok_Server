@@ -11,10 +11,12 @@ import server.yakssok.domain.user.domain.entity.UserDevice;
 
 public interface UserDeviceRepository extends JpaRepository<UserDevice, Long> {
 	List<UserDevice> findByUserIdAndAlertOnTrue(Long userId);
-	Optional<UserDevice> findByUserIdAndDeviceId(Long userId, String deviceId);
 	void deleteByUserIdAndDeviceId(Long userId, String deviceId);
 
 	@Modifying
 	@Query("DELETE FROM UserDevice ud WHERE ud.user.id = :userId")
 	void deleteAllByUserId(Long userId);
+
+	Optional<UserDevice> findByFcmToken(String fcmToken);
+	Optional<UserDevice> findByDeviceId(String deviceId);
 }

@@ -25,7 +25,7 @@ public class UserDevice {
 	@Column(name = "user_device_id")
 	private Long id;
 
-	@Column(length = 1000)
+	@Column(length = 1000, unique = true)
 	private String fcmToken;
 
 	@Column(nullable = false)
@@ -35,7 +35,7 @@ public class UserDevice {
 	@JoinColumn(name = "user_id")
 	private User user;
 
-	@Column(length = 255, unique = true)
+	@Column
 	private String deviceId;
 
 	private UserDevice(User user, String deviceId, String fcmToken, boolean alertOn) {
@@ -61,5 +61,16 @@ public class UserDevice {
 
 	public void invalidateFcmToken() {
 		this.fcmToken = null;
+	}
+
+	public void reassignAndUpdate(User user,
+		boolean alertOn,
+		String deviceId,
+		String fcmToken
+	) {
+		this.user = user;
+		this.alertOn = alertOn;
+		this.deviceId = deviceId;
+		this.fcmToken = fcmToken;
 	}
 }
