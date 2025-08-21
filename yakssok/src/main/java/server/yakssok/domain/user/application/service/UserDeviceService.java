@@ -20,13 +20,29 @@ public class UserDeviceService {
 	@Transactional
 	public void registerOrUpdateDevice(Long userId, RegisterDeviceRequest request) {
 		User user = userService.getActiveUser(userId);
-		Optional<UserDevice> existing = userDeviceRepository.findByUserIdAndDeviceId(userId, request.deviceId());
 
-		if (existing.isPresent()) {
-			existing.get().update(request.fcmToken(), request.alertOn());
-		} else {
-			UserDevice userDevice = request.toUserDevice(user);
-			userDeviceRepository.save(userDevice);
+		Optional<UserDevice> userDevice = userDeviceRepository.findByFcmToken(request.fcmToken());
+		if (userDevice.isPresent()) {
+			reassignAndUpdate(userDevice.get(), user, request);
+			return;
 		}
+
+		Optional<UserDevice> existing = userDeviceRepository.findByDeviceId(request.deviceId());
+		if (existing.isPresent()) {
+			reassignAndUpdate(existing.get(), user, request);
+			return;
+		}
+
+		//새로운 기기면 새로 등록
+		registerNewDevice(request, user);
+	}
+
+	private void registerNewDevice(RegisterDeviceRequest request, User user) {
+		UserDevice newUserDevice = request.toUserDevice(user);
+		userDeviceRepository.save(newUserDevice);
+	}
+
+	private void reassignAndUpdate(UserDevice userDevice, User user, RegisterDeviceRequest request) {
+		userDevice.reassignAndUpdate(user, request.alertOn(), request.deviceId(), request.fcmToken());
 	}
 }
