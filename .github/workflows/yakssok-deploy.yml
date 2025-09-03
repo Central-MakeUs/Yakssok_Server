@@ -33,7 +33,7 @@ jobs:
           cd yakssok
           echo "🔐 Create application.yml"
           mkdir -p src/main/resources
-          echo "${{ secrets.DEV_YML }}" > src/main/resources/application.yml
+          echo "${{ secrets.PROD_YML }}" > src/main/resources/application.yml
           
           echo "🔐 Create firebase key json"
           echo '${{ secrets.FIREBASE_KEY_JSON }}' > src/main/resources/firebase-service-account.json
