@@ -26,18 +26,11 @@ public class FriendInitializer implements ApplicationRunner {
 		User inwoo = userRepository.findUserByProviderId(UserInitializer.OAUTH_TYPE_INWOO, UserInitializer.PROVIDER_ID_INWOO).orElseThrow();
 		User ria = userRepository.findUserByProviderId(UserInitializer.OAUTH_TYPE_RIA, UserInitializer.PROVIDER_ID_RIA).orElseThrow();
 		if (!friendRepository.isAlreadyFollow(inwoo.getId(), ria.getId())) {
-			Friend inwooFriend = Friend.create(inwoo, ria, "울첫째딸");
+			Friend inwooFriend = Friend.create(inwoo, ria);
 			friendRepository.save(inwooFriend);
 			log.info(">>> 인우 → 리아 지인 관계 생성");
 		} else {
 			log.info(">>> 인우 → 리아 지인 관계 이미 존재");
-		}
-		if (!friendRepository.isAlreadyFollow(ria.getId(), inwoo.getId())) {
-			Friend leaFriend = Friend.create(ria, inwoo, "울아빠");
-			friendRepository.save(leaFriend);
-			log.info(">>> 리아 → 인우 지인 관계 생성");
-		} else {
-			log.info(">>> 리아 → 인우 지인 관계 이미 존재");
 		}
 	}
 }

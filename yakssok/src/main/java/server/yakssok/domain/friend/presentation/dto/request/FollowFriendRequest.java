@@ -11,10 +11,9 @@ public record FollowFriendRequest(
 	@NotNull
 	String inviteCode,
 	@Schema(description = "관계명", example = "엄마")
-	@NotNull
 	String relationName
 ) {
 	public Friend toFriend(User user, User following) {
-		return Friend.create(user, following, relationName);
+		return Friend.create(user, following);
 	}
 }

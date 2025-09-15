@@ -19,7 +19,6 @@ public class Friend {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private User user;
@@ -28,15 +27,12 @@ public class Friend {
 	@JoinColumn(name = "following_id")
 	private User following;
 
-	private String relationName;
-
-	public static Friend create(User user, User following, String relationName) {
-		return new Friend(user, following, relationName);
+	public static Friend create(User user, User following) {
+		return new Friend(user, following);
 	}
 
-	private Friend(User user, User following, String relationName) {
+	private Friend(User user, User following) {
 		this.user = user;
 		this.following = following;
-		this.relationName = relationName;
 	}
 }
