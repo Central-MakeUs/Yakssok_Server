@@ -1,4 +1,4 @@
-package server.yakssok.domain.notice;
+package server.yakssok.domain.notice.service;
 
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.notice.controller.SendNoticeRequest;
-import server.yakssok.domain.notification.presentation.dto.NotificationDTO;
+import server.yakssok.domain.notification.presentation.dto.NotificationAllDTO;
 import server.yakssok.global.infra.rabbitmq.properties.NoticeQueueProperties;
 
 @Service
@@ -17,18 +17,18 @@ public class NoticeService {
 	private final RabbitTemplate rabbitTemplate;
 	private final NoticeQueueProperties noticeQueueProperties;
 
-	public void sendNotice(SendNoticeRequest request) {
-		pushNotice(request.userId(), request.title(), request.body());
+	public void sendNoticeToAll(SendNoticeRequest request) {
+		pushNotice(request.title(), request.body());
 	}
 
-	private void pushNotice(Long receiverId, String title, String body) {
-		NotificationDTO notificationDTO = NotificationDTO.fromNotice(receiverId, title, body);
-		pushNoticeQueue(notificationDTO);
+	private void pushNotice(String title, String body) {
+		NotificationAllDTO notificationAllDTO = NotificationAllDTO.fromNotice(title, body);
+		pushNoticeQueue(notificationAllDTO);
 	}
 
-	private void pushNoticeQueue(NotificationDTO notificationDTO) {
+	private void pushNoticeQueue(NotificationAllDTO notificationAllDTO) {
 		String noticeExchange = noticeQueueProperties.exchange();
 		String noticeRoutingKey = noticeQueueProperties.routingKey();
-		rabbitTemplate.convertAndSend(noticeExchange, noticeRoutingKey, notificationDTO);
+		rabbitTemplate.convertAndSend(noticeExchange, noticeRoutingKey, notificationAllDTO);
 	}
 }

@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import server.yakssok.domain.notice.NoticeService;
+import server.yakssok.domain.notice.service.NoticeService;
 import server.yakssok.global.common.reponse.ApiResponse;
 
 @RestController
@@ -19,10 +19,10 @@ import server.yakssok.global.common.reponse.ApiResponse;
 public class NoticeController {
 	private final NoticeService noticeService;
 
-	@Operation(summary = "공지 발송 (관리자 전용)", description = "공지 내용 푸시 알림 전송")
+	@Operation(summary = "공지 발송 (관리자 전용)", description = "모든 유저에게 공지 내용 푸시 알림 전송")
 	@PostMapping("/send")
 	public ApiResponse<Void> sendNotice(@Valid @RequestBody SendNoticeRequest request) {
-		noticeService.sendNotice(request);
+		noticeService.sendNoticeToAll(request);
 		return ApiResponse.success();
 	}
 }

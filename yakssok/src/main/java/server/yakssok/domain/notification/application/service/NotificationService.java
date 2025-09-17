@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import server.yakssok.domain.notification.domain.entity.Notification;
 import server.yakssok.domain.notification.domain.repository.NotificationRepository;
+import server.yakssok.domain.notification.presentation.dto.NotificationAllDTO;
 import server.yakssok.domain.notification.presentation.dto.NotificationDTO;
 import server.yakssok.domain.notification.presentation.dto.response.NotificationResponse;
 import server.yakssok.domain.user.domain.entity.User;
@@ -34,6 +35,18 @@ public class NotificationService {
 	void saveNotification(NotificationDTO request) {
 		Notification notification = request.toNotification();
 		notificationRepository.save(notification);
+	}
+
+	void saveAllNotifications(NotificationAllDTO request) {
+		userRepository.findAllByIsDeletedFalse().forEach(user -> {
+			Notification notification = Notification.createNoticieNotification(
+				user.getId(),
+				request.title(),
+				request.body(),
+				request.type()
+			);
+			notificationRepository.save(notification);
+		});
 	}
 
 	@Transactional(readOnly = true)
@@ -74,4 +87,5 @@ public class NotificationService {
 			.collect(Collectors.toSet());
 		return userIds;
 	}
+
 }
