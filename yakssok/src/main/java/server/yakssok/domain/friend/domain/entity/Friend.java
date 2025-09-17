@@ -27,6 +27,8 @@ public class Friend {
 	@JoinColumn(name = "following_id")
 	private User following;
 
+	private String relationName;
+
 	public static Friend create(User user, User following) {
 		return new Friend(user, following);
 	}

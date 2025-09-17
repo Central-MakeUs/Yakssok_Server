@@ -39,15 +39,14 @@ public record FollowingMedicationStatusResponse(
 
 	/* ===== 공통 생성기 ===== */
 	private static FollowingMedicationStatusResponse ofCommon(
-		Friend friend,
+		User following,
 		FeedbackType type,
 		List<MedicationInfo> details
 	) {
-		User following = friend.getFollowing();
 		return new FollowingMedicationStatusResponse(
 			following.getId(),
 			following.getNickName(),
-			friend.getRelationName(),
+			following.getNickName(),
 			following.getProfileImageUrl(),
 			type.name(),
 			details.size(),
@@ -57,18 +56,18 @@ public record FollowingMedicationStatusResponse(
 
 	/* ===== NAG (미복용) ===== */
 	public static FollowingMedicationStatusResponse ofNag(
-		Friend friend,
+		User following,
 		List<MedicationScheduleDto> notTakenDtos
 	) {
-		return ofCommon(friend, FeedbackType.NAG, toMedicationInfos(notTakenDtos));
+		return ofCommon(following, FeedbackType.NAG, toMedicationInfos(notTakenDtos));
 	}
 
 	/* ===== PRAISE (복용) ===== */
 	public static FollowingMedicationStatusResponse ofPraise(
-		Friend friend,
+		User following,
 		List<MedicationScheduleDto> takenDtos
 	) {
-		return ofCommon(friend, FeedbackType.PRAISE, toMedicationInfos(takenDtos));
+		return ofCommon(following, FeedbackType.PRAISE, toMedicationInfos(takenDtos));
 	}
 
 	private static List<MedicationInfo> toMedicationInfos(List<MedicationScheduleDto> dtos) {

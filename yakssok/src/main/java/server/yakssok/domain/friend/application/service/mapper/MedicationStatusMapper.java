@@ -20,23 +20,23 @@ public class MedicationStatusMapper {
 		List<FollowingMedicationStatusResponse> result = new ArrayList<>(friends.size());
 		for (Friend friend : friends) {
 			var following = friend.getFollowing();
-			Long uid = following.getId();
+			Long followingId = following.getId();
 
 			// 1) 미복용이 있으면 NAG 우선
-			List<MedicationScheduleDto> nagList = nag.get(uid);
+			List<MedicationScheduleDto> nagList = nag.get(followingId);
 			if (nagList != null && !nagList.isEmpty()) {
 				result.add(FollowingMedicationStatusResponse.ofNag(
-					friend,
+					following,
 					nagList
 				));
 				continue;
 			}
 
 			// 2) NAG가 없고, 칭찬 대상이면 PRAISE
-			List<MedicationScheduleDto> praiseList = praise.get(uid);
+			List<MedicationScheduleDto> praiseList = praise.get(followingId);
 			if (praiseList != null && !praiseList.isEmpty()) {
 				result.add(FollowingMedicationStatusResponse.ofPraise(
-					friend, praiseList)
+					following, praiseList)
 				);
 			}
 		}

@@ -30,8 +30,13 @@ public class FriendService {
 		User following = userService.getUserIdByInviteCode(inviteCode);
 		User user = userService.getActiveUser(userId);
 		relationshipService.validateCanFollow(user.getId(), following.getId());
-		Friend friend = followFriendRequest.toFriend(user, following);
-		friendRepository.save(friend);
+		followEachOther(followFriendRequest, user, following);
+	}
+
+	private void followEachOther(FollowFriendRequest followFriendRequest, User user, User following) {
+		Friend userToFollowing = followFriendRequest.toFriend(user, following);
+		Friend followingToUser = followFriendRequest.toFriend(following, user);
+		friendRepository.saveAll(List.of(userToFollowing, followingToUser));
 	}
 
 	@Transactional(readOnly = true)

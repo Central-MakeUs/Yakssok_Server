@@ -28,8 +28,8 @@ public class FriendQueryRepositoryImpl implements FriendQueryRepository {
 			.selectOne()
 			.from(friend)
 			.where(
-				friend.user.id.eq(userId),
-				friend.following.id.eq(followingId)
+				friend.user.id.in(userId, followingId)
+					.and(friend.following.id.in(userId, followingId))
 			)
 			.fetchFirst();
 		return fetchOne != null;
