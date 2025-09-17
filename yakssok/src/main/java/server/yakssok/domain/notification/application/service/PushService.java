@@ -10,7 +10,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import server.yakssok.domain.notification.presentation.controller.TestSendDataRequest;
+import server.yakssok.domain.notification.presentation.dto.request.TestSendDataRequest;
 import server.yakssok.domain.notification.presentation.dto.NotificationDTO;
 import server.yakssok.domain.user.domain.entity.UserDevice;
 import server.yakssok.domain.user.domain.repository.UserDeviceRepository;

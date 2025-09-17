@@ -44,10 +44,10 @@ public class FeedbackService {
 		NotificationDTO notificationDTO = receiverFollowSender
 			.map(friend -> createMutualFeedbackNotificationDto(sender, receiver, feedback, friend))
 			.orElseGet(() -> createOneWayFeedbackNotificationDto(sender, receiver, feedback));
-		pushFeedBackQoeue(notificationDTO);
+		pushFeedBackQueue(notificationDTO);
 	}
 
-	private void pushFeedBackQoeue(NotificationDTO notificationDTO) {
+	private void pushFeedBackQueue(NotificationDTO notificationDTO) {
 		String feedbackExchange = feedbackQueueProperties.exchange();
 		String feedbackRoutingKey = feedbackQueueProperties.routingKey();
 		rabbitTemplate.convertAndSend(feedbackExchange, feedbackRoutingKey, notificationDTO);
