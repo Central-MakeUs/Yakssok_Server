@@ -16,7 +16,7 @@ public record FollowingInfoResponse(
 	public static FollowingInfoResponse from(Friend friend) {
 		return new FollowingInfoResponse(
 			friend.getFollowing().getId(),
-			friend.getRelationName(),
+			friend.getFollowing().getNickName(),
 			friend.getFollowing().getProfileImageUrl(),
 			friend.getFollowing().getNickName()
 		);

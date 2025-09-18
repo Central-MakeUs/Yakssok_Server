@@ -1,4 +1,4 @@
-package server.yakssok.domain.notification.presentation.controller;
+package server.yakssok.domain.notification.presentation.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

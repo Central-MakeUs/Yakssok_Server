@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import server.yakssok.domain.BaseEntity;
@@ -27,7 +28,8 @@ public class Notification extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private NotificationType type;
 
-	public Notification(Long senderId, Long receiverId, Long scheduleId, String title, String body,
+	@Builder
+	private Notification(Long senderId, Long receiverId, Long scheduleId, String title, String body,
 		NotificationType type) {
 		this.senderId = senderId;
 		this.receiverId = receiverId;
@@ -38,7 +40,23 @@ public class Notification extends BaseEntity {
 	}
 
 	public static Notification createNotification(Long senderId, Long receiverId, Long scheduleId, String title, String body, NotificationType type) {
-		return new Notification(senderId, receiverId, scheduleId, title, body, type);
+		return Notification.builder()
+			.senderId(senderId)
+			.receiverId(receiverId)
+			.scheduleId(scheduleId)
+			.title(title)
+			.body(body)
+			.type(type)
+			.build();
+	}
+
+	public static Notification createNoticieNotification(Long receiverId, String title, String body, NotificationType type) {
+		return Notification.builder()
+			.receiverId(receiverId)
+			.title(title)
+			.body(body)
+			.type(type)
+			.build();
 	}
 
 	public boolean isSentBy(Long userId) {

@@ -1,6 +1,7 @@
 package server.yakssok.domain.notification.presentation.dto;
 
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import server.yakssok.domain.feedback.domain.entity.Feedback;
@@ -13,6 +14,7 @@ import server.yakssok.domain.notification.domain.entity.NotificationType;
 @Builder(access = AccessLevel.PRIVATE)
 public record NotificationDTO(
 	Long senderId,
+	@NotNull
 	Long receiverId,
 	Long scheduleId,
 	String title,
@@ -86,6 +88,15 @@ public record NotificationDTO(
 			.body(NotificationBodyConstants.MEDICATION_TAKE_BODY)
 			.type(NotificationType.MEDICATION_TAKE)
 			.soundType(schedule.soundType().name())
+			.build();
+	}
+
+	public static NotificationDTO fromNotice(Long userId, String title, String body) {
+		return NotificationDTO.builder()
+			.receiverId(userId)
+			.title(title)
+			.body(body)
+			.type(NotificationType.NOTICE)
 			.build();
 	}
 
