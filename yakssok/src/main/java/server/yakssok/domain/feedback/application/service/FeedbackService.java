@@ -68,7 +68,7 @@ public class FeedbackService {
 			sender.getId(),
 			receiver.getId(),
 			receiver.getNickName(),
-			friend.getRelationName(),
+			sender.getNickName(),
 			feedback
 		);
 	}
