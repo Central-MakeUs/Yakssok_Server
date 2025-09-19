@@ -34,23 +34,7 @@ public record NotificationDTO(
 			.build();
 	}
 
-	public static NotificationDTO fromMutualFollowFeedback(
-		Long senderId,
-		Long receiverId,
-		String receiverName,
-		String relationName,
-		Feedback feedback
-	) {
-		return NotificationDTO.builder()
-			.senderId(senderId)
-			.receiverId(receiverId)
-			.title(NotificationTitleUtils.createFeedbackTitleMutual(feedback.getFeedbackType(), receiverName, relationName))
-			.body(feedback.getMessage())
-			.type(feedback.getFeedbackType().toNotificationType())
-			.build();
-	}
-
-	public static NotificationDTO fromOneWayFollowFeedback(
+	public static NotificationDTO fromFeedback(
 		Long senderId,
 		String senderName,
 		Long receiverId,
