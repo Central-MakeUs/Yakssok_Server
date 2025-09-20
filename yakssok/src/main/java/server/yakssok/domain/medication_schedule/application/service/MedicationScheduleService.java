@@ -104,4 +104,9 @@ public class MedicationScheduleService {
 	public void deleteAllByMedicationIds(List<Long> medicationIds) {
 		medicationScheduleManager.deleteAllByMedicationIds(medicationIds);
 	}
+
+	public void generateDateSchedules(LocalDate date) {
+		List<MedicationSchedule> schedules = medicationScheduleGenerator.generateAllTodaySchedules(date.atStartOfDay());
+		medicationScheduleJdbcRepository.batchInsert(schedules);
+	}
 }
