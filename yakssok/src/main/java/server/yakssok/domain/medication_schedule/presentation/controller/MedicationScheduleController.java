@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,6 +18,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.medication_schedule.application.service.MedicationScheduleService;
+import server.yakssok.domain.medication_schedule.batch.job.MedicationScheduleJob;
 import server.yakssok.domain.medication_schedule.presentation.dto.response.MedicationScheduleGroupResponse;
 import server.yakssok.global.common.reponse.ApiResponse;
 import server.yakssok.global.common.security.YakssokUserDetails;
@@ -30,6 +32,7 @@ import server.yakssok.global.exception.ErrorCode;
 @Tag(name = "Medication Schedule", description = "복약 스케줄 API")
 public class MedicationScheduleController {
 	private final MedicationScheduleService medicationScheduleService;
+	private final MedicationScheduleJob job;
 
 	@Operation(summary = "나의 복약 스케줄 조회 (오늘)")
 	@GetMapping("/today")
@@ -91,5 +94,10 @@ public class MedicationScheduleController {
 	) {
 		Long userId = userDetails.getUserId();
 		return ApiResponse.success(medicationScheduleService.getFriendRangeSchedules(userId, friendId, startDate, endDate));
+	}
+
+	@PostMapping("/backfill/{date}") // yyyy-MM-dd
+	public void backfill(@PathVariable String date) {
+		job.runFor(LocalDate.parse(date));
 	}
 }
