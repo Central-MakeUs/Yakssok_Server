@@ -95,9 +95,4 @@ public class MedicationScheduleController {
 		Long userId = userDetails.getUserId();
 		return ApiResponse.success(medicationScheduleService.getFriendRangeSchedules(userId, friendId, startDate, endDate));
 	}
-
-	@PostMapping("/backfill/{date}") // yyyy-MM-dd
-	public void backfill(@PathVariable String date) {
-		job.runFor(LocalDate.parse(date));
-	}
 }

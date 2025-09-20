@@ -15,8 +15,4 @@ public class MedicationScheduleJob {
 	public void runToday() {
 		medicationScheduleService.generateTodaySchedules();
 	}
-
-	public void runFor(LocalDate parse) {
-		medicationScheduleService.generateDateSchedules(parse);
-	}
 }
