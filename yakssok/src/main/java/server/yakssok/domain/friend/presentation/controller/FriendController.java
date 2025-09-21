@@ -3,7 +3,6 @@ package server.yakssok.domain.friend.presentation.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +24,7 @@ import server.yakssok.global.common.swagger.ApiErrorResponse;
 import server.yakssok.global.common.swagger.ApiErrorResponses;
 import server.yakssok.global.exception.ErrorCode;
 
-@Tag(name = "Friend", description = "지인 API")
+@Tag(name = "Friend", description = "친구 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/friends")
@@ -33,7 +32,6 @@ public class FriendController {
 
 	private final FriendService friendService;
 	private final FollowingMedicationStatusService followingMedicationStatusService;
-
 
 	@Operation(summary = "지인 팔로우")
 	@ApiErrorResponses(value = {
