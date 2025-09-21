@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.friend.domain.entity.Friend;
 import server.yakssok.domain.friend.domain.repository.FriendRepository;
 import server.yakssok.domain.friend.presentation.dto.request.FollowFriendRequest;
+import server.yakssok.domain.friend.presentation.dto.response.FollowFriendResponse;
 import server.yakssok.domain.friend.presentation.dto.response.FollowerInfoGroupResponse;
 import server.yakssok.domain.friend.presentation.dto.response.FollowerInfoResponse;
 import server.yakssok.domain.friend.presentation.dto.response.FollowingInfoGroupResponse;
@@ -31,6 +32,16 @@ public class FriendService {
 		User user = userService.getActiveUser(userId);
 		relationshipService.validateCanFollow(user.getId(), following.getId());
 		followEachOther(followFriendRequest, user, following);
+	}
+
+	@Transactional
+	public FollowFriendResponse followFriendByInviteCodeV2(Long userId, FollowFriendRequest followFriendRequest) {
+		String inviteCode = followFriendRequest.inviteCode();
+		User following = userService.getUserIdByInviteCode(inviteCode);
+		User user = userService.getActiveUser(userId);
+		relationshipService.validateCanFollow(user.getId(), following.getId());
+		followEachOther(followFriendRequest, user, following);
+		return FollowFriendResponse.of(following);
 	}
 
 	private void followEachOther(FollowFriendRequest followFriendRequest, User user, User following) {
