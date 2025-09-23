@@ -10,8 +10,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import server.yakssok.domain.friend.application.service.FriendService;
-import server.yakssok.domain.friend.presentation.dto.request.FollowFriendRequest;
+import server.yakssok.domain.friend.application.service.FriendServiceV2;
+import server.yakssok.domain.friend.presentation.dto.request.FollowFriendRequestV2;
 import server.yakssok.domain.friend.presentation.dto.response.FollowFriendResponse;
 import server.yakssok.global.common.reponse.ApiResponse;
 import server.yakssok.global.common.security.YakssokUserDetails;
@@ -24,7 +24,7 @@ import server.yakssok.global.exception.ErrorCode;
 @RequiredArgsConstructor
 @RequestMapping("/api/v2/friends")
 public class FriendControllerV2 {
-	private final FriendService friendService;
+	private final FriendServiceV2 friendServicev2;
 
 	@Operation(summary = "지인 팔로우")
 	@ApiErrorResponses(value = {
@@ -33,11 +33,11 @@ public class FriendControllerV2 {
 	})
 	@PostMapping
 	public ApiResponse<FollowFriendResponse> followByInviteCode(
-		@RequestBody @Valid FollowFriendRequest followRequest,
+		@RequestBody @Valid FollowFriendRequestV2 followRequest,
 		@AuthenticationPrincipal YakssokUserDetails userDetails
 	) {
 		Long userId = userDetails.getUserId();
-		FollowFriendResponse followFriendResponse = friendService.followFriendByInviteCodeV2(userId, followRequest);
+		FollowFriendResponse followFriendResponse = friendServicev2.followFriendByInviteCode(userId, followRequest);
 		return ApiResponse.success(followFriendResponse);
 	}
 
