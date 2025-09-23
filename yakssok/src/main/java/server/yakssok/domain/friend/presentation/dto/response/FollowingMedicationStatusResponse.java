@@ -37,6 +37,8 @@ public record FollowingMedicationStatusResponse(
 		LocalTime time
 	) { }
 
+	private static final String EMPTY_RELATION = "";
+
 	/* ===== 공통 생성기 ===== */
 	private static FollowingMedicationStatusResponse ofCommon(
 		User following,
@@ -46,7 +48,7 @@ public record FollowingMedicationStatusResponse(
 		return new FollowingMedicationStatusResponse(
 			following.getId(),
 			following.getNickName(),
-			following.getNickName(),
+			EMPTY_RELATION,
 			following.getProfileImageUrl(),
 			type.name(),
 			details.size(),
