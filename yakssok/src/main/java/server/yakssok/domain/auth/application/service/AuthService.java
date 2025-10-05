@@ -62,6 +62,7 @@ public class AuthService {
 
 	private void validateRefreshToken(String refreshToken) {
 		if (!jwtTokenUtils.isValidateToken(refreshToken)) {
+			log.warn("invalid refresh token: {}", refreshToken);
 			throw new AuthException(ErrorCode.INVALID_JWT);
 		}
 	}

@@ -35,5 +35,4 @@ public class NoticeRabbitConfig {
 			.to(noticeExchange())
 			.with(noticeQueueProperties.routingKey());
 	}
-
 }
