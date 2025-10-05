@@ -29,14 +29,13 @@ public class MedicationAlarmJob {
 	private final OverduePolicy overduePolicy;
 
 	@Transactional
-	public void sendNotTakenMedicationAlarms() {
+	public void sendNotTakenReportMedicationAlarms() {
 		LocalDateTime now = LocalDateTime.now();
 		LocalDateTime delayBoundary = overduePolicy.delayBoundary(now);
 		List<MedicationScheduleAlarmDto> notTakenSchedules =
 			medicationScheduleRepository.findNotTakenSchedules(delayBoundary);
 
 		for (MedicationScheduleAlarmDto schedule : notTakenSchedules) {
-			pushService.sendData(NotificationDTO.fromNotTakenMedicationSchedule(schedule));
 			if (overduePolicy.isBeforeDailyGraceWindow(now)) {
 				continue;
 			}
