@@ -6,8 +6,10 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import server.yakssok.domain.feedback.domain.entity.Feedback;
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleAlarmDto;
-import server.yakssok.domain.notification.application.constants.NotificationBodyConstants;
-import server.yakssok.domain.notification.application.util.NotificationTitleUtils;
+import server.yakssok.domain.notification.application.constants.FeedbackTemplates;
+import server.yakssok.domain.notification.application.constants.MedicationTakenTemplates;
+import server.yakssok.domain.notification.application.constants.NotTakenReminderTemplates;
+import server.yakssok.domain.notification.application.constants.NotTakenReportTemplates;
 import server.yakssok.domain.notification.domain.entity.Notification;
 import server.yakssok.domain.notification.domain.entity.NotificationType;
 
@@ -27,8 +29,8 @@ public record NotificationDTO(
 		return NotificationDTO.builder()
 			.receiverId(schedule.userId())
 			.scheduleId(schedule.scheduleId())
-			.title(NotificationTitleUtils.createMedicationReminderTitle(schedule.userNickName(), schedule.medicineName()))
-			.body(NotificationBodyConstants.MEDICATION_NOT_TAKEN_BODY)
+			.title(NotTakenReminderTemplates.randomTitle(schedule.medicineName()))
+			.body(NotTakenReminderTemplates.randomBody())
 			.type(NotificationType.MEDICATION_NOT_TAKEN)
 			.soundType(schedule.soundType().name())
 			.build();
@@ -43,7 +45,7 @@ public record NotificationDTO(
 		return NotificationDTO.builder()
 			.senderId(senderId)
 			.receiverId(receiverId)
-			.title(NotificationTitleUtils.createFeedbackTitleOneWay(feedback.getFeedbackType(), senderName))
+			.title(FeedbackTemplates.getTitle(feedback.getFeedbackType(), senderName))
 			.body(feedback.getMessage())
 			.type(feedback.getFeedbackType().toNotificationType())
 			.build();
@@ -58,8 +60,8 @@ public record NotificationDTO(
 		return NotificationDTO.builder()
 			.receiverId(receiverId)
 			.scheduleId(schedule.scheduleId())
-			.title(NotificationTitleUtils.createFriendNotTakenAlarmTitle(followingNickName))
-			.body(NotificationBodyConstants.MEDICATION_NOT_TAKEN_BODY_FOR_FRIEND)
+			.title(NotTakenReportTemplates.getTitle(followingNickName))
+			.body(NotTakenReportTemplates.getBody())
 			.type(NotificationType.MEDICATION_NOT_TAKEN_FOR_FRIEND)
 			.build();
 	}
@@ -68,8 +70,8 @@ public record NotificationDTO(
 		return NotificationDTO.builder()
 			.receiverId(schedule.userId())
 			.scheduleId(schedule.scheduleId())
-			.title(NotificationTitleUtils.createMedicationTitle(schedule.medicineName()))
-			.body(NotificationBodyConstants.MEDICATION_TAKE_BODY)
+			.title(MedicationTakenTemplates.getTitle(schedule.medicineName()))
+			.body(MedicationTakenTemplates.getBody())
 			.type(NotificationType.MEDICATION_TAKE)
 			.soundType(schedule.soundType().name())
 			.build();

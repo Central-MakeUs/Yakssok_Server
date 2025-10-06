@@ -104,6 +104,28 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 	}
 
 	@Override
+	public List<MedicationScheduleAlarmDto> findTodayNotTakenSchedules(LocalDateTime notTakenLimitTime) {
+		return jpaQueryFactory
+			.select(Projections.constructor(
+				MedicationScheduleAlarmDto.class,
+				medicationSchedule.id,
+				medication.medicineName,
+				user.id,
+				user.nickName,
+				medication.soundType
+			))
+			.from(medicationSchedule)
+			.innerJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
+			.innerJoin(user).on(user.id.eq(medication.userId))
+			.where(
+				medicationSchedule.scheduledDate.eq(notTakenLimitTime.toLocalDate()),
+				medicationSchedule.scheduledTime.loe(notTakenLimitTime.toLocalTime()),
+				medicationSchedule.isTaken.isFalse()
+			)
+			.fetch();
+	}
+
+	@Override
 	public List<MedicationScheduleAlarmDto> findSchedules(LocalDateTime intakeTime) {
 		return jpaQueryFactory
 			.select(Projections.constructor(
