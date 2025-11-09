@@ -60,8 +60,8 @@ public record NotificationDTO(
 		return NotificationDTO.builder()
 			.receiverId(receiverId)
 			.scheduleId(schedule.scheduleId())
-			.title(NotTakenReportTemplates.getTitle(followingNickName))
-			.body(NotTakenReportTemplates.getBody())
+			.title(NotTakenReportTemplates.randomTitle(followingNickName))
+			.body(NotTakenReportTemplates.randomBody())
 			.type(NotificationType.MEDICATION_NOT_TAKEN_FOR_FRIEND)
 			.build();
 	}

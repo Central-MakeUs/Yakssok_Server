@@ -3,7 +3,6 @@ package server.yakssok.domain.medication_schedule.batch.job;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +14,6 @@ import server.yakssok.domain.medication_schedule.domain.repository.MedicationSch
 import server.yakssok.domain.medication_schedule.domain.repository.MedicationScheduleRepository;
 import server.yakssok.domain.notification.application.service.PushService;
 import server.yakssok.domain.notification.presentation.dto.NotificationDTO;
-import server.yakssok.global.infra.rabbitmq.properties.MedicationQueueProperties;
 import server.yakssok.domain.user.domain.entity.User;
 
 @Component
@@ -24,8 +22,6 @@ public class MedicationAlarmJob {
 	private final PushService pushService;
 	private final MedicationScheduleRepository medicationScheduleRepository;
 	private final FriendRepository friendRepository;
-	private final RabbitTemplate rabbitTemplate;
-	private final MedicationQueueProperties medicationQueueProperties;
 	private final OverduePolicy overduePolicy;
 
 	@Transactional
@@ -61,13 +57,7 @@ public class MedicationAlarmJob {
 			= medicationScheduleRepository.findSchedules(now);
 		for (MedicationScheduleAlarmDto schedule : scheduledMedications) {
 			NotificationDTO notificationDTO = NotificationDTO.fromMedicationSchedule(schedule);
-			sendToMedicationQueue(notificationDTO);
+			pushService.sendNotification(notificationDTO);
 		}
-	}
-
-	private void sendToMedicationQueue(NotificationDTO notificationDTO) {
-		String exchange = medicationQueueProperties.exchange();
-		String routingKey = medicationQueueProperties.routingKey();
-		rabbitTemplate.convertAndSend(exchange, routingKey, notificationDTO);
 	}
 }
