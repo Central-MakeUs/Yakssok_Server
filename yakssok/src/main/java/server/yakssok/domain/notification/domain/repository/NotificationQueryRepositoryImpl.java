@@ -2,6 +2,7 @@ package server.yakssok.domain.notification.domain.repository;
 
 import static server.yakssok.domain.notification.domain.entity.QNotification.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Slice;
@@ -30,6 +31,14 @@ public class NotificationQueryRepositoryImpl implements NotificationQueryReposit
 			.limit(SliceUtils.limitForHasNext(limit))
 			.fetch();
 		return SliceUtils.toSlice(notifications, limit);
+	}
+
+	@Override
+	public long deleteByCreatedAtBefore(LocalDateTime beforeBoundary) {
+		return jpaQueryFactory
+			.delete(notification)
+			.where(notification.createdAt.before(beforeBoundary))
+			.execute();
 	}
 
 	private static BooleanExpression ltCursorId(Long cursorId) {
