@@ -96,8 +96,7 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 			.innerJoin(user).on(user.id.eq(medication.userId))
 			.where(
 				medicationSchedule.scheduledDate.eq(notTakenLimitTime.toLocalDate()),
-				medicationSchedule.scheduledTime.hour().eq(notTakenLimitTime.getHour()),
-				medicationSchedule.scheduledTime.minute().eq(notTakenLimitTime.getMinute()),
+				medicationSchedule.scheduledTime.before(notTakenLimitTime.toLocalTime()),
 				medicationSchedule.isTaken.isFalse()
 			)
 			.fetch();
@@ -142,7 +141,8 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 			.where(
 				medicationSchedule.scheduledDate.eq(intakeTime.toLocalDate()),
 				medicationSchedule.scheduledTime.hour().eq(intakeTime.getHour()),
-				medicationSchedule.scheduledTime.minute().eq(intakeTime.getMinute())
+				medicationSchedule.scheduledTime.minute().eq(intakeTime.getMinute()),
+				medicationSchedule.isTaken.isFalse()
 			)
 			.fetch();
 	}
