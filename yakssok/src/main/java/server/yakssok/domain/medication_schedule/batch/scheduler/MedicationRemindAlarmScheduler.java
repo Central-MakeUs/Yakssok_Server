@@ -12,7 +12,7 @@ public class MedicationRemindAlarmScheduler {
 	private final MedicationRemindAlarmJob medicationRemindAlarmJob;
 
 	@Scheduled(cron = "0 0 21 * * *")
-	public void sendNotTakenRemindMedicationAlarms() {
+	public void run() {
 		medicationRemindAlarmJob.sendNotTakenRemindMedicationAlarms();
 	}
 }
