@@ -141,7 +141,8 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 			.where(
 				medicationSchedule.scheduledDate.eq(intakeTime.toLocalDate()),
 				medicationSchedule.scheduledTime.hour().eq(intakeTime.getHour()),
-				medicationSchedule.scheduledTime.minute().eq(intakeTime.getMinute())
+				medicationSchedule.scheduledTime.minute().eq(intakeTime.getMinute()),
+				medicationSchedule.isTaken.isFalse()
 			)
 			.fetch();
 	}
