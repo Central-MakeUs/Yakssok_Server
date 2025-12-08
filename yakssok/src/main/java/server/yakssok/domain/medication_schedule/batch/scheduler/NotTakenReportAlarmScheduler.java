@@ -12,7 +12,7 @@ public class NotTakenReportAlarmScheduler {
 
 	private final NotTakenReportAlarmJob notTakenReportAlarmJob;
 
-	@Scheduled(cron = "0 * * * * *")
+	@Scheduled(cron = "0 0 21 * * *")
 	public void run() {
 		notTakenReportAlarmJob.sendNotTakenReportMedicationAlarms();
 	}
