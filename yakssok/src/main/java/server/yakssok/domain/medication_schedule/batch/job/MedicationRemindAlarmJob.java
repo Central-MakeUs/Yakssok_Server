@@ -39,7 +39,7 @@ public class MedicationRemindAlarmJob {
 	}
 
 	private void sendNotification(MedicationScheduleAlarmDto schedule) {
-		NotificationDTO notificationDTO = NotificationDTO.fromMedicationSchedule(schedule);
+		NotificationDTO notificationDTO = NotificationDTO.fromNotTakenMedicationSchedule(schedule);
 		pushService.sendNotification(notificationDTO);
 	}
 }
