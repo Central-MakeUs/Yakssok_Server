@@ -28,7 +28,8 @@ public class SecurityConfig {
 		"/api/auth/login/**",
 		"/api/auth/reissue/**",
 		"/api/auth/kakao/callback",
-		"/actuator/**"
+		"/actuator/**",
+		"/apple/notifications"
 	};
 
 	@Bean

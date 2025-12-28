@@ -1,99 +1,100 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.2.3'
-	id 'io.spring.dependency-management' version '1.1.4'
+    id 'java'
+    id 'org.springframework.boot' version '3.2.3'
+    id 'io.spring.dependency-management' version '1.1.4'
 }
 
 group = 'server'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 def querydslDir = "src/main/generated"
 
 sourceSets {
-	main.java.srcDirs += querydslDir
+    main.java.srcDirs += querydslDir
 }
 
 tasks.named("compileJava") {
-	options.generatedSourceOutputDirectory.set(file(querydslDir))
+    options.generatedSourceOutputDirectory.set(file(querydslDir))
 }
 
 test {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'mysql:mysql-connector-java:8.0.33'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'mysql:mysql-connector-java:8.0.33'
 
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
-	testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
-	testImplementation 'org.mockito:mockito-junit-jupiter:5.12.0'
-	testImplementation 'org.assertj:assertj-core:3.25.3'
-	testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.2'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.12.0'
+    testImplementation 'org.assertj:assertj-core:3.25.3'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.2'
 
-	//QueryDSL
-	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
-	annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'
-	annotationProcessor 'jakarta.persistence:jakarta.persistence-api:3.1.0'
-	annotationProcessor 'jakarta.annotation:jakarta.annotation-api:2.1.1'
+    //QueryDSL
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'
+    annotationProcessor 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+    annotationProcessor 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 
-	//jwt
-	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
-	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+    //jwt
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+    implementation 'com.nimbusds:nimbus-jose-jwt:9.37.3'
 
-	//swagger
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+    //swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
 
-	//jwks
-	implementation 'com.auth0:java-jwt:4.4.0'
-	implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
-	implementation 'com.auth0:jwks-rsa:0.22.1'
+    //jwks
+    implementation 'com.auth0:java-jwt:4.4.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
+    implementation 'com.auth0:jwks-rsa:0.22.1'
 
-	//slack
-	implementation 'com.github.maricn:logback-slack-appender:1.4.0'
+    //slack
+    implementation 'com.github.maricn:logback-slack-appender:1.4.0'
 
-	//s3
-	implementation 'software.amazon.awssdk:s3:2.25.3'
+    //s3
+    implementation 'software.amazon.awssdk:s3:2.25.3'
 
-	//test
-	testImplementation 'org.junit.jupiter:junit-jupiter'
-	testCompileOnly 'org.projectlombok:lombok'
-	testAnnotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'com.h2database:h2:2.2.224'
+    //test
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'com.h2database:h2:2.2.224'
 
-	//firebase
-	implementation 'com.google.firebase:firebase-admin:9.2.0'
+    //firebase
+    implementation 'com.google.firebase:firebase-admin:9.2.0'
 
-	//prometheus
-	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	implementation 'io.micrometer:micrometer-registry-prometheus'
+    //prometheus
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
 
-	//validation
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
+    //validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-	//rabbitmq
-	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+    //rabbitmq
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
 }
