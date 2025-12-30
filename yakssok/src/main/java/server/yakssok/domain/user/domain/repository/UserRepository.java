@@ -13,6 +13,5 @@ import server.yakssok.domain.user.domain.entity.User;
 public interface UserRepository extends JpaRepository<User, Long>, UserQueryRepository {
 	Optional<User> findByInviteCodeValue(String inviteCode);
 	Optional<User> findByIdAndIsDeletedFalse(Long userId);
-
 	List<User> findAllByIsDeletedFalse();
 }
