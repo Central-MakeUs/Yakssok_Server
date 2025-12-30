@@ -1,4 +1,4 @@
-package server.yakssok.global.infra.apple;
+package server.yakssok.global.infra.apple.notification;
 
 import java.util.Map;
 
@@ -28,10 +28,8 @@ public class AppleNotificationController {
 			appleNotificationService.handle(payload);
 			return ResponseEntity.ok("OK");
 		} catch (SecurityException e) {
-			// 서명 검증 실패 등: 위조/부적절 요청
 			return ResponseEntity.status(401).body("invalid signature");
 		} catch (Exception e) {
-			// 내부 처리 실패: 애플이 재시도할 수도 있으니 로깅 권장
 			return ResponseEntity.status(500).body("internal error");
 		}
 	}

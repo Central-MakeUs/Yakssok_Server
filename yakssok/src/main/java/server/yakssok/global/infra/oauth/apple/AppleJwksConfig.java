@@ -1,4 +1,4 @@
-package server.yakssok.global.infra.apple;
+package server.yakssok.global.infra.oauth.apple;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -11,8 +11,6 @@ import com.auth0.jwk.JwkProvider;
 import com.auth0.jwk.JwkProviderBuilder;
 
 import lombok.RequiredArgsConstructor;
-import server.yakssok.global.infra.oauth.apple.AppleOAuthProperties;
-
 
 @Configuration
 @RequiredArgsConstructor
