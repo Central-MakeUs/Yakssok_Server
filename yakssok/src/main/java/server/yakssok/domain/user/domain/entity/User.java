@@ -75,6 +75,10 @@ public class User extends BaseEntity {
 		this.oAuthRefreshToken = null;
 	}
 
+	public boolean isActive() {
+		return !isDeleted;
+	}
+
 	public void initializeUserInfo(String nickName) {
 		this.nickName = nickName;
 		this.isInitialized = true;
