@@ -20,6 +20,7 @@ import server.yakssok.global.infra.oauth.exception.OAuthException;
 @RequiredArgsConstructor
 public class AppleLoginStrategy implements OAuthStrategy {
 	private final AppleOAuthProperties properties;
+	private final AppleJwtVerifier appleJwtVerifier;
 
 	private static final String TOKEN_URI = "/auth/token";
 	private static final String REVOKE_URI = "/auth/revoke";
@@ -34,14 +35,7 @@ public class AppleLoginStrategy implements OAuthStrategy {
 	@Override
 	public AppleUserResponse fetchUserInfo(String authorizationCode, String expectedNonce) {
 		AppleTokenResponse tokenResponse = requestTokenFromApple(authorizationCode);
-		DecodedJWT jwt = AppleJwtUtils.verifyIdToken(
-			tokenResponse.idToken(),
-			properties.jwkUrl(),
-			properties.apiBaseUrl(),
-			properties.clientId(),
-			properties.nonceClaimKey(),
-			expectedNonce
-		);
+		DecodedJWT jwt = appleJwtVerifier.verifyIdToken(tokenResponse.idToken(), expectedNonce);
 		return new AppleUserResponse(jwt.getSubject(), tokenResponse.refreshToken());
 	}
 
@@ -89,7 +83,7 @@ public class AppleLoginStrategy implements OAuthStrategy {
 	}
 
 	private String createClientSecret() {
-		return AppleJwtUtils.createClientSecret(
+		return AppleClientSecretGenerator.createClientSecret(
 			properties.teamId(),
 			properties.clientId(),
 			properties.keyId(),
