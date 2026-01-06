@@ -36,7 +36,7 @@ public class MedicationScheduleService {
 	public void generateTodaySchedules() {
 		LocalDateTime currentDateTime = LocalDateTime.now();
 		List<MedicationSchedule> schedules = medicationScheduleGenerator.generateAllTodaySchedules(currentDateTime);
-		medicationScheduleJdbcRepository.batchInsert(schedules);
+		medicationScheduleJdbcRepository.batchInsert(schedules, 100);
 	}
 
 	@Transactional
@@ -98,7 +98,7 @@ public class MedicationScheduleService {
 		Medication medication, List<LocalTime> intakeTimes) {
 		List<MedicationSchedule> schedules = medicationScheduleGenerator.generateTodaySchedules(
 			medication, intakeTimes);
-		medicationScheduleJdbcRepository.batchInsert(schedules);
+		medicationScheduleJdbcRepository.batchInsert(schedules, 100);
 	}
 
 	public void deleteAllByMedicationIds(List<Long> medicationIds) {

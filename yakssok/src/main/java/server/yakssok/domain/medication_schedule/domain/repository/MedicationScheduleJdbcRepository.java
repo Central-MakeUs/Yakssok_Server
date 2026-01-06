@@ -1,5 +1,7 @@
 package server.yakssok.domain.medication_schedule.domain.repository;
 
+import static server.yakssok.global.exception.ErrorCode.*;
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
@@ -9,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import lombok.RequiredArgsConstructor;
+import server.yakssok.domain.medication_schedule.application.exception.MedicationScheduleException;
 import server.yakssok.domain.medication_schedule.domain.entity.MedicationSchedule;
 
 @RequiredArgsConstructor
@@ -41,5 +44,16 @@ public class MedicationScheduleJdbcRepository {
 				}
 			}
 		);
+	}
+
+	public void batchInsert(List<MedicationSchedule> schedules, int chunkSize) {
+		if (schedules == null || schedules.isEmpty()) return;
+		if (chunkSize <= 0) throw new MedicationScheduleException(INTERNAL_SERVER_ERROR);
+
+		for (int from = 0; from < schedules.size(); from += chunkSize) {
+			int to = Math.min(from + chunkSize, schedules.size());
+			List<MedicationSchedule> chunk = schedules.subList(from, to);
+			batchInsert(chunk);
+		}
 	}
 }
