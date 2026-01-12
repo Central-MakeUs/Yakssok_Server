@@ -96,8 +96,15 @@ public class MedicationScheduleService {
 
 	public void createTodaySchedules(
 		Medication medication, List<LocalTime> intakeTimes) {
-		List<MedicationSchedule> schedules = medicationScheduleGenerator.generateTodaySchedules(
-			medication, intakeTimes);
+		List<MedicationSchedule> schedules = medicationScheduleGenerator
+			.generateTodaySchedules(medication, intakeTimes);
+		medicationScheduleJdbcRepository.batchInsert(schedules);
+	}
+
+	public void createAllSchedules(
+		Medication medication, List<LocalTime> intakeTimes) {
+		List<MedicationSchedule> schedules = medicationScheduleGenerator.
+			generateAllSchedules(medication, intakeTimes);
 		medicationScheduleJdbcRepository.batchInsert(schedules);
 	}
 

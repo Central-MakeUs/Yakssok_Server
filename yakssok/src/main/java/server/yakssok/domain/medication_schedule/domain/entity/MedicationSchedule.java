@@ -28,10 +28,22 @@ public class MedicationSchedule extends BaseEntity {
 	private Long userId;
 
 	public static MedicationSchedule create(LocalDate scheduledDate, LocalTime scheduledTime, Long medicationId, Long userId) {
-		return new MedicationSchedule(scheduledDate, scheduledTime, false, medicationId, userId);
+		return new MedicationSchedule(
+			scheduledDate,
+			scheduledTime,
+			false,
+			medicationId,
+			userId
+		);
 	}
 
-	private MedicationSchedule(LocalDate scheduledDate, LocalTime scheduledTime, boolean isTaken, Long medicationId, Long userId) {
+	private MedicationSchedule(
+		LocalDate scheduledDate,
+		LocalTime scheduledTime,
+		boolean isTaken,
+		Long medicationId,
+		Long userId
+	) {
 		this.scheduledDate = scheduledDate;
 		this.scheduledTime = scheduledTime;
 		this.isTaken = isTaken;

@@ -26,14 +26,21 @@ public class MedicationScheduleGenerator {
 
 	private final MedicationRepository medicationRepository;
 
-	public List<MedicationScheduleDto> generateUserFutureScheduleDtos(Long userId, LocalDate start, LocalDate end) {
+	public List<MedicationScheduleDto> generateUserFutureScheduleDtos(
+		Long userId,
+		LocalDate start,
+		LocalDate end
+	) {
 		return medicationRepository.findFutureMedicationSchedules(userId).stream()
 			.flatMap(schedule -> createMedicationScheduleDtos(schedule, start, end))
 			.toList();
 	}
 
 	private Stream<MedicationScheduleDto> createMedicationScheduleDtos(
-		FutureMedicationSchedulesDto schedule, LocalDate start, LocalDate end) {
+		FutureMedicationSchedulesDto schedule,
+		LocalDate start,
+		LocalDate end
+	) {
 		Medication medication = schedule.medication();
 		MedicationIntakeDay intakeDay = schedule.medicationIntakeDay();
 		MedicationIntakeTime intakeTime = schedule.medicationIntakeTime();
@@ -50,20 +57,30 @@ public class MedicationScheduleGenerator {
 	}
 
 
-	private boolean isSameDayOfWeek(LocalDate date, MedicationIntakeDay intakeDay) {
+	private boolean isSameDayOfWeek(
+		LocalDate date,
+		MedicationIntakeDay intakeDay
+	) {
 		return intakeDay.getDayOfWeek() == date.getDayOfWeek();
 	}
 
-	private LocalDate getActualStart(LocalDate inputStart, Medication medication) {
+	private LocalDate getActualStart(
+		LocalDate inputStart,
+		Medication medication
+	) {
 		return inputStart.isAfter(medication.getStartDate()) ? inputStart : medication.getStartDate();
 	}
 
-	private LocalDate getActualEnd(LocalDate inputEnd, Medication medication) {
+	private LocalDate getActualEnd(
+		LocalDate inputEnd, Medication medication
+	) {
 		LocalDate endDate = medication.getEndDate();
 		return (endDate == null) ? inputEnd : (inputEnd.isBefore(endDate) ? inputEnd : endDate);
 	}
 
-	public List<MedicationSchedule> generateAllTodaySchedules(LocalDateTime currentDateTime) {
+	public List<MedicationSchedule> generateAllTodaySchedules(
+		LocalDateTime currentDateTime
+	) {
 		List<MedicationDto> medicationDtos = medicationRepository.findMedicationsForScheduleGeneration(currentDateTime, currentDateTime.getDayOfWeek());
 		return medicationDtos.stream()
 			.map(dto -> MedicationSchedule.create(currentDateTime.toLocalDate(), dto.intakeTime(), dto.medicationId(), dto.userId()))
@@ -71,9 +88,34 @@ public class MedicationScheduleGenerator {
 	}
 
 	public List<MedicationSchedule> generateTodaySchedules(
-		Medication medication, List<LocalTime> intakeTimes) {
+		Medication medication,
+		List<LocalTime> intakeTimes
+	) {
 		return intakeTimes.stream()
 				.map(intakeTime -> MedicationSchedule.create(LocalDate.now(), intakeTime, medication.getId(), medication.getUserId()))
 				.collect(Collectors.toList());
+	}
+
+	public List<MedicationSchedule> generateAllSchedules(
+		Medication medication,
+		List<LocalTime> intakeTimes
+	)
+	{
+		LocalDate start = medication.getStartDate();
+		LocalDate end = medication.getEndDate();
+
+		List<DayOfWeek> intakeDayOfWeeks = medication.getIntakeDays().stream()
+			.map(MedicationIntakeDay::getDayOfWeek)
+			.toList();
+
+		return start.datesUntil(end.plusDays(1))
+			.filter(date -> intakeDayOfWeeks.contains(date.getDayOfWeek()))
+			.flatMap(date -> intakeTimes.stream()
+				.map(intakeTime -> MedicationSchedule.create(
+					date,
+					intakeTime,
+					medication.getId(),
+					medication.getUserId())))
+			.toList();
 	}
 }
