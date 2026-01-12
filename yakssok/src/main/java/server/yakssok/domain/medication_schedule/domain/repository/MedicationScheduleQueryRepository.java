@@ -11,6 +11,7 @@ public interface MedicationScheduleQueryRepository {
 	List<MedicationScheduleDto> findUserSchedulesByDate(Long userId, LocalDate date);
 	List<MedicationScheduleDto> findUserSchedulesInPastRange(Long userId, LocalDate startDate, LocalDate endDate);
 	void deleteTodayUpcomingSchedules(Long medicationId, LocalDate currentDate, LocalTime currentTime);
+	void deleteAllUpcomingSchedules(Long medicationId, LocalDate currentDate, LocalTime currentTime);
 	List<MedicationScheduleAlarmDto> findNotTakenSchedules(LocalDateTime notTakenLimitTime);
 	List<MedicationScheduleAlarmDto> findTodayNotTakenSchedules(LocalDateTime notTakenLimitTime);
 	List<MedicationScheduleAlarmDto> findSchedules(LocalDateTime now);

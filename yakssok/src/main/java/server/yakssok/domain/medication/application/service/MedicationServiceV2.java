@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import server.yakssok.domain.medication.application.exception.MedicationException;
 import server.yakssok.domain.medication.domain.entity.Medication;
 import server.yakssok.domain.medication.domain.entity.MedicationIntakeDay;
 import server.yakssok.domain.medication.domain.entity.MedicationIntakeTime;
@@ -17,6 +18,7 @@ import server.yakssok.domain.medication.domain.repository.MedicationIntakeTimeRe
 import server.yakssok.domain.medication.domain.repository.MedicationRepository;
 import server.yakssok.domain.medication.presentation.dto.request.CreateMedicationRequestV2;
 import server.yakssok.domain.medication_schedule.application.service.MedicationScheduleService;
+import server.yakssok.global.exception.ErrorCode;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +49,20 @@ public class MedicationServiceV2 {
 	private Medication saveMedication(CreateMedicationRequestV2 request, Long userId) {
 		Medication medication = request.toMedication(userId);
 		medicationRepository.save(medication);
+		return medication;
+	}
+
+	@Transactional
+	public void endMedication(Long medicationId) {
+		Medication medication = getMedication(medicationId);
+		LocalDateTime currentDateTime = LocalDateTime.now();
+		medication.end(currentDateTime);
+		medicationScheduleService.deleteAllUpcomingSchedules(medicationId, currentDateTime);
+	}
+
+	private Medication getMedication(Long medicationId) {
+		Medication medication = medicationRepository.findById(medicationId)
+			.orElseThrow(() -> new MedicationException(ErrorCode.NOT_FOUND_MEDICATION));
 		return medication;
 	}
 }

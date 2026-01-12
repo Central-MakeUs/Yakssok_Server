@@ -1,7 +1,9 @@
 package server.yakssok.domain.medication.presentation.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,6 +35,16 @@ public class MedicationControllerV2 {
 	) {
 		Long userId = userDetails.getUserId();
 		medicationServiceV2.createMedication(userId, createMedicationRequest);
+		return ApiResponse.success();
+	}
+
+	@Operation(summary = "복약 종료")
+	@ApiErrorResponse(ErrorCode.NOT_FOUND_MEDICATION)
+	@PutMapping("/{medicationId}/end")
+	public ApiResponse endMedication(
+		@PathVariable Long medicationId
+	) {
+		medicationServiceV2.endMedication(medicationId);
 		return ApiResponse.success();
 	}
 }

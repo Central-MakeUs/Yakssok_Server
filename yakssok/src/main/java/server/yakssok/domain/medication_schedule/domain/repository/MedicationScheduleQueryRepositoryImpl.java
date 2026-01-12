@@ -81,6 +81,19 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 	}
 
 	@Override
+	public void deleteAllUpcomingSchedules(Long medicationId, LocalDate currentDate, LocalTime currentTime) {
+		jpaQueryFactory
+			.delete(medicationSchedule)
+			.where(
+				medicationSchedule.medicationId.eq(medicationId),
+				medicationSchedule.scheduledDate.gt(currentDate)
+					.or(medicationSchedule.scheduledDate.eq(currentDate)
+						.and(medicationSchedule.scheduledTime.after(currentTime)))
+			)
+			.execute();
+	}
+
+	@Override
 	public List<MedicationScheduleAlarmDto> findNotTakenSchedules(LocalDateTime notTakenLimitTime) {
 		return jpaQueryFactory
 			.select(Projections.constructor(

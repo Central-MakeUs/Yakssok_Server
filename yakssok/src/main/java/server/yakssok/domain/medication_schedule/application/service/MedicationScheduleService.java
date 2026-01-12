@@ -51,6 +51,10 @@ public class MedicationScheduleService {
 		medicationScheduleManager.deleteTodayUpcomingSchedules(medicationId, now);
 	}
 
+	public void deleteAllUpcomingSchedules(Long medicationId, LocalDateTime now) {
+		medicationScheduleManager.deleteAllUpcomingSchedules(medicationId, now);
+	}
+
 	@Transactional(readOnly = true)
 	public MedicationScheduleGroupResponse getMyTodaySchedules(Long userId) {
 		return groupAndSort(medicationScheduleFinder.findSchedulesByDate(userId, LocalDate.now()));
