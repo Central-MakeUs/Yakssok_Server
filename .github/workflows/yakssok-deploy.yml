@@ -7,7 +7,7 @@ on:
       - "yakssok/**"
       - "docker-compose.yml"
       - ".github/workflows/yakssok-deploy.yml"
-
+  workflow_dispatch:
 permissions:
   contents: read
 
