@@ -22,7 +22,6 @@ import server.yakssok.global.exception.ErrorCode;
 public class MedicationScheduleFinder {
 
 	private final MedicationScheduleRepository medicationScheduleRepository;
-	private final MedicationScheduleGenerator medicationScheduleGenerator;
 
 	public MedicationSchedule findScheduleById(Long scheduleId) {
 		MedicationSchedule schedule = medicationScheduleRepository.findById(scheduleId)
@@ -39,59 +38,17 @@ public class MedicationScheduleFinder {
 	public List<MedicationScheduleResponse> findSchedulesInRange(
 		Long userId,
 		LocalDate start,
-		LocalDate end,
-		LocalDate today
+		LocalDate end
 	) {
-		if (isEntirelyPast(end, today)) {
-			return findPastSchedules(userId, start, end);
-		}
-		if (isMixedPeriod(start, end, today)) {
-			return findMixedSchedules(userId, start, end, today);
-		}
-		return findFutureSchedules(userId, start, end);
+		return findSchedules(userId, start, end);
 	}
 
-	private boolean isEntirelyPast(LocalDate end, LocalDate today) {
-		return !end.isAfter(today);
-	}
-
-	private boolean isMixedPeriod(LocalDate start, LocalDate end, LocalDate today) {
-		return !start.isAfter(today) && end.isAfter(today);
-	}
-
-	private List<MedicationScheduleResponse> findPastSchedules(
+	private List<MedicationScheduleResponse> findSchedules(
 		Long userId,
 		LocalDate start,
 		LocalDate end
 	) {
-		return medicationScheduleRepository.findUserSchedulesInPastRange(userId, start, end).stream()
-			.map(MedicationScheduleResponse::from)
-			.toList();
-	}
-
-	private List<MedicationScheduleResponse> findMixedSchedules(
-		Long userId,
-		LocalDate start,
-		LocalDate end,
-		LocalDate today
-	) {
-		List<MedicationScheduleResponse> past = medicationScheduleRepository.findUserSchedulesInPastRange(userId, start, today).stream()
-			.map(MedicationScheduleResponse::from)
-			.toList();
-
-		List<MedicationScheduleResponse> future = medicationScheduleGenerator.generateUserFutureScheduleDtos(userId, today.plusDays(1), end).stream()
-			.map(MedicationScheduleResponse::from)
-			.toList();
-
-		return Stream.concat(past.stream(), future.stream()).toList();
-	}
-
-	private List<MedicationScheduleResponse> findFutureSchedules(
-		Long userId,
-		LocalDate start,
-		LocalDate end
-	) {
-		return medicationScheduleGenerator.generateUserFutureScheduleDtos(userId, start, end).stream()
+		return medicationScheduleRepository.findUserSchedulesInRange(userId, start, end).stream()
 			.map(MedicationScheduleResponse::from)
 			.toList();
 	}
