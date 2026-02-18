@@ -31,6 +31,7 @@ public record CreateMedicationRequest(
 	LocalDate startDate,
 
 	@Schema(description = "복용 종료일 (yyyy-MM-dd)", example = "2025-07-13")
+	@NotNull
 	LocalDate endDate,
 
 	@Schema(

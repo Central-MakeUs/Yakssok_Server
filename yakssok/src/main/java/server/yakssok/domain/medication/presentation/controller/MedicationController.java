@@ -1,7 +1,5 @@
 package server.yakssok.domain.medication.presentation.controller;
 
-import java.time.LocalDate;
-
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

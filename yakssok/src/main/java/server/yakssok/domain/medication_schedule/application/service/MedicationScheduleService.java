@@ -32,12 +32,6 @@ public class MedicationScheduleService {
 	private final RelationshipService relationshipService;
 	private final MedicationScheduleValidator medicationScheduleValidator;
 
-	@Transactional
-	public void generateTodaySchedules() {
-		LocalDateTime currentDateTime = LocalDateTime.now();
-		List<MedicationSchedule> schedules = medicationScheduleGenerator.generateAllTodaySchedules(currentDateTime);
-		medicationScheduleJdbcRepository.batchInsert(schedules);
-	}
 
 	@Transactional
 	public void switchTakeMedication(Long userId, Long scheduleId) {
@@ -45,10 +39,6 @@ public class MedicationScheduleService {
 		medicationScheduleValidator.validateOwnership(userId, schedule);
 		medicationScheduleValidator.validateTodaySchedule(schedule);
 		schedule.switchTake();
-	}
-
-	public void deleteTodayUpcomingSchedules(Long medicationId, LocalDateTime now) {
-		medicationScheduleManager.deleteTodayUpcomingSchedules(medicationId, now);
 	}
 
 	public void deleteAllUpcomingSchedules(Long medicationId, LocalDateTime now) {
@@ -96,13 +86,6 @@ public class MedicationScheduleService {
 			.collect(Collectors.toList());
 
 		return MedicationScheduleGroupResponse.fromList(dailyGroups);
-	}
-
-	public void createTodaySchedules(
-		Medication medication, List<LocalTime> intakeTimes) {
-		List<MedicationSchedule> schedules = medicationScheduleGenerator
-			.generateTodaySchedules(medication, intakeTimes);
-		medicationScheduleJdbcRepository.batchInsert(schedules);
 	}
 
 	public void createAllSchedules(
