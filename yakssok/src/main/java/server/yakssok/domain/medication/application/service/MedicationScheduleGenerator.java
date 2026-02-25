@@ -2,10 +2,8 @@ package server.yakssok.domain.medication.application.service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.springframework.stereotype.Component;
@@ -16,7 +14,6 @@ import server.yakssok.domain.medication.domain.entity.MedicationIntakeDay;
 import server.yakssok.domain.medication.domain.entity.MedicationIntakeTime;
 import server.yakssok.domain.medication.domain.repository.MedicationRepository;
 import server.yakssok.domain.medication.domain.repository.dto.FutureMedicationSchedulesDto;
-import server.yakssok.domain.medication.domain.repository.dto.MedicationDto;
 import server.yakssok.domain.medication_schedule.domain.entity.MedicationSchedule;
 import server.yakssok.domain.medication_schedule.domain.repository.dto.MedicationScheduleDto;
 
@@ -76,24 +73,6 @@ public class MedicationScheduleGenerator {
 	) {
 		LocalDate endDate = medication.getEndDate();
 		return (endDate == null) ? inputEnd : (inputEnd.isBefore(endDate) ? inputEnd : endDate);
-	}
-
-	public List<MedicationSchedule> generateAllTodaySchedules(
-		LocalDateTime currentDateTime
-	) {
-		List<MedicationDto> medicationDtos = medicationRepository.findMedicationsForScheduleGeneration(currentDateTime, currentDateTime.getDayOfWeek());
-		return medicationDtos.stream()
-			.map(dto -> MedicationSchedule.create(currentDateTime.toLocalDate(), dto.intakeTime(), dto.medicationId(), dto.userId()))
-			.toList();
-	}
-
-	public List<MedicationSchedule> generateTodaySchedules(
-		Medication medication,
-		List<LocalTime> intakeTimes
-	) {
-		return intakeTimes.stream()
-				.map(intakeTime -> MedicationSchedule.create(LocalDate.now(), intakeTime, medication.getId(), medication.getUserId()))
-				.collect(Collectors.toList());
 	}
 
 	public List<MedicationSchedule> generateAllSchedules(

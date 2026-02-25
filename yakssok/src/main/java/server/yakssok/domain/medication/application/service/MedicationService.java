@@ -1,5 +1,6 @@
 package server.yakssok.domain.medication.application.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
