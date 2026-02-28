@@ -21,25 +21,30 @@ public class MedicationScheduleJdbcRepository {
         VALUES (?, ?, ?, ?, ?)
     """;
 
-	public void batchInsert(List<MedicationSchedule> schedules) {
-		jdbcTemplate.batchUpdate(
-			INSERT_SQL,
-			new BatchPreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps, int i) throws SQLException {
-					MedicationSchedule schedule = schedules.get(i);
-					ps.setObject(1, schedule.getScheduledDate());
-					ps.setObject(2, schedule.getScheduledTime());
-					ps.setBoolean(3, schedule.isTaken());
-					ps.setLong(4, schedule.getMedicationId());
-					ps.setLong(5, schedule.getUserId());
-				}
+	private static final int CHUNK_SIZE = 500;
 
-				@Override
-				public int getBatchSize() {
-					return schedules.size();
+	public void batchInsert(List<MedicationSchedule> schedules) {
+		for (int i = 0; i < schedules.size(); i += CHUNK_SIZE) {
+			List<MedicationSchedule> chunk = schedules.subList(i, Math.min(i + CHUNK_SIZE, schedules.size()));
+			jdbcTemplate.batchUpdate(
+				INSERT_SQL,
+				new BatchPreparedStatementSetter() {
+					@Override
+					public void setValues(PreparedStatement ps, int i) throws SQLException {
+						MedicationSchedule schedule = chunk.get(i);
+						ps.setObject(1, schedule.getScheduledDate());
+						ps.setObject(2, schedule.getScheduledTime());
+						ps.setBoolean(3, schedule.isTaken());
+						ps.setLong(4, schedule.getMedicationId());
+						ps.setLong(5, schedule.getUserId());
+					}
+
+					@Override
+					public int getBatchSize() {
+						return chunk.size();
+					}
 				}
-			}
-		);
+			);
+		}
 	}
 }
