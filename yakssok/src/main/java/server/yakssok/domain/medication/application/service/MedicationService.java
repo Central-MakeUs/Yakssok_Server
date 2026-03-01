@@ -11,8 +11,6 @@ import org.springframework.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.medication.application.exception.MedicationException;
 import server.yakssok.domain.medication.domain.entity.Medication;
-import server.yakssok.domain.medication.domain.entity.MedicationIntakeDay;
-import server.yakssok.domain.medication.domain.entity.MedicationIntakeTime;
 import server.yakssok.domain.medication.domain.entity.MedicationStatus;
 import server.yakssok.domain.medication.domain.entity.MedicationType;
 import server.yakssok.domain.medication.domain.entity.SoundType;
@@ -34,30 +32,96 @@ public class MedicationService {
 	private final MedicationIntakeTimeRepository medicationIntakeTimeRepository;
 	private final MedicationScheduleService medicationScheduleService;
 
-	/**
-	 * 내 복약 목록 조회
-	 */
 	@Transactional(readOnly = true)
 	public MedicationGroupedResponse findMedications(Long userId, String statusParam) {
 		LocalDateTime now = LocalDateTime.now();
-		MedicationStatus medicationStatus = toMedicationStatus(statusParam);
-		List<Medication> medications = (medicationStatus == null)
+		MedicationStatus status = toMedicationStatus(statusParam);
+		List<Medication> medications = (status == null)
 			? medicationRepository.findAllUserMedications(userId)
-			: findByStatus(userId, medicationStatus, now);
-		return mapToGroupedResponse(medications);
+			: findByStatus(userId, status, now);
+		return toGroupedResponse(medications);
 	}
 
-	private MedicationGroupedResponse mapToGroupedResponse(List<Medication> medications) {
-		List<MedicationCardResponse> medicationCardResponses = medications.stream()
-			.map(MedicationCardResponse::from)
-			.toList();
-		return MedicationGroupedResponse.of(medicationCardResponses);
+	@Transactional
+	public void createMedication(Long userId, CreateMedicationRequest request) {
+		Medication medication = medicationRepository.save(request.toMedication(userId));
+		medicationIntakeDayRepository.saveAll(request.toIntakeDays(medication));
+		medicationIntakeTimeRepository.saveAll(request.toMedicationsTimes(medication));
+		medicationScheduleService.createAllSchedules(medication, request.intakeTimes());
+	}
+
+	@Transactional
+	public void updateMedication(Long userId, Long medicationId, UpdateMedicationRequest request) {
+		Medication medication = getMedication(medicationId);
+		validateOwnership(userId, medication);
+
+		LocalDateTime cutoff = resolveCutoff(request.startDate());
+		deleteUpcomingSchedulesAndIntakes(medicationId, cutoff);
+
+		medication.update(
+			request.name(), request.startDate(), request.endDate(),
+			SoundType.from(request.alarmSound()),
+			MedicationType.from(request.medicineType()),
+			request.intakeCount()
+		);
+
+		medicationIntakeDayRepository.saveAll(request.toIntakeDays(medication));
+		medicationIntakeTimeRepository.saveAll(request.toMedicationsTimes(medication));
+		medicationScheduleService.createSchedulesAfter(
+			medication, request.intakeTimes(), request.intakeDays(), cutoff);
+	}
+
+	@Transactional
+	public void endMedication(Long medicationId) {
+		Medication medication = getMedication(medicationId);
+		LocalDateTime now = LocalDateTime.now();
+		medication.end(now);
+		medicationScheduleService.deleteAllUpcomingSchedules(medicationId, now);
+	}
+
+	@Transactional
+	public void deleteAllByUserId(Long userId) {
+		List<Medication> medications = medicationRepository.findAllUserMedications(userId);
+		List<Long> medicationIds = medications.stream().map(Medication::getId).toList();
+		medicationIntakeDayRepository.deleteAllByMedicationIds(medicationIds);
+		medicationIntakeTimeRepository.deleteAllByMedicationIds(medicationIds);
+		medicationRepository.deleteAll(medications);
+		medicationScheduleService.deleteAllByMedicationIds(medicationIds);
+	}
+
+	// 공유 헬퍼
+	private Medication getMedication(Long medicationId) {
+		return medicationRepository.findById(medicationId)
+			.orElseThrow(() -> new MedicationException(ErrorCode.NOT_FOUND_MEDICATION));
+	}
+
+	private void validateOwnership(Long userId, Medication medication) {
+		if (!medication.getUserId().equals(userId)) {
+			throw new MedicationException(ErrorCode.FORBIDDEN);
+		}
+	}
+
+	// updateMedication 헬퍼
+	private LocalDateTime resolveCutoff(LocalDate startDate) {
+		LocalDateTime now = LocalDateTime.now();
+		return startDate.isAfter(now.toLocalDate()) ? startDate.atStartOfDay() : now;
+	}
+
+	private void deleteUpcomingSchedulesAndIntakes(Long medicationId, LocalDateTime cutoff) {
+		medicationScheduleService.deleteAllUpcomingSchedules(medicationId, cutoff);
+		medicationIntakeDayRepository.deleteAllByMedicationIds(List.of(medicationId));
+		medicationIntakeTimeRepository.deleteAllByMedicationIds(List.of(medicationId));
+	}
+
+	// findMedications 헬퍼
+	private MedicationGroupedResponse toGroupedResponse(List<Medication> medications) {
+		return MedicationGroupedResponse.of(
+			medications.stream().map(MedicationCardResponse::from).toList()
+		);
 	}
 
 	private MedicationStatus toMedicationStatus(String statusParam) {
-		if (!StringUtils.hasText(statusParam)) {
-			return null;
-		}
+		if (!StringUtils.hasText(statusParam)) return null;
 		return MedicationStatus.from(statusParam);
 	}
 
@@ -67,95 +131,5 @@ public class MedicationService {
 			case TAKING -> medicationRepository.findUserTakingMedications(userId, now);
 			case ENDED -> medicationRepository.findUserEndedMedications(userId, now);
 		};
-	}
-
-	public void deleteAllByUserId(Long userId) {
-		List<Medication> medications = medicationRepository.findAllUserMedications(userId);
-		List<Long> medicationIds = medications.stream()
-			.map(Medication::getId)
-			.toList();
-		medicationIntakeDayRepository.deleteAllByMedicationIds(medicationIds);
-		medicationIntakeTimeRepository.deleteAllByMedicationIds(medicationIds);
-		medicationRepository.deleteAll(medications);
-		medicationScheduleService.deleteAllByMedicationIds(medicationIds);
-	}
-
-	/**
-	 * 복약 생성
-	 */
-	@Transactional
-	public void createMedication(Long userId, CreateMedicationRequest request) {
-		Medication medication = saveMedication(request, userId);
-		saveMedicationTimes(request, medication);
-		saveMedicationDays(request, medication);
-		medicationScheduleService.createAllSchedules(medication, request.intakeTimes());
-	}
-
-	private void saveMedicationTimes(CreateMedicationRequest request, Medication medication) {
-		List<MedicationIntakeTime> medicationsTimes = request.toMedicationsTimes(medication);
-		medicationIntakeTimeRepository.saveAll(medicationsTimes);
-	}
-
-	private void saveMedicationDays(CreateMedicationRequest request, Medication medication) {
-		List<MedicationIntakeDay> intakeDays = request.toIntakeDays(medication);
-		medicationIntakeDayRepository.saveAll(intakeDays);
-	}
-
-	private Medication saveMedication(CreateMedicationRequest request, Long userId) {
-		Medication medication = request.toMedication(userId);
-		medicationRepository.save(medication);
-		return medication;
-	}
-
-	/**
-	 * 복약 루틴 수정
-	 */
-	@Transactional
-	public void updateMedication(Long userId, Long medicationId, UpdateMedicationRequest request) {
-		Medication medication = getMedication(medicationId);
-		validateOwnership(userId, medication);
-
-		LocalDateTime now = LocalDateTime.now();
-
-		medicationScheduleService.deleteAllUpcomingSchedules(medicationId, now);
-
-		medicationIntakeDayRepository.deleteAllByMedicationIds(List.of(medicationId));
-		medicationIntakeTimeRepository.deleteAllByMedicationIds(List.of(medicationId));
-
-		medication.update(
-			request.name(), request.startDate(), request.endDate(),
-			SoundType.from(request.alarmSound()),
-			MedicationType.from(request.medicineType()),
-			request.intakeCount()
-		);
-
-		medicationIntakeTimeRepository.saveAll(request.toMedicationsTimes(medication));
-		medicationIntakeDayRepository.saveAll(request.toIntakeDays(medication));
-
-		medicationScheduleService.createSchedulesAfter(
-			medication, request.intakeTimes(), request.intakeDays(), now);
-	}
-
-	private void validateOwnership(Long userId, Medication medication) {
-		if (!medication.getUserId().equals(userId)) {
-			throw new MedicationException(ErrorCode.FORBIDDEN);
-		}
-	}
-
-	/**
-	 * 복약 종료
-	 */
-	@Transactional
-	public void endMedication(Long medicationId) {
-		Medication medication = getMedication(medicationId);
-		LocalDateTime currentDateTime = LocalDateTime.now();
-		medication.end(currentDateTime);
-		medicationScheduleService.deleteAllUpcomingSchedules(medicationId, currentDateTime);
-	}
-
-	private Medication getMedication(Long medicationId) {
-		Medication medication = medicationRepository.findById(medicationId)
-			.orElseThrow(() -> new MedicationException(ErrorCode.NOT_FOUND_MEDICATION));
-		return medication;
 	}
 }

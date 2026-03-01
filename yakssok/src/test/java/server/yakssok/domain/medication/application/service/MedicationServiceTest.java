@@ -113,6 +113,7 @@ class MedicationServiceTest {
 			List<MedicationIntakeDay> days = List.of(mock(MedicationIntakeDay.class));
 
 			when(request.toMedication(USER_ID)).thenReturn(medication);
+			when(medicationRepository.save(medication)).thenReturn(medication);
 			when(request.toMedicationsTimes(medication)).thenReturn(times);
 			when(request.toIntakeDays(medication)).thenReturn(days);
 			when(request.intakeTimes()).thenReturn(List.of(LocalTime.of(9, 0)));
