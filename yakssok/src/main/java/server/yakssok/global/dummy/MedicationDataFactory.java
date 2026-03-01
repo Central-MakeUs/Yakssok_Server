@@ -28,7 +28,7 @@ public class MedicationDataFactory {
 			"비타민D",
 			"SUPPLEMENT",
 			LocalDate.of(2025, 7, 10),
-			null,
+			LocalDate.of(2025, 12, 31),
 			List.of(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY, DayOfWeek.FRIDAY),
 			1,
 			"PILL_SHAKE",
