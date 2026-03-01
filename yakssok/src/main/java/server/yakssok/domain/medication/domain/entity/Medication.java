@@ -116,6 +116,18 @@ public class Medication {
 		return calculateStatus(startDateTime, endDateTime);
 	}
 
+	public void update(String medicineName, LocalDate startDate, LocalDate endDate,
+		SoundType soundType, MedicationType medicationType, int intakeCount) {
+		this.medicineName = medicineName;
+		this.startDateTime = convertToStartDateTime(startDate);
+		this.endDateTime = convertToEndDateTime(endDate);
+		this.soundType = soundType;
+		this.medicationType = medicationType;
+		this.intakeCount = intakeCount;
+		this.intakeTimes.clear();
+		this.intakeDays.clear();
+	}
+
 	public void end(LocalDateTime endDateTime) {
 		this.endDateTime = endDateTime;
 	}

@@ -17,6 +17,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import server.yakssok.domain.medication.application.service.MedicationService;
 import server.yakssok.domain.medication.presentation.dto.request.CreateMedicationRequest;
+import server.yakssok.domain.medication.presentation.dto.request.UpdateMedicationRequest;
 import server.yakssok.domain.medication.presentation.dto.response.MedicationGroupedResponse;
 import server.yakssok.global.common.reponse.ApiResponse;
 import server.yakssok.global.common.security.YakssokUserDetails;
@@ -50,6 +51,20 @@ public class MedicationController {
 	) {
 		Long userId = userDetails.getUserId();
 		return ApiResponse.success(medicationService.findMedications(userId, status));
+	}
+
+	@Operation(summary = "복약 루틴 수정")
+	@ApiErrorResponse(ErrorCode.NOT_FOUND_MEDICATION)
+	@ApiErrorResponse(ErrorCode.FORBIDDEN)
+	@ApiErrorResponse(ErrorCode.INVALID_INPUT_VALUE)
+	@PutMapping("/{medicationId}")
+	public ApiResponse updateMedication(
+		@PathVariable Long medicationId,
+		@RequestBody @Valid UpdateMedicationRequest request,
+		@AuthenticationPrincipal YakssokUserDetails userDetails
+	) {
+		medicationService.updateMedication(userDetails.getUserId(), medicationId, request);
+		return ApiResponse.success();
 	}
 
 	@Operation(summary = "복약 종료")

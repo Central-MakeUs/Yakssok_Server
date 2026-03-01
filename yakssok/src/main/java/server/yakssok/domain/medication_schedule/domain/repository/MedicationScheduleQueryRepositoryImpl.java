@@ -27,11 +27,11 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 			MedicationScheduleDto.class,
 			medicationSchedule.scheduledDate,
 			medicationSchedule.id,
-			medication.medicationType,
-			medication.medicineName,
+			medicationSchedule.medicationType,
+			medicationSchedule.medicineName,
 			medicationSchedule.scheduledTime,
 			medicationSchedule.isTaken,
-			medication.userId
+			medicationSchedule.userId
 		);
 
 	@Override
@@ -39,7 +39,6 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 		return jpaQueryFactory
 			.select(SCHEDULE_DTO_PROJECTION)
 			.from(medicationSchedule)
-			.innerJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
 			.where(
 				medicationSchedule.userId.eq(userId),
 				medicationSchedule.scheduledDate.eq(date)
@@ -56,7 +55,6 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 		return jpaQueryFactory
 			.select(SCHEDULE_DTO_PROJECTION)
 			.from(medicationSchedule)
-			.innerJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
 			.where(
 				medicationSchedule.userId.eq(userId),
 				medicationSchedule.scheduledDate.between(startDate, endDate)
@@ -170,10 +168,8 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 		return jpaQueryFactory
 			.select(SCHEDULE_DTO_PROJECTION)
 			.from(medicationSchedule)
-			.innerJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
-			.from(medicationSchedule)
 			.where(
-				medication.userId.in(followingIds),
+				medicationSchedule.userId.in(followingIds),
 				medicationSchedule.scheduledDate.eq(localDate),
 				medicationSchedule.scheduledTime.loe(localTime),
 				medicationSchedule.isTaken.isFalse()
@@ -189,7 +185,6 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 		return jpaQueryFactory
 			.select(SCHEDULE_DTO_PROJECTION)
 			.from(medicationSchedule)
-			.innerJoin(medication).on(medication.id.eq(medicationSchedule.medicationId))
 			.where(
 				medicationSchedule.userId.in(followingIds),
 				medicationSchedule.scheduledDate.eq(today),

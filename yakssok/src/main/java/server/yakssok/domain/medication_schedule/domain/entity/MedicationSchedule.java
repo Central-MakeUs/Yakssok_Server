@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -12,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import server.yakssok.domain.BaseEntity;
+import server.yakssok.domain.medication.domain.entity.MedicationType;
 import server.yakssok.domain.medication_schedule.domain.policy.OverduePolicy;
 
 @Entity
@@ -26,14 +29,15 @@ public class MedicationSchedule extends BaseEntity {
 	private boolean isTaken;
 	private Long medicationId;
 	private Long userId;
+	private String medicineName;
 
-	public static MedicationSchedule create(LocalDate scheduledDate, LocalTime scheduledTime, Long medicationId, Long userId) {
+	@Enumerated(EnumType.STRING)
+	private MedicationType medicationType;
+
+	public static MedicationSchedule create(LocalDate scheduledDate, LocalTime scheduledTime,
+		Long medicationId, Long userId, String medicineName, MedicationType medicationType) {
 		return new MedicationSchedule(
-			scheduledDate,
-			scheduledTime,
-			false,
-			medicationId,
-			userId
+			scheduledDate, scheduledTime, false, medicationId, userId, medicineName, medicationType
 		);
 	}
 
@@ -42,13 +46,17 @@ public class MedicationSchedule extends BaseEntity {
 		LocalTime scheduledTime,
 		boolean isTaken,
 		Long medicationId,
-		Long userId
+		Long userId,
+		String medicineName,
+		MedicationType medicationType
 	) {
 		this.scheduledDate = scheduledDate;
 		this.scheduledTime = scheduledTime;
 		this.isTaken = isTaken;
 		this.medicationId = medicationId;
 		this.userId = userId;
+		this.medicineName = medicineName;
+		this.medicationType = medicationType;
 	}
 
 	public boolean isTodaySchedule() {

@@ -14,10 +14,13 @@ import server.yakssok.domain.medication.domain.entity.Medication;
 import server.yakssok.domain.medication.domain.entity.MedicationIntakeDay;
 import server.yakssok.domain.medication.domain.entity.MedicationIntakeTime;
 import server.yakssok.domain.medication.domain.entity.MedicationStatus;
+import server.yakssok.domain.medication.domain.entity.MedicationType;
+import server.yakssok.domain.medication.domain.entity.SoundType;
 import server.yakssok.domain.medication.domain.repository.MedicationIntakeDayRepository;
 import server.yakssok.domain.medication.domain.repository.MedicationIntakeTimeRepository;
 import server.yakssok.domain.medication.domain.repository.MedicationRepository;
 import server.yakssok.domain.medication.presentation.dto.request.CreateMedicationRequest;
+import server.yakssok.domain.medication.presentation.dto.request.UpdateMedicationRequest;
 import server.yakssok.domain.medication.presentation.dto.response.MedicationCardResponse;
 import server.yakssok.domain.medication.presentation.dto.response.MedicationGroupedResponse;
 import server.yakssok.domain.medication_schedule.application.service.MedicationScheduleService;
@@ -102,6 +105,41 @@ public class MedicationService {
 		Medication medication = request.toMedication(userId);
 		medicationRepository.save(medication);
 		return medication;
+	}
+
+	/**
+	 * 복약 루틴 수정
+	 */
+	@Transactional
+	public void updateMedication(Long userId, Long medicationId, UpdateMedicationRequest request) {
+		Medication medication = getMedication(medicationId);
+		validateOwnership(userId, medication);
+
+		LocalDateTime now = LocalDateTime.now();
+
+		medicationScheduleService.deleteAllUpcomingSchedules(medicationId, now);
+
+		medicationIntakeDayRepository.deleteAllByMedicationIds(List.of(medicationId));
+		medicationIntakeTimeRepository.deleteAllByMedicationIds(List.of(medicationId));
+
+		medication.update(
+			request.name(), request.startDate(), request.endDate(),
+			SoundType.from(request.alarmSound()),
+			MedicationType.from(request.medicineType()),
+			request.intakeCount()
+		);
+
+		medicationIntakeTimeRepository.saveAll(request.toMedicationsTimes(medication));
+		medicationIntakeDayRepository.saveAll(request.toIntakeDays(medication));
+
+		medicationScheduleService.createSchedulesAfter(
+			medication, request.intakeTimes(), request.intakeDays(), now);
+	}
+
+	private void validateOwnership(Long userId, Medication medication) {
+		if (!medication.getUserId().equals(userId)) {
+			throw new MedicationException(ErrorCode.FORBIDDEN);
+		}
 	}
 
 	/**

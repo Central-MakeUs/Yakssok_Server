@@ -43,3 +43,6 @@ application-test.yml
 firebase-service-account.json
 .env
 src/main/generated
+
+### Claude Code ###
+.claude/settings.local.json

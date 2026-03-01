@@ -17,8 +17,8 @@ public class MedicationScheduleJdbcRepository {
 	private final JdbcTemplate jdbcTemplate;
 
 	private static final String INSERT_SQL = """
-        INSERT INTO medication_schedule (scheduled_date, scheduled_time, is_taken, medication_id, user_id)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO medication_schedule (scheduled_date, scheduled_time, is_taken, medication_id, user_id, medicine_name, medication_type)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
     """;
 
 	private static final int CHUNK_SIZE = 500;
@@ -37,6 +37,8 @@ public class MedicationScheduleJdbcRepository {
 						ps.setBoolean(3, schedule.isTaken());
 						ps.setLong(4, schedule.getMedicationId());
 						ps.setLong(5, schedule.getUserId());
+						ps.setString(6, schedule.getMedicineName());
+						ps.setString(7, schedule.getMedicationType().name());
 					}
 
 					@Override
