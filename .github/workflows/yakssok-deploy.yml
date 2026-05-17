@@ -51,13 +51,11 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         env:
           TAG: ${{ github.sha }}
-          RABBITMQ_USER: ${{ secrets.RABBITMQ_USER }}
-          RABBITMQ_PASS: ${{ secrets.RABBITMQ_PASS }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_KEY }}
-          envs: TAG,RABBITMQ_USER,RABBITMQ_PASS
+          envs: TAG
           script: |
             echo "📁 이동: docker-compose.yml이 있는 디렉토리로"
             cd ~/Yakssok_Server
