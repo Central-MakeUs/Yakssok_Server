@@ -17,7 +17,7 @@ public class MedicationScheduleJdbcRepository {
 	private final JdbcTemplate jdbcTemplate;
 
 	private static final String INSERT_SQL = """
-        INSERT INTO medication_schedule (scheduled_date, scheduled_time, is_taken, medication_id, user_id)
+        INSERT INTO yakssok.medication_schedule (scheduled_date, scheduled_time, is_taken, medication_id, user_id)
         VALUES (?, ?, ?, ?, ?)
     """;
 
