@@ -95,6 +95,4 @@ dependencies {
     //validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    //rabbitmq
-    implementation 'org.springframework.boot:spring-boot-starter-amqp'
 }
