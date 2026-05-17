@@ -55,7 +55,7 @@ public class MedicationDataFactory {
 			"콜라겐",
 			"BEAUTY",
 			LocalDate.of(2025, 7, 22),
-			null,
+			LocalDate.of(2025, 8, 22),
 			List.of(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY, DayOfWeek.FRIDAY),
 			1,
 			"SCOLD",

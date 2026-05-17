@@ -2,10 +2,8 @@ package server.yakssok.domain.medication.application.service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.springframework.stereotype.Component;
@@ -16,7 +14,6 @@ import server.yakssok.domain.medication.domain.entity.MedicationIntakeDay;
 import server.yakssok.domain.medication.domain.entity.MedicationIntakeTime;
 import server.yakssok.domain.medication.domain.repository.MedicationRepository;
 import server.yakssok.domain.medication.domain.repository.dto.FutureMedicationSchedulesDto;
-import server.yakssok.domain.medication.domain.repository.dto.MedicationDto;
 import server.yakssok.domain.medication_schedule.domain.entity.MedicationSchedule;
 import server.yakssok.domain.medication_schedule.domain.repository.dto.MedicationScheduleDto;
 
@@ -26,14 +23,21 @@ public class MedicationScheduleGenerator {
 
 	private final MedicationRepository medicationRepository;
 
-	public List<MedicationScheduleDto> generateUserFutureScheduleDtos(Long userId, LocalDate start, LocalDate end) {
+	public List<MedicationScheduleDto> generateUserFutureScheduleDtos(
+		Long userId,
+		LocalDate start,
+		LocalDate end
+	) {
 		return medicationRepository.findFutureMedicationSchedules(userId).stream()
 			.flatMap(schedule -> createMedicationScheduleDtos(schedule, start, end))
 			.toList();
 	}
 
 	private Stream<MedicationScheduleDto> createMedicationScheduleDtos(
-		FutureMedicationSchedulesDto schedule, LocalDate start, LocalDate end) {
+		FutureMedicationSchedulesDto schedule,
+		LocalDate start,
+		LocalDate end
+	) {
 		Medication medication = schedule.medication();
 		MedicationIntakeDay intakeDay = schedule.medicationIntakeDay();
 		MedicationIntakeTime intakeTime = schedule.medicationIntakeTime();
@@ -50,30 +54,47 @@ public class MedicationScheduleGenerator {
 	}
 
 
-	private boolean isSameDayOfWeek(LocalDate date, MedicationIntakeDay intakeDay) {
+	private boolean isSameDayOfWeek(
+		LocalDate date,
+		MedicationIntakeDay intakeDay
+	) {
 		return intakeDay.getDayOfWeek() == date.getDayOfWeek();
 	}
 
-	private LocalDate getActualStart(LocalDate inputStart, Medication medication) {
+	private LocalDate getActualStart(
+		LocalDate inputStart,
+		Medication medication
+	) {
 		return inputStart.isAfter(medication.getStartDate()) ? inputStart : medication.getStartDate();
 	}
 
-	private LocalDate getActualEnd(LocalDate inputEnd, Medication medication) {
+	private LocalDate getActualEnd(
+		LocalDate inputEnd, Medication medication
+	) {
 		LocalDate endDate = medication.getEndDate();
 		return (endDate == null) ? inputEnd : (inputEnd.isBefore(endDate) ? inputEnd : endDate);
 	}
 
-	public List<MedicationSchedule> generateAllTodaySchedules(LocalDateTime currentDateTime) {
-		List<MedicationDto> medicationDtos = medicationRepository.findMedicationsForScheduleGeneration(currentDateTime, currentDateTime.getDayOfWeek());
-		return medicationDtos.stream()
-			.map(dto -> MedicationSchedule.create(currentDateTime.toLocalDate(), dto.intakeTime(), dto.medicationId(), dto.userId()))
-			.toList();
-	}
+	public List<MedicationSchedule> generateAllSchedules(
+		Medication medication,
+		List<LocalTime> intakeTimes
+	)
+	{
+		LocalDate start = medication.getStartDate();
+		LocalDate end = medication.getEndDate();
 
-	public List<MedicationSchedule> generateTodaySchedules(
-		Medication medication, List<LocalTime> intakeTimes) {
-		return intakeTimes.stream()
-				.map(intakeTime -> MedicationSchedule.create(LocalDate.now(), intakeTime, medication.getId(), medication.getUserId()))
-				.collect(Collectors.toList());
+		List<DayOfWeek> intakeDayOfWeeks = medication.getIntakeDays().stream()
+			.map(MedicationIntakeDay::getDayOfWeek)
+			.toList();
+
+		return start.datesUntil(end.plusDays(1))
+			.filter(date -> intakeDayOfWeeks.contains(date.getDayOfWeek()))
+			.flatMap(date -> intakeTimes.stream()
+				.map(intakeTime -> MedicationSchedule.create(
+					date,
+					intakeTime,
+					medication.getId(),
+					medication.getUserId())))
+			.toList();
 	}
 }

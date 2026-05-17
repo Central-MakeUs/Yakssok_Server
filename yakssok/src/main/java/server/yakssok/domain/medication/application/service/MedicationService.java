@@ -1,6 +1,5 @@
 package server.yakssok.domain.medication.application.service;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,6 +31,9 @@ public class MedicationService {
 	private final MedicationIntakeTimeRepository medicationIntakeTimeRepository;
 	private final MedicationScheduleService medicationScheduleService;
 
+	/**
+	 * 내 복약 목록 조회
+	 */
 	@Transactional(readOnly = true)
 	public MedicationGroupedResponse findMedications(Long userId, String statusParam) {
 		LocalDateTime now = LocalDateTime.now();
@@ -64,23 +66,26 @@ public class MedicationService {
 		};
 	}
 
+	public void deleteAllByUserId(Long userId) {
+		List<Medication> medications = medicationRepository.findAllUserMedications(userId);
+		List<Long> medicationIds = medications.stream()
+			.map(Medication::getId)
+			.toList();
+		medicationIntakeDayRepository.deleteAllByMedicationIds(medicationIds);
+		medicationIntakeTimeRepository.deleteAllByMedicationIds(medicationIds);
+		medicationRepository.deleteAll(medications);
+		medicationScheduleService.deleteAllByMedicationIds(medicationIds);
+	}
+
+	/**
+	 * 복약 생성
+	 */
 	@Transactional
 	public void createMedication(Long userId, CreateMedicationRequest request) {
 		Medication medication = saveMedication(request, userId);
 		saveMedicationTimes(request, medication);
 		saveMedicationDays(request, medication);
-
-		if (isTodayStart(medication, request.intakeDays())) {
-			medicationScheduleService.createTodaySchedules(medication, request.intakeTimes());
-		}
-	}
-
-	private static boolean isTodayStart(Medication medication, List<DayOfWeek> intakeDays) {
-		LocalDate today = LocalDate.now();
-		boolean isTodayStartDate = today.equals(medication.getStartDate());
-		boolean isTodayMedicationDay = intakeDays.stream()
-			.anyMatch(day -> day == today.getDayOfWeek());
-		return isTodayStartDate && isTodayMedicationDay;
+		medicationScheduleService.createAllSchedules(medication, request.intakeTimes());
 	}
 
 	private void saveMedicationTimes(CreateMedicationRequest request, Medication medication) {
@@ -99,28 +104,20 @@ public class MedicationService {
 		return medication;
 	}
 
+	/**
+	 * 복약 종료
+	 */
 	@Transactional
 	public void endMedication(Long medicationId) {
 		Medication medication = getMedication(medicationId);
 		LocalDateTime currentDateTime = LocalDateTime.now();
 		medication.end(currentDateTime);
-		medicationScheduleService.deleteTodayUpcomingSchedules(medicationId, currentDateTime);
+		medicationScheduleService.deleteAllUpcomingSchedules(medicationId, currentDateTime);
 	}
 
 	private Medication getMedication(Long medicationId) {
 		Medication medication = medicationRepository.findById(medicationId)
 			.orElseThrow(() -> new MedicationException(ErrorCode.NOT_FOUND_MEDICATION));
 		return medication;
-	}
-
-	public void deleteAllByUserId(Long userId) {
-		List<Medication> medications = medicationRepository.findAllUserMedications(userId);
-		List<Long> medicationIds = medications.stream()
-			.map(Medication::getId)
-			.toList();
-		medicationIntakeDayRepository.deleteAllByMedicationIds(medicationIds);
-		medicationIntakeTimeRepository.deleteAllByMedicationIds(medicationIds);
-		medicationRepository.deleteAll(medications);
-		medicationScheduleService.deleteAllByMedicationIds(medicationIds);
 	}
 }

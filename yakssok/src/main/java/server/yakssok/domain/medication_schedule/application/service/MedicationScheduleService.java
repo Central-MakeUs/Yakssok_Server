@@ -32,12 +32,6 @@ public class MedicationScheduleService {
 	private final RelationshipService relationshipService;
 	private final MedicationScheduleValidator medicationScheduleValidator;
 
-	@Transactional
-	public void generateTodaySchedules() {
-		LocalDateTime currentDateTime = LocalDateTime.now();
-		List<MedicationSchedule> schedules = medicationScheduleGenerator.generateAllTodaySchedules(currentDateTime);
-		medicationScheduleJdbcRepository.batchInsert(schedules);
-	}
 
 	@Transactional
 	public void switchTakeMedication(Long userId, Long scheduleId) {
@@ -47,8 +41,8 @@ public class MedicationScheduleService {
 		schedule.switchTake();
 	}
 
-	public void deleteTodayUpcomingSchedules(Long medicationId, LocalDateTime now) {
-		medicationScheduleManager.deleteTodayUpcomingSchedules(medicationId, now);
+	public void deleteAllUpcomingSchedules(Long medicationId, LocalDateTime now) {
+		medicationScheduleManager.deleteAllUpcomingSchedules(medicationId, now);
 	}
 
 	@Transactional(readOnly = true)
@@ -58,7 +52,7 @@ public class MedicationScheduleService {
 
 	@Transactional(readOnly = true)
 	public MedicationScheduleGroupResponse getMyRangeSchedules(Long userId, LocalDate start, LocalDate end) {
-		return groupAndSort(medicationScheduleFinder.findSchedulesInRange(userId, start, end, LocalDate.now()));
+		return groupAndSort(medicationScheduleFinder.findSchedulesInRange(userId, start, end));
 	}
 
 	@Transactional(readOnly = true)
@@ -74,6 +68,7 @@ public class MedicationScheduleService {
 		return getMyRangeSchedules(friendId, start, end);
 	}
 
+	//TODO : 이미 정렬된 상태로 DB에서 가져오고 있으므로 그룹핑만 하면 됨
 	private MedicationScheduleGroupResponse groupAndSort(List<MedicationScheduleResponse> list) {
 		Map<LocalDate, List<MedicationScheduleResponse>> grouped = list.stream()
 			.collect(Collectors.groupingBy(MedicationScheduleResponse::date));
@@ -94,10 +89,10 @@ public class MedicationScheduleService {
 		return MedicationScheduleGroupResponse.fromList(dailyGroups);
 	}
 
-	public void createTodaySchedules(
+	public void createAllSchedules(
 		Medication medication, List<LocalTime> intakeTimes) {
-		List<MedicationSchedule> schedules = medicationScheduleGenerator.generateTodaySchedules(
-			medication, intakeTimes);
+		List<MedicationSchedule> schedules = medicationScheduleGenerator.
+			generateAllSchedules(medication, intakeTimes);
 		medicationScheduleJdbcRepository.batchInsert(schedules);
 	}
 

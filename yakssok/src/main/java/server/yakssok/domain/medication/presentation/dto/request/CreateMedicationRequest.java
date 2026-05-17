@@ -14,7 +14,10 @@ import server.yakssok.domain.medication.domain.entity.MedicationIntakeDay;
 import server.yakssok.domain.medication.domain.entity.MedicationIntakeTime;
 import server.yakssok.domain.medication.domain.entity.MedicationType;
 import server.yakssok.domain.medication.domain.entity.SoundType;
+import server.yakssok.domain.medication.presentation.dto.validator.MedicationDateRange;
+import server.yakssok.domain.medication.presentation.dto.validator.ValidMedicationDateRange;
 
+@ValidMedicationDateRange
 @Schema(description = "약 복용 등록 요청")
 public record CreateMedicationRequest(
 	@Schema(description = "약 이름", example = "타이레놀")
@@ -31,6 +34,7 @@ public record CreateMedicationRequest(
 	LocalDate startDate,
 
 	@Schema(description = "복용 종료일 (yyyy-MM-dd)", example = "2025-07-13")
+	@NotNull
 	LocalDate endDate,
 
 	@Schema(
@@ -55,7 +59,7 @@ public record CreateMedicationRequest(
 	)
 	@NotEmpty
 	List<LocalTime> intakeTimes
-) {
+) implements MedicationDateRange {
 
 	public Medication toMedication(Long userId) {
 		return Medication.create(

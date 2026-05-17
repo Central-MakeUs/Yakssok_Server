@@ -52,7 +52,7 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 	}
 
 	@Override
-	public List<MedicationScheduleDto> findUserSchedulesInPastRange(Long userId, LocalDate startDate, LocalDate endDate) {
+	public List<MedicationScheduleDto> findUserSchedulesInRange(Long userId, LocalDate startDate, LocalDate endDate) {
 		return jpaQueryFactory
 			.select(SCHEDULE_DTO_PROJECTION)
 			.from(medicationSchedule)
@@ -76,6 +76,19 @@ public class MedicationScheduleQueryRepositoryImpl implements MedicationSchedule
 				medicationSchedule.medicationId.eq(medicationId),
 				medicationSchedule.scheduledDate.eq(currentDate),
 				medicationSchedule.scheduledTime.after(currentTime)
+			)
+			.execute();
+	}
+
+	@Override
+	public void deleteAllUpcomingSchedules(Long medicationId, LocalDate currentDate, LocalTime currentTime) {
+		jpaQueryFactory
+			.delete(medicationSchedule)
+			.where(
+				medicationSchedule.medicationId.eq(medicationId),
+				medicationSchedule.scheduledDate.gt(currentDate)
+					.or(medicationSchedule.scheduledDate.eq(currentDate)
+						.and(medicationSchedule.scheduledTime.after(currentTime)))
 			)
 			.execute();
 	}

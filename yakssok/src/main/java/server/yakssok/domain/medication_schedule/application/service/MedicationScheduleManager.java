@@ -24,4 +24,12 @@ public class MedicationScheduleManager {
 	public void deleteAllByMedicationIds(List<Long> medicationIds) {
 		medicationScheduleRepository.deleteAllByMedicationIds(medicationIds);
 	}
+
+	public void deleteAllUpcomingSchedules(Long medicationId, LocalDateTime now) {
+		medicationScheduleRepository.deleteAllUpcomingSchedules(
+			medicationId,
+			now.toLocalDate(),
+			now.toLocalTime()
+		);
+	}
 }
