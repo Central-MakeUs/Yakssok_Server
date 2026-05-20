@@ -42,8 +42,8 @@ jobs:
 
           echo "🐳 Docker Build & Push"
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t yakssok/yakssok:${IMAGE_TAG} .
-          docker push yakssok/yakssok:${IMAGE_TAG}
+          docker buildx create --use
+          docker buildx build --platform linux/amd64,linux/arm64 -t yakssok/yakssok:${IMAGE_TAG} --push .
 
       - name: 🚀 Deploy to OCI
         uses: appleboy/ssh-action@v1.0.3
