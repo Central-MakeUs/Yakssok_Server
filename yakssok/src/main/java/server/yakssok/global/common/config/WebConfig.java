@@ -12,6 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
 			.allowedOrigins(
 				"http://yakssok.site",
 				"https://yakssok.site",
+				"https://yakssok.onrender.com",
 				"http://localhost:8080")
 			.allowedMethods("*")
 			.allowedHeaders("*")
