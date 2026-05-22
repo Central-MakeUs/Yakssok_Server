@@ -1,10 +1,10 @@
-name: yakssok-deploy-render
+name: yakssok-deploy-superbase
 on:
   push:
     branches: [ "release/supabase" ]
     paths:
       - "yakssok/**"
-      - ".github/workflows/yakssok-deploy-render.yml"
+      - ".github/workflows/yakssok-deploy-oci.yml"
   workflow_dispatch:
 permissions:
   contents: read
