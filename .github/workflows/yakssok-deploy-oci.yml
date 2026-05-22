@@ -1,18 +1,15 @@
-name: yakssok-deploy-oci
+name: yakssok-deploy-render
 on:
   push:
     branches: [ "release/supabase" ]
     paths:
       - "yakssok/**"
-      - "docker-compose.yml"
-      - ".github/workflows/yakssok-deploy-oci.yml"
+      - ".github/workflows/yakssok-deploy-render.yml"
   workflow_dispatch:
-
 permissions:
   contents: read
-
 jobs:
-  build-and-deploy:
+  build-and-push:
     runs-on: ubuntu-latest
     env:
       IMAGE_TAG: ${{ github.sha }}
@@ -42,32 +39,8 @@ jobs:
 
           echo "🐳 Docker Build & Push"
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-<<<<<<< HEAD
-          docker build -t yakssok/yakssok:${IMAGE_TAG} .
-          docker push yakssok/yakssok:${IMAGE_TAG}
-=======
           docker buildx create --use
-          docker buildx build --platform linux/amd64,linux/arm64 -t yakssok/yakssok:${IMAGE_TAG} --push .
->>>>>>> origin/release/supabase
-
-      - name: 🚀 Deploy to OCI
-        uses: appleboy/ssh-action@v1.0.3
-        env:
-          TAG: ${{ github.sha }}
-        with:
-          host: ${{ secrets.OCI_HOST }}
-          username: ${{ secrets.OCI_USERNAME }}
-          key: ${{ secrets.OCI_KEY }}
-          envs: TAG
-          script: |
-            echo "📁 이동: docker-compose.yml이 있는 디렉토리로"
-            cd ~/Yakssok_Server
-            echo "🐳 Docker 로그인"
-            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-            echo "📦 이미지 최신 Pull"
-            docker compose pull app
-            echo "🔄 컨테이너 재시작"
-            docker compose down --remove-orphans
-            docker compose up -d --force-recreate
-            echo "🧹 이미지 정리"
-            docker image prune -a -f
+          docker buildx build --platform linux/amd64,linux/arm64 \
+            -t yakssok/yakssok:${IMAGE_TAG} \
+            -t yakssok/yakssok:latest \
+            --push .
